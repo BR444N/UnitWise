@@ -53,4 +53,29 @@ dependencies {
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
+
+    // Material 3
+    implementation(libs.material3)
+    implementation(libs.material.icons.extended)
+
+    // Lifecycle / MVVM
+    implementation(libs.lifecycle.viewmodel)
+
+    // Navigation
+    implementation(libs.navigation.compose)
+
+    // Splash Screen
+    implementation(libs.splashscreen)
+
+    // CameraX
+    implementation(libs.camerax.core)
+    implementation(libs.camerax.camera2)
+    implementation(libs.camerax.lifecycle)
+    implementation(libs.camerax.view)
+
+    // ML Kit OCR
+    implementation(libs.mlkit.text.recognition)
+
+    // Lottie animations
+    implementation(libs.lottie.compose)
 }
