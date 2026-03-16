@@ -1,4 +1,4 @@
-package com.br444n.unitwise
+package com.br444n.unitwise.app
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -12,7 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import com.br444n.unitwise.ui.theme.UnitWiseTheme
+import com.br444n.unitwise.app.ui.theme.UnitWiseTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -1,4 +1,4 @@
-package com.br444n.unitwise.ui.theme
+package com.br444n.unitwise.app.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
