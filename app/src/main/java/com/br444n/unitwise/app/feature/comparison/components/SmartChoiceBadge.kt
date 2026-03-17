@@ -35,11 +35,11 @@ fun SmartChoiceBadge(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(12.dp))
+            .clip(RoundedCornerShape(16.dp))
             .background(Badge)
             .border(
                 BorderStroke(2.dp, MaterialTheme.colorScheme.primary),
-                RoundedCornerShape(12.dp)
+                RoundedCornerShape(16.dp)
             )
             .padding(16.dp)
     ) {
