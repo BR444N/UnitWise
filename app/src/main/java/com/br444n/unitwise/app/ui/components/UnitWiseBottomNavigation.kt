@@ -18,7 +18,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import com.br444n.unitwise.R
 import com.br444n.unitwise.app.ui.theme.UnitWiseTheme
 
 data class NavigationItem(
@@ -36,12 +38,12 @@ fun UnitWiseBottomNavigation(
 
     val items = listOf(
         NavigationItem(
-            title = "Home",
+            title = stringResource(id = R.string.home_tab),
             selectedIcon = Icons.Filled.Home,
             unselectedIcon = Icons.Outlined.Home
         ),
         NavigationItem(
-            title = "History",
+            title = stringResource(id = R.string.history_tab),
             selectedIcon = Icons.Filled.History,
             unselectedIcon = Icons.Outlined.History
         )
