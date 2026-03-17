@@ -47,6 +47,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.br444n.unitwise.R
 import com.br444n.unitwise.app.domain.model.MeasurementUnit.SUPPORTED_UNITS
+import com.br444n.unitwise.app.feature.home.isValid
+import com.br444n.unitwise.app.ui.theme.BrandPrimaryUnfocused
 import com.br444n.unitwise.app.ui.theme.UnitWiseTheme
 
 data class ProductInputState(
@@ -87,7 +89,7 @@ fun ProductInputCard(
                 .fillMaxWidth()
                 .padding(16.dp)
         ) {
-            ProductCardHeader(title = title, isFocused = isFocused)
+            ProductCardHeader(title = title, isFocused = isFocused, isValid = state.isValid())
             Spacer(modifier = Modifier.height(16.dp))
             
             ProductNameField(
@@ -119,7 +121,7 @@ fun ProductInputCard(
 }
 
 @Composable
-private fun ProductCardHeader(title: String, isFocused: Boolean) {
+private fun ProductCardHeader(title: String, isFocused: Boolean, isValid: Boolean) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         Box(
             modifier = Modifier
@@ -127,8 +129,11 @@ private fun ProductCardHeader(title: String, isFocused: Boolean) {
                 .width(4.dp)
                 .clip(RoundedCornerShape(2.dp))
                 .background(
-                    if (isFocused) MaterialTheme.colorScheme.primary
-                    else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.3f)
+                    when {
+                        isValid -> MaterialTheme.colorScheme.primary
+                        isFocused -> BrandPrimaryUnfocused
+                        else -> MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.3f)
+                    }
                 )
         )
         Spacer(modifier = Modifier.width(8.dp))
