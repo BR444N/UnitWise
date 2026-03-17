@@ -24,19 +24,19 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.br444n.unitwise.R
-import com.br444n.unitwise.app.ui.theme.BrandPrimaryUnfocused
+import com.br444n.unitwise.app.ui.theme.Badge
 import com.br444n.unitwise.app.ui.theme.UnitWiseTheme
 
 @Composable
 fun SmartChoiceBadge(
-    productName: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    productName: String
 ) {
     Column(
         modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(12.dp))
-            .background(BrandPrimaryUnfocused)
+            .background(Badge)
             .border(
                 BorderStroke(2.dp, MaterialTheme.colorScheme.primary),
                 RoundedCornerShape(12.dp)
