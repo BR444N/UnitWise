@@ -8,6 +8,7 @@ import androidx.compose.ui.graphics.Color
 
 val BrandPrimary = Color(0xFF0DF246)          // Color principal app
 val BrandPrimaryUnfocused = Color(0x660DF246) // 40% opacity (no focus)
+val Badge = Color(0x1A0DF246) // 10% opacity (no focus)
 
 /* =========================
    Backgrounds & Surfaces
