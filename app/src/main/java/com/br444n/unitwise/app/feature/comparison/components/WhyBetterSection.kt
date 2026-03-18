@@ -25,9 +25,8 @@ import com.br444n.unitwise.app.ui.theme.UnitWiseTheme
 @Composable
 fun WhyBetterSection(
     modifier: Modifier = Modifier,
-    content: String,
-    unit: String,
-    savingsTotal: String,
+    savingsPerStandardUnit: String,
+    standardUnitDesc: String,
     estimatedMonthlySavings: String,
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
@@ -43,11 +42,8 @@ fun WhyBetterSection(
         WhyBetterListItem(
             text = stringResource(
                 id = R.string.why_better_saving_per_unit,
-                content,
-                unit,
-                savingsTotal,
-                content,
-                unit
+                savingsPerStandardUnit,
+                standardUnitDesc
             )
         )
         
@@ -88,9 +84,8 @@ private fun WhyBetterListItem(text: String, modifier: Modifier = Modifier) {
 fun WhyBetterSectionPreview() {
     UnitWiseTheme {
         WhyBetterSection(
-            content = "1",
-            unit = "kg",
-            savingsTotal = "2.50",
+            savingsPerStandardUnit = "1.50",
+            standardUnitDesc = "100 g",
             estimatedMonthlySavings = "10.00",
             modifier = Modifier.padding(16.dp)
         )
