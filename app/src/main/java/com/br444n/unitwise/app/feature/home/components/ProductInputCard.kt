@@ -74,6 +74,7 @@ fun ProductInputCard(
     title: String,
     state: ProductInputState,
     actions: ProductInputActions,
+    isReadOnly: Boolean = false,
 ) {
     var isFocused by remember { mutableStateOf(false) }
     val onFocusChange: (Boolean) -> Unit = { focused -> if (focused) isFocused = true }
@@ -96,7 +97,8 @@ fun ProductInputCard(
                 productName = state.productName,
                 onProductNameChange = actions.onProductNameChange,
                 onScanClick = actions.onScanClick,
-                onFocusChange = { isFocused = it }
+                onFocusChange = { isFocused = it },
+                isReadOnly = isReadOnly
             )
             Spacer(modifier = Modifier.height(12.dp))
             
@@ -105,7 +107,8 @@ fun ProductInputCard(
                 onContentAmountChange = actions.onContentAmountChange,
                 selectedUnit = state.selectedUnit,
                 onUnitChange = actions.onUnitChange,
-                onFocusChange = onFocusChange
+                onFocusChange = onFocusChange,
+                isReadOnly = isReadOnly
             )
             Spacer(modifier = Modifier.height(12.dp))
             
@@ -114,7 +117,8 @@ fun ProductInputCard(
                 onPriceChange = actions.onPriceChange,
                 quantity = state.quantity,
                 onQuantityChange = actions.onQuantityChange,
-                onFocusChange = onFocusChange
+                onFocusChange = onFocusChange,
+                isReadOnly = isReadOnly
             )
         }
     }
@@ -152,7 +156,8 @@ private fun ProductNameField(
     productName: String,
     onProductNameChange: (String) -> Unit,
     onScanClick: () -> Unit,
-    onFocusChange: (Boolean) -> Unit
+    onFocusChange: (Boolean) -> Unit,
+    isReadOnly: Boolean
 ) {
     OutlinedTextField(
         value = productName,
@@ -160,37 +165,45 @@ private fun ProductNameField(
         modifier = Modifier
             .fillMaxWidth()
             .onFocusChanged { onFocusChange(it.isFocused) },
+        readOnly = isReadOnly,
+        enabled = !isReadOnly,
         placeholder = { Text(stringResource(id = R.string.scan_hint)) },
-        trailingIcon = {
-            TooltipBox(
-                positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
-                    positioning = TooltipAnchorPosition.Below
-                ),
-                tooltip = {
-                    PlainTooltip(
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        contentColor = MaterialTheme.colorScheme.onPrimary
-                    ) {
-                        Text(
-                            text = stringResource(id = R.string.scan_desc),
-                            color = MaterialTheme.colorScheme.onPrimary
-                        )
-                    }
-                },
-                state = rememberTooltipState()
-            ) {
-                IconButton(onClick = onScanClick) {
-                    Icon(
-                        imageVector = Icons.Default.QrCodeScanner,
-                        contentDescription = stringResource(id = R.string.scan_desc),
-                        tint = MaterialTheme.colorScheme.primary
-                    )
-                }
-            }
+        trailingIcon = if (isReadOnly) null else {
+            { ScanIconTooltip(onScanClick) }
         },
         singleLine = true,
         shape = RoundedCornerShape(12.dp)
     )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun ScanIconTooltip(onScanClick: () -> Unit) {
+    TooltipBox(
+        positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
+            positioning = TooltipAnchorPosition.Below
+        ),
+        tooltip = {
+            PlainTooltip(
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary
+            ) {
+                Text(
+                    text = stringResource(id = R.string.scan_desc),
+                    color = MaterialTheme.colorScheme.onPrimary
+                )
+            }
+        },
+        state = rememberTooltipState()
+    ) {
+        IconButton(onClick = onScanClick) {
+            Icon(
+                imageVector = Icons.Default.QrCodeScanner,
+                contentDescription = stringResource(id = R.string.scan_desc),
+                tint = MaterialTheme.colorScheme.primary
+            )
+        }
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -200,7 +213,8 @@ private fun ProductContentRow(
     onContentAmountChange: (String) -> Unit,
     selectedUnit: String,
     onUnitChange: (String) -> Unit,
-    onFocusChange: (Boolean) -> Unit
+    onFocusChange: (Boolean) -> Unit,
+    isReadOnly: Boolean
 ) {
     var expandedUnitDropdown by remember { mutableStateOf(false) }
 
@@ -211,21 +225,28 @@ private fun ProductContentRow(
             modifier = Modifier
                 .weight(1f)
                 .onFocusChanged { onFocusChange(it.isFocused) },
+            readOnly = isReadOnly,
+            enabled = !isReadOnly,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
             label = { Text(stringResource(id = R.string.content_label)) },
             singleLine = true,
             shape = RoundedCornerShape(12.dp)
         )
         ExposedDropdownMenuBox(
-            expanded = expandedUnitDropdown,
-            onExpandedChange = { expandedUnitDropdown = !expandedUnitDropdown },
+            expanded = expandedUnitDropdown && !isReadOnly,
+            onExpandedChange = { if (!isReadOnly) expandedUnitDropdown = !expandedUnitDropdown },
             modifier = Modifier.weight(1f)
         ) {
             OutlinedTextField(
                 value = selectedUnit,
                 onValueChange = {},
                 readOnly = true,
-                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedUnitDropdown) },
+                enabled = !isReadOnly,
+                trailingIcon = { 
+                    if (!isReadOnly) {
+                        ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedUnitDropdown) 
+                    }
+                },
                 modifier = Modifier.menuAnchor(type = ExposedDropdownMenuAnchorType.PrimaryNotEditable),
                 label = { Text(stringResource(id = R.string.unit_label)) },
                 shape = RoundedCornerShape(12.dp)
@@ -254,7 +275,8 @@ private fun ProductPriceQuantityRow(
     onPriceChange: (String) -> Unit,
     quantity: String,
     onQuantityChange: (String) -> Unit,
-    onFocusChange: (Boolean) -> Unit
+    onFocusChange: (Boolean) -> Unit,
+    isReadOnly: Boolean
 ) {
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
         OutlinedTextField(
@@ -263,6 +285,8 @@ private fun ProductPriceQuantityRow(
             modifier = Modifier
                 .weight(1f)
                 .onFocusChanged { onFocusChange(it.isFocused) },
+            readOnly = isReadOnly,
+            enabled = !isReadOnly,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
             label = { Text(stringResource(id = R.string.price_label)) },
             singleLine = true,
@@ -274,6 +298,8 @@ private fun ProductPriceQuantityRow(
             modifier = Modifier
                 .weight(1f)
                 .onFocusChanged { onFocusChange(it.isFocused) },
+            readOnly = isReadOnly,
+            enabled = !isReadOnly,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             label = { Text(stringResource(id = R.string.quantity_label)) },
             singleLine = true,
