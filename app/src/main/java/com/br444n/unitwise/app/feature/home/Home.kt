@@ -27,6 +27,7 @@ import com.br444n.unitwise.app.ui.theme.UnitWiseTheme
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
+    onNavigateToComparison: () -> Unit,
     viewModel: HomeViewModel = viewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -81,7 +82,7 @@ fun HomeScreen(
             )
 
             CalculateButton(
-                onClick = { /* Implement calculation logic */ },
+                onClick = onNavigateToComparison,
                 enabled = uiState.isCalculateEnabled,
                 modifier = Modifier.padding(bottom = 24.dp)
             )
@@ -93,6 +94,8 @@ fun HomeScreen(
 @Composable
 fun HomeScreenPreview() {
     UnitWiseTheme {
-        HomeScreen()
+        HomeScreen(
+            onNavigateToComparison = {}
+        )
     }
 }
