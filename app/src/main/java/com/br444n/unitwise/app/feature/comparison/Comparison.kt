@@ -78,7 +78,8 @@ fun ComparisonScreen(
                     title = if (uiState.isProductAWinner) stringResource(R.string.product_a_title) else stringResource(R.string.product_b_title),
                     state = uiState.winningProduct,
                     // Pass empty actions for read-only view
-                    actions = ProductInputActions()
+                    actions = ProductInputActions(),
+                    isReadOnly = true
                 )
             }
 
@@ -92,7 +93,8 @@ fun ComparisonScreen(
                 title = if (!uiState.isProductAWinner) stringResource(R.string.product_a_title) else stringResource(R.string.product_b_title),
                 state = uiState.losingProduct,
                 // Pass empty actions for read-only view
-                actions = ProductInputActions()
+                actions = ProductInputActions(),
+                isReadOnly = true
             )
             
             Spacer(modifier = Modifier.height(16.dp))
