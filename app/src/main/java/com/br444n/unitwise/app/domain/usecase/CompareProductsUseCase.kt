@@ -2,13 +2,16 @@ package com.br444n.unitwise.app.domain.usecase
 
 import com.br444n.unitwise.app.feature.home.components.ProductInputState
 import java.util.Locale
+import kotlin.math.abs
 
 data class ComparisonResult(
     val isProductAWinner: Boolean,
+    val isTie: Boolean,
     val savingsTotal: String,
     val monthlySavings: String,
     val savingsPerStandardUnit: String,
-    val standardUnitDesc: String
+    val standardUnitDesc: String,
+    val standardUnitPrice: String
 )
 
 class CompareProductsUseCase {
@@ -36,6 +39,7 @@ class CompareProductsUseCase {
         val ppuB = priceB / normalizedContentB
 
         // 3. Determine Winner
+        val isTie = abs(ppuA - ppuB) < 0.0001
         val isProductAWinner = ppuA <= ppuB
 
         // 4. Calculate Savings
@@ -62,29 +66,35 @@ class CompareProductsUseCase {
 
         val standardUnitDesc: String
         val savingsPerStandard: Double
+        val standardUnitPriceValue: Double
 
         when (baseUnitLower) {
             "g", "ml" -> {
                 savingsPerStandard = ppuDiff * 100.0
+                standardUnitPriceValue = winnerPPU * 100.0
                 standardUnitDesc = "100 $baseUnitLower"
             }
             "kg", "l", "lts" -> {
                 savingsPerStandard = ppuDiff * 1000.0
+                standardUnitPriceValue = winnerPPU * 1000.0
                 val displayUnit = if (baseUnitLower == "kg") "kg" else "l"
                 standardUnitDesc = "1 $displayUnit"
             }
             else -> {
                 savingsPerStandard = ppuDiff * 1.0 // pcs
+                standardUnitPriceValue = winnerPPU * 1.0
                 standardUnitDesc = "1 $baseUnitRaw"
             }
         }
 
         return ComparisonResult(
             isProductAWinner = isProductAWinner,
+            isTie = isTie,
             savingsTotal = String.format(Locale.US, "%.2f", maxOf(0.0, savingsTotal)),
             monthlySavings = String.format(Locale.US, "%.2f", maxOf(0.0, monthlySavings)),
             savingsPerStandardUnit = String.format(Locale.US, "%.2f", savingsPerStandard),
-            standardUnitDesc = standardUnitDesc
+            standardUnitDesc = standardUnitDesc,
+            standardUnitPrice = String.format(Locale.US, "%.2f", standardUnitPriceValue)
         )
     }
 
