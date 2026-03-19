@@ -6,10 +6,12 @@ data class ComparisonUiState(
     val productA: ProductInputState = ProductInputState(),
     val productB: ProductInputState = ProductInputState(),
     val isProductAWinner: Boolean = true,
+    val isTie: Boolean = false,
     val savingsTotal: String = "0.00",
     val monthlySavings: String = "0.00",
     val savingsPerStandardUnit: String = "0.00",
-    val standardUnitDesc: String = "100 g"
+    val standardUnitDesc: String = "100 g",
+    val standardUnitPrice: String = "0.00"
 ) {
     val winningProduct: ProductInputState
         get() = if (isProductAWinner) productA else productB
