@@ -4,7 +4,8 @@ import com.br444n.unitwise.app.feature.home.components.ProductInputState
 
 data class HomeUiState(
     val productA: ProductInputState = ProductInputState(),
-    val productB: ProductInputState = ProductInputState()
+    val productB: ProductInputState = ProductInputState(),
+    val isLoading: Boolean = false
 ) {
     val isCalculateEnabled: Boolean
         get() = productA.isValid() && productB.isValid()
