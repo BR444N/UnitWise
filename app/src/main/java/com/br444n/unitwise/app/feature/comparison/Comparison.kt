@@ -22,6 +22,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.br444n.unitwise.R
 import com.br444n.unitwise.app.feature.comparison.components.BestValueWrapper
 import com.br444n.unitwise.app.feature.comparison.components.SmartChoiceBadge
+import com.br444n.unitwise.app.feature.comparison.components.TieBadge
+import com.br444n.unitwise.app.feature.comparison.components.TieDetailsSection
 import com.br444n.unitwise.app.feature.comparison.components.WhyBetterSection
 import com.br444n.unitwise.app.feature.home.HomeViewModel
 import com.br444n.unitwise.app.feature.home.components.ProductInputActions
@@ -71,31 +73,54 @@ fun ComparisonScreen(
         ) {
             Spacer(modifier = Modifier.height(8.dp))
             
-            SmartChoiceBadge(productName = winningProductName)
+            if (uiState.isTie) {
+                TieBadge()
 
-            BestValueWrapper {
                 ProductInputCard(
-                    title = if (uiState.isProductAWinner) stringResource(R.string.product_a_title) else stringResource(R.string.product_b_title),
-                    state = uiState.winningProduct,
+                    title = stringResource(R.string.product_a_title),
+                    state = uiState.productA,
+                    actions = ProductInputActions(),
+                    isReadOnly = true
+                )
+
+                TieDetailsSection(
+                    standardUnitPrice = uiState.standardUnitPrice,
+                    standardUnitDesc = uiState.standardUnitDesc
+                )
+
+                ProductInputCard(
+                    title = stringResource(R.string.product_b_title),
+                    state = uiState.productB,
+                    actions = ProductInputActions(),
+                    isReadOnly = true
+                )
+            } else {
+                SmartChoiceBadge(productName = winningProductName)
+
+                BestValueWrapper {
+                    ProductInputCard(
+                        title = if (uiState.isProductAWinner) stringResource(R.string.product_a_title) else stringResource(R.string.product_b_title),
+                        state = uiState.winningProduct,
+                        // Pass empty actions for read-only view
+                        actions = ProductInputActions(),
+                        isReadOnly = true
+                    )
+                }
+
+                WhyBetterSection(
+                    savingsPerStandardUnit = uiState.savingsPerStandardUnit,
+                    standardUnitDesc = uiState.standardUnitDesc,
+                    estimatedMonthlySavings = uiState.monthlySavings
+                )
+
+                ProductInputCard(
+                    title = if (!uiState.isProductAWinner) stringResource(R.string.product_a_title) else stringResource(R.string.product_b_title),
+                    state = uiState.losingProduct,
                     // Pass empty actions for read-only view
                     actions = ProductInputActions(),
                     isReadOnly = true
                 )
             }
-
-            WhyBetterSection(
-                savingsPerStandardUnit = uiState.savingsPerStandardUnit,
-                standardUnitDesc = uiState.standardUnitDesc,
-                estimatedMonthlySavings = uiState.monthlySavings
-            )
-
-            ProductInputCard(
-                title = if (!uiState.isProductAWinner) stringResource(R.string.product_a_title) else stringResource(R.string.product_b_title),
-                state = uiState.losingProduct,
-                // Pass empty actions for read-only view
-                actions = ProductInputActions(),
-                isReadOnly = true
-            )
             
             Spacer(modifier = Modifier.height(16.dp))
         }
