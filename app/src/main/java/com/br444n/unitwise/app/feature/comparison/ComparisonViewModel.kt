@@ -23,10 +23,12 @@ class ComparisonViewModel(
                 productA = productA,
                 productB = productB,
                 isProductAWinner = result.isProductAWinner,
+                isTie = result.isTie,
                 savingsTotal = result.savingsTotal,
                 monthlySavings = result.monthlySavings,
                 savingsPerStandardUnit = result.savingsPerStandardUnit,
-                standardUnitDesc = result.standardUnitDesc
+                standardUnitDesc = result.standardUnitDesc,
+                standardUnitPrice = result.standardUnitPrice
             )
         }
     }
