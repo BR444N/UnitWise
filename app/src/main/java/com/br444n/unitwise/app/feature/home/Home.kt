@@ -29,8 +29,8 @@ import com.br444n.unitwise.app.ui.theme.UnitWiseTheme
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
-    onNavigateToComparison: () -> Unit,
-    viewModel: HomeViewModel = viewModel()
+    onNavigateToComparison: (Int) -> Unit,
+    viewModel: HomeViewModel = viewModel(factory = HomeViewModel.Factory)
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
