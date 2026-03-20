@@ -25,7 +25,6 @@ import com.br444n.unitwise.app.feature.comparison.components.SmartChoiceBadge
 import com.br444n.unitwise.app.feature.comparison.components.TieBadge
 import com.br444n.unitwise.app.feature.comparison.components.TieDetailsSection
 import com.br444n.unitwise.app.feature.comparison.components.WhyBetterSection
-import com.br444n.unitwise.app.feature.home.HomeViewModel
 import com.br444n.unitwise.app.feature.home.components.ProductInputActions
 import com.br444n.unitwise.app.feature.home.components.ProductInputCard
 import com.br444n.unitwise.app.ui.components.UnitWiseBottomNavigation
@@ -34,16 +33,15 @@ import com.br444n.unitwise.app.ui.theme.UnitWiseTheme
 
 @Composable
 fun ComparisonScreen(
-    onBackClick: () -> Unit,
-    homeViewModel: HomeViewModel,
     modifier: Modifier = Modifier,
-    viewModel: ComparisonViewModel = viewModel()
+    comparisonId: Int,
+    onBackClick: () -> Unit,
+    viewModel: ComparisonViewModel = viewModel(factory = ComparisonViewModel.Factory)
 ) {
-    val homeState by homeViewModel.uiState.collectAsState()
     val uiState by viewModel.uiState.collectAsState()
 
-    LaunchedEffect(homeState.productA, homeState.productB) {
-        viewModel.calculate(homeState.productA, homeState.productB)
+    LaunchedEffect(comparisonId) {
+        viewModel.loadComparison(comparisonId)
     }
 
     val winningProductName = uiState.winningProduct.productName.ifBlank { "Product" }
@@ -135,8 +133,8 @@ fun ComparisonScreenPreview() {
         // For preview purposes, we can instantiate an empty HomeViewModel
         // Note: In real scenarios, prefer breaking down the UI to take State instead of ViewModel for previews.
         ComparisonScreen(
-            onBackClick = {},
-            homeViewModel = HomeViewModel()
+            comparisonId = 1,
+            onBackClick = {}
         )
     }
 }
