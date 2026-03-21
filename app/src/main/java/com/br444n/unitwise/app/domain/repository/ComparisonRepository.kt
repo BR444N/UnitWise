@@ -7,4 +7,5 @@ interface ComparisonRepository {
     suspend fun insertComparison(comparison: ComparisonEntity): Long
     suspend fun getComparisonById(id: Int): ComparisonEntity?
     fun getAllComparisons(): Flow<List<ComparisonEntity>>
+    suspend fun deleteAllComparisons()
 }
