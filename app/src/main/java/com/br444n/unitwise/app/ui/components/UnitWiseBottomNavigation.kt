@@ -12,10 +12,6 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
@@ -32,10 +28,9 @@ data class NavigationItem(
 @Composable
 fun UnitWiseBottomNavigation(
     modifier: Modifier = Modifier,
+    selectedIndex: Int = 0,
     onNavigate: (Int) -> Unit = {}
 ) {
-    var selectedItemIndex by remember { mutableIntStateOf(0) } // 0 is Home (default)
-
     val items = listOf(
         NavigationItem(
             title = stringResource(id = R.string.home_tab),
@@ -56,14 +51,13 @@ fun UnitWiseBottomNavigation(
     ) {
         items.forEachIndexed { index, item ->
             NavigationBarItem(
-                selected = selectedItemIndex == index,
+                selected = selectedIndex == index,
                 onClick = {
-                    selectedItemIndex = index
                     onNavigate(index)
                 },
                 icon = {
                     Icon(
-                        imageVector = if (index == selectedItemIndex) {
+                        imageVector = if (index == selectedIndex) {
                             item.selectedIcon
                         } else item.unselectedIcon,
                         contentDescription = item.title
