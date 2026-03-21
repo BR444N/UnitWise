@@ -19,4 +19,8 @@ class ComparisonRepositoryImpl(
     override fun getAllComparisons(): Flow<List<ComparisonEntity>> {
         return dao.getAllComparisons()
     }
+
+    override suspend fun deleteAllComparisons() {
+        dao.deleteAllComparisons()
+    }
 }
