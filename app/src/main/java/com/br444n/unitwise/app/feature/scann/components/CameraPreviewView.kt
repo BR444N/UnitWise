@@ -36,7 +36,8 @@ fun CameraPreviewView(
         val cameraProviderFuture = remember { ProcessCameraProvider.getInstance(context) }
 
         Box(modifier = modifier) {
-            AndroidView<PreviewView>(
+            @Suppress("SuspiciousCallableReferenceInLambda")
+            AndroidView(
                 modifier = Modifier.fillMaxSize(),
                 factory = { ctx ->
                     PreviewView(ctx).apply {
