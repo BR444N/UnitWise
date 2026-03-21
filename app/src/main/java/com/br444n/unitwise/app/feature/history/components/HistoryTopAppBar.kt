@@ -28,6 +28,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.br444n.unitwise.R
+import com.br444n.unitwise.app.ui.components.topAppBarBorder
 import com.br444n.unitwise.app.ui.theme.Badge
 import com.br444n.unitwise.app.ui.theme.UnitWiseTheme
 
@@ -41,9 +42,10 @@ fun HistoryTopAppBar(
             .fillMaxWidth()
             .clip(RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp))
             .background(MaterialTheme.colorScheme.surface)
-            .border(
-                BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
-                RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp)
+            .topAppBarBorder(
+                color = MaterialTheme.colorScheme.outline,
+                width = 1.dp,
+                cornerRadius = 24.dp
             )
             .statusBarsPadding()
             .padding(horizontal = 16.dp, vertical = 16.dp),
