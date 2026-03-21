@@ -37,9 +37,26 @@ class HistoryViewModel(
     private fun loadHistory() {
         viewModelScope.launch {
             getHistoryUseCase().collect { list ->
+                val uiModels = list.map { entity ->
+                    val priceA = entity.productAPrice.toDoubleOrNull() ?: 0.0
+                    val contentA = entity.productAContent.toDoubleOrNull() ?: 1.0
+                    val ppuA = if (contentA > 0) priceA / contentA else Double.MAX_VALUE
+
+                    val priceB = entity.productBPrice.toDoubleOrNull() ?: 0.0
+                    val contentB = entity.productBContent.toDoubleOrNull() ?: 1.0
+                    val ppuB = if (contentB > 0) priceB / contentB else Double.MAX_VALUE
+
+                    val actualWinnerName = when {
+                        ppuA < ppuB -> entity.productAName.ifBlank { "Product A" }
+                        ppuB < ppuA -> entity.productBName.ifBlank { "Product B" }
+                        else -> null
+                    }
+                    HistoryItemUiModel(entity, actualWinnerName)
+                }
+
                 _uiState.update {
                     it.copy(
-                        comparisons = list,
+                        comparisons = uiModels,
                         isLoading = false
                     )
                 }
