@@ -32,17 +32,35 @@ fun HistoryScreen(
     viewModel: HistoryViewModel = viewModel(factory = HistoryViewModel.Factory),
     onNavigate: (Int) -> Unit = {},
     onViewDetails: (Int) -> Unit = {},
-    onShareClick: (ComparisonEntity) -> Unit = {},
-    onClearAll: () -> Unit = {}
+    onShareClick: (ComparisonEntity) -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    HistoryContent(
+        uiState = uiState,
+        onNavigate = onNavigate,
+        onViewDetails = onViewDetails,
+        onShareClick = onShareClick,
+        onClearAllClick = { viewModel.clearAll() },
+        modifier = modifier
+    )
+}
+
+@Composable
+fun HistoryContent(
+    uiState: HistoryUiState,
+    onNavigate: (Int) -> Unit,
+    onViewDetails: (Int) -> Unit,
+    onShareClick: (ComparisonEntity) -> Unit,
+    onClearAllClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     var searchQuery by remember { mutableStateOf("") }
 
     val filteredComparisons = remember(uiState.comparisons, searchQuery) {
         if (searchQuery.isBlank()) uiState.comparisons
-        else uiState.comparisons.filter { entity ->
-            entity.productAName.contains(searchQuery, ignoreCase = true) ||
-            entity.productBName.contains(searchQuery, ignoreCase = true)
+        else uiState.comparisons.filter { item ->
+            item.entity.productAName.contains(searchQuery, ignoreCase = true) ||
+            item.entity.productBName.contains(searchQuery, ignoreCase = true)
         }
     }
 
@@ -83,26 +101,22 @@ fun HistoryScreen(
             // Section header
             item {
                 HistorySectionHeader(
-                    onClearAllClick = onClearAll
+                    onClearAllClick = onClearAllClick
                 )
             }
 
             // Comparison cards
             items(
                 items = filteredComparisons,
-                key = { it.id }
-            ) { entity ->
-                // Determine winner by comparing PPU directly
-                // For display purposes, we just show productAName as winner fallback
-                val winnerName = entity.productAName.ifBlank { entity.productBName }
-
+                key = { it.entity.id }
+            ) { item ->
                 HistoryComparisonCard(
-                    productAName = entity.productAName,
-                    productBName = entity.productBName,
-                    winnerName = winnerName,
-                    timestamp = entity.timestamp,
-                    onViewDetailsClick = { onViewDetails(entity.id) },
-                    onShareClick = { onShareClick(entity) }
+                    productAName = item.entity.productAName,
+                    productBName = item.entity.productBName,
+                    winnerName = item.winnerName,
+                    timestamp = item.entity.timestamp,
+                    onViewDetailsClick = { onViewDetails(item.entity.id) },
+                    onShareClick = { onShareClick(item.entity) }
                 )
             }
         }
@@ -113,7 +127,12 @@ fun HistoryScreen(
 @Composable
 fun HistoryScreenPreview() {
     UnitWiseTheme {
-        // In preview, no ViewModel factory is available — screen renders with empty state
-        HistoryScreen()
+        HistoryContent(
+            uiState = HistoryUiState(),
+            onNavigate = {},
+            onViewDetails = {},
+            onShareClick = {},
+            onClearAllClick = {}
+        )
     }
 }
