@@ -17,4 +17,7 @@ interface ComparisonDao {
 
     @Query("SELECT * FROM comparisons ORDER BY timestamp DESC")
     fun getAllComparisons(): Flow<List<ComparisonEntity>>
+
+    @Query("DELETE FROM comparisons")
+    suspend fun deleteAllComparisons()
 }
