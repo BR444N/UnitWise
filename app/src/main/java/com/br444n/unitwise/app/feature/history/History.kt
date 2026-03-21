@@ -54,6 +54,7 @@ fun HistoryScreen(
         },
         bottomBar = {
             UnitWiseBottomNavigation(
+                selectedIndex = 1,
                 onNavigate = onNavigate
             )
         }
