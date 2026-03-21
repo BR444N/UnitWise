@@ -17,6 +17,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.br444n.unitwise.R
+import com.br444n.unitwise.app.permission.rememberCameraPermissionHandler
 import com.br444n.unitwise.app.feature.home.components.CalculateButton
 import com.br444n.unitwise.app.feature.home.components.HomeHeaderText
 import com.br444n.unitwise.app.feature.home.components.ProductInputActions
@@ -35,6 +36,10 @@ fun HomeScreen(
     viewModel: HomeViewModel = viewModel(factory = HomeViewModel.Factory)
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    @Suppress("UNUSED_VARIABLE")
+    val handleScanClick: (String) -> Unit = rememberCameraPermissionHandler(
+        onPermissionGranted = { target -> onNavigateToScann(target) }
+    )
 
     Box(modifier = modifier.fillMaxSize()) {
         Scaffold(
@@ -86,7 +91,7 @@ fun HomeScreen(
                         onUnitChange = { viewModel.updateProductA(uiState.productA.copy(selectedUnit = it)) },
                         onPriceChange = { viewModel.updateProductA(uiState.productA.copy(price = it)) },
                         onQuantityChange = { viewModel.updateProductA(uiState.productA.copy(quantity = it)) },
-                        onScanClick = { onNavigateToScann("A") }
+                        onScanClick = { handleScanClick("A") }
                     )
                 )
 
@@ -111,7 +116,7 @@ fun HomeScreen(
                         onUnitChange = { viewModel.updateProductB(uiState.productB.copy(selectedUnit = it)) },
                         onPriceChange = { viewModel.updateProductB(uiState.productB.copy(price = it)) },
                         onQuantityChange = { viewModel.updateProductB(uiState.productB.copy(quantity = it)) },
-                        onScanClick = { onNavigateToScann("B") }
+                        onScanClick = { handleScanClick("B") }
                     )
                 )
 
