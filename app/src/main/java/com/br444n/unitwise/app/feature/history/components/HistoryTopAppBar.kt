@@ -39,6 +39,12 @@ fun HistoryTopAppBar(
     Row(
         modifier = modifier
             .fillMaxWidth()
+            .clip(RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp))
+            .background(MaterialTheme.colorScheme.surface)
+            .border(
+                BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+                RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp)
+            )
             .statusBarsPadding()
             .padding(horizontal = 16.dp, vertical = 16.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
