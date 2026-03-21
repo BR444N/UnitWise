@@ -34,6 +34,7 @@ splashscreen = "1.2.0"
 #Room & KSP
 room = "2.7.0"
 ksp = "2.0.21-1.0.25"
+uiText = "1.10.5"
 
 # Testing
 
@@ -86,6 +87,7 @@ splashscreen = { group = "androidx.core", name = "core-splashscreen", version.re
 room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
 room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
 room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
+androidx-compose-ui-text = { group = "androidx.compose.ui", name = "ui-text", version.ref = "uiText" }
 
 # ---------------- Testing ----------------
 
