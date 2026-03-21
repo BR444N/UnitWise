@@ -30,6 +30,7 @@ import com.br444n.unitwise.app.ui.theme.UnitWiseTheme
 fun HomeScreen(
     modifier: Modifier = Modifier,
     onNavigateToComparison: (Int) -> Unit,
+    onNavigateToHistory: () -> Unit = {},
     viewModel: HomeViewModel = viewModel(factory = HomeViewModel.Factory)
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -43,7 +44,12 @@ fun HomeScreen(
             },
             bottomBar = {
                 UnitWiseBottomNavigation(
-                    onNavigate = { /* Handle navigation between Home and History */ }
+                    onNavigate = { index ->
+                        when (index) {
+                            1 -> onNavigateToHistory()
+                            else -> { /* already on Home */ }
+                        }
+                    }
                 )
             },
             modifier = Modifier.fillMaxSize()
