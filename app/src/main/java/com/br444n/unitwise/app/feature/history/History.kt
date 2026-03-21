@@ -25,6 +25,7 @@ import com.br444n.unitwise.app.feature.history.components.HistorySectionHeader
 import com.br444n.unitwise.app.feature.history.components.HistoryTopAppBar
 import com.br444n.unitwise.app.ui.components.UnitWiseBottomNavigation
 import com.br444n.unitwise.app.ui.theme.UnitWiseTheme
+import com.br444n.unitwise.app.feature.history.dialog.ClearHistoryDialog
 
 @Composable
 fun HistoryScreen(
@@ -55,6 +56,17 @@ fun HistoryContent(
     modifier: Modifier = Modifier
 ) {
     var searchQuery by remember { mutableStateOf("") }
+    val showClearDialog = remember { mutableStateOf(false) }
+
+    if (showClearDialog.value) {
+        ClearHistoryDialog(
+            onDismissRequest = { showClearDialog.value = false },
+            onConfirmClick = {
+                showClearDialog.value = false
+                onClearAllClick()
+            }
+        )
+    }
 
     val filteredComparisons = remember(uiState.comparisons, searchQuery) {
         if (searchQuery.isBlank()) uiState.comparisons
@@ -101,7 +113,7 @@ fun HistoryContent(
             // Section header
             item {
                 HistorySectionHeader(
-                    onClearAllClick = onClearAllClick
+                    onClearAllClick = { showClearDialog.value = true }
                 )
             }
 
