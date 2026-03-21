@@ -26,8 +26,8 @@ import com.br444n.unitwise.app.ui.theme.UnitWiseTheme
 
 @Composable
 fun BestValueMicroBadge(
-    winnerName: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    winnerName: String?,
 ) {
     Row(
         modifier = modifier
@@ -44,7 +44,8 @@ fun BestValueMicroBadge(
         )
         Spacer(modifier = Modifier.width(4.dp))
         Text(
-            text = stringResource(id = R.string.best_value_micro_badge, winnerName),
+            text = if (winnerName == null) stringResource(id = R.string.tie_title) 
+                   else stringResource(id = R.string.best_value_micro_badge, winnerName),
             style = MaterialTheme.typography.labelSmall,
             fontWeight = FontWeight.SemiBold,
             color = MaterialTheme.colorScheme.primary
