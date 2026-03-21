@@ -9,6 +9,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.br444n.unitwise.app.feature.comparison.ComparisonScreen
+import com.br444n.unitwise.app.feature.history.HistoryScreen
 import com.br444n.unitwise.app.feature.home.HomeScreen
 import com.br444n.unitwise.app.feature.home.HomeViewModel
 
@@ -36,6 +37,9 @@ fun AppNavigation(
                 onNavigateToComparison = { id -> 
                     navController.navigate(Screen.createComparisonRoute(id)) 
                 },
+                onNavigateToHistory = {
+                    navController.navigate(Screen.HISTORY)
+                },
                 viewModel = homeViewModel
             )
         }
@@ -50,7 +54,19 @@ fun AppNavigation(
             )
         }
         composable(Screen.HISTORY) {
-            // TODO: Add HistoryScreen when ready
+            HistoryScreen(
+                onNavigate = { index ->
+                    when (index) {
+                        0 -> navController.navigate(Screen.HOME) {
+                            popUpTo(Screen.HOME) { inclusive = true }
+                        }
+                        1 -> { /* already here */ }
+                    }
+                },
+                onViewDetails = { id ->
+                    navController.navigate(Screen.createComparisonRoute(id))
+                }
+            )
         }
     }
 }
