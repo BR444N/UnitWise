@@ -1,9 +1,8 @@
 package com.br444n.unitwise.app.feature.home.components
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Row
+import com.br444n.unitwise.app.ui.components.topAppBarBorder
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -98,9 +97,10 @@ fun UnitWiseTopAppBar(
                     bottomEnd = 24.dp
                 )
             )
-            .border(
-                BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
-                RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp)
+            .topAppBarBorder(
+                color = MaterialTheme.colorScheme.outline,
+                width = 1.dp,
+                cornerRadius = 24.dp
             )
     )
 }
