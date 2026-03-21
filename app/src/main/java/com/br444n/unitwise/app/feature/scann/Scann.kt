@@ -8,6 +8,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -55,17 +58,22 @@ fun ScannContent(
     onTextSelected: (String) -> Unit,
     onUseSelectedClick: () -> Unit,
     onScanAgainClick: () -> Unit,
-    onProcessImage: (ImageProxy) -> Unit
+    onProcessImage: (ImageProxy, Int, Int, Int) -> Unit
 ) {
+    var previewWidth by remember { mutableIntStateOf(0) }
+    var previewHeight by remember { mutableIntStateOf(0) }
+    var overlayHeight by remember { mutableIntStateOf(0) }
+
     val context = LocalContext.current
-    val imageAnalyzer = remember {
+    val imageAnalyzer = remember(previewWidth, previewHeight, overlayHeight) {
+        if (previewWidth == 0 || overlayHeight == 0) return@remember null
         ImageAnalysis.Builder()
             .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
             .build()
             .also { analyzer ->
                 analyzer.setAnalyzer(
                     ContextCompat.getMainExecutor(context)
-                ) { imageProxy -> onProcessImage(imageProxy) }
+                ) { imageProxy -> onProcessImage(imageProxy, previewWidth, previewHeight, overlayHeight) }
             }
     }
 
@@ -76,7 +84,10 @@ fun ScannContent(
     ) {
         // Camera fills the whole screen behind the UI
         CameraPreviewView(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize().onSizeChanged {
+                previewWidth = it.width
+                previewHeight = it.height
+            },
             imageAnalyzer = imageAnalyzer
         )
         
@@ -84,7 +95,9 @@ fun ScannContent(
         Column(
             modifier = Modifier.fillMaxSize()
         ) {
-            Box(modifier = Modifier.weight(1f)) {
+            Box(modifier = Modifier.weight(1f).onSizeChanged {
+                overlayHeight = it.height
+            }) {
                 // Scanner mask perfectly centered in the remaining available upper space
                 ScannerOverlay(
                     modifier = Modifier.fillMaxSize()
@@ -126,7 +139,7 @@ private fun ScannContentPreview() {
             onTextSelected = {},
             onUseSelectedClick = {},
             onScanAgainClick = {},
-            onProcessImage = {}
+            onProcessImage = { _, _, _, _ -> }
         )
     }
 }
