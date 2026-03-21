@@ -1,8 +1,6 @@
 package com.br444n.unitwise.app.ui.components
 
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.border
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -87,9 +85,10 @@ fun UnitWiseDefaultTopAppBar(
         ),
         modifier = modifier
             .clip(RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp))
-            .border(
-                BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
-                RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp)
+            .topAppBarBorder(
+                color = MaterialTheme.colorScheme.outline,
+                width = 1.dp,
+                cornerRadius = 24.dp
             )
     )
 }
