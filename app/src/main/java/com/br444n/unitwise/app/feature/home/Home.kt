@@ -31,6 +31,7 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
     onNavigateToComparison: (Int) -> Unit,
     onNavigateToHistory: () -> Unit = {},
+    onNavigateToScann: (String) -> Unit = {},
     viewModel: HomeViewModel = viewModel(factory = HomeViewModel.Factory)
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -85,7 +86,7 @@ fun HomeScreen(
                         onUnitChange = { viewModel.updateProductA(uiState.productA.copy(selectedUnit = it)) },
                         onPriceChange = { viewModel.updateProductA(uiState.productA.copy(price = it)) },
                         onQuantityChange = { viewModel.updateProductA(uiState.productA.copy(quantity = it)) },
-                        onScanClick = { /* Open Scanner for A */ }
+                        onScanClick = { onNavigateToScann("A") }
                     )
                 )
 
@@ -110,7 +111,7 @@ fun HomeScreen(
                         onUnitChange = { viewModel.updateProductB(uiState.productB.copy(selectedUnit = it)) },
                         onPriceChange = { viewModel.updateProductB(uiState.productB.copy(price = it)) },
                         onQuantityChange = { viewModel.updateProductB(uiState.productB.copy(quantity = it)) },
-                        onScanClick = { /* Open Scanner for B */ }
+                        onScanClick = { onNavigateToScann("B") }
                     )
                 )
 
@@ -133,7 +134,8 @@ fun HomeScreen(
 fun HomeScreenPreview() {
     UnitWiseTheme {
         HomeScreen(
-            onNavigateToComparison = {}
+            onNavigateToComparison = {},
+            onNavigateToScann = {}
         )
     }
 }
