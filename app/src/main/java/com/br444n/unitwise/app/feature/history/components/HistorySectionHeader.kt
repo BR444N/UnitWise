@@ -16,7 +16,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.br444n.unitwise.R
 import com.br444n.unitwise.app.ui.theme.UnitWiseTheme
-
 @Composable
 fun HistorySectionHeader(
     modifier: Modifier = Modifier,
@@ -35,7 +34,7 @@ fun HistorySectionHeader(
             fontWeight = FontWeight.SemiBold,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
-        TextButton(onClick = onClearAllClick) {
+        TextButton(onClick = { onClearAllClick() }) {
             Text(
                 text = stringResource(id = R.string.clear_all),
                 style = MaterialTheme.typography.labelLarge,
@@ -50,6 +49,10 @@ fun HistorySectionHeader(
 @Composable
 fun HistorySectionHeaderPreview() {
     UnitWiseTheme {
-        HistorySectionHeader()
+        HistorySectionHeader(
+            onClearAllClick = {
+
+            }
+        )
     }
 }
