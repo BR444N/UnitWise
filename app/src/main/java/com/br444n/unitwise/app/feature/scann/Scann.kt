@@ -18,12 +18,11 @@ import com.br444n.unitwise.app.feature.scann.components.ScannBottomSheet
 import com.br444n.unitwise.app.feature.scann.components.ScannTopAppBar
 import com.br444n.unitwise.app.feature.scann.components.ScannerOverlay
 import com.br444n.unitwise.app.ui.theme.UnitWiseTheme
-
-data class ScannUiState(
-    val isFlashOn: Boolean = false,
-    val detectedTexts: List<String> = emptyList(),
-    val selectedText: String? = null
-)
+import androidx.camera.core.ImageAnalysis
+import androidx.camera.core.ImageProxy
+import androidx.core.content.ContextCompat
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.runtime.remember
 
 private const val PREVIEW_SELECTED_TEXT = "$24.50"
 private val PREVIEW_DETECTED_TEXTS = listOf("500g", PREVIEW_SELECTED_TEXT, "1kg", "Brand Name")
@@ -43,7 +42,8 @@ fun ScannScreen(
         onBackClick = onBackClick,
         onTextSelected = viewModel::selectText,
         onUseSelectedClick = { state.selectedText?.let { onUseSelectedClick(it) } },
-        onScanAgainClick = viewModel::scanAgain
+        onScanAgainClick = viewModel::scanAgain,
+        onProcessImage = viewModel::processImageProxy
     )
 }
 
@@ -54,8 +54,21 @@ fun ScannContent(
     onBackClick: () -> Unit,
     onTextSelected: (String) -> Unit,
     onUseSelectedClick: () -> Unit,
-    onScanAgainClick: () -> Unit
+    onScanAgainClick: () -> Unit,
+    onProcessImage: (ImageProxy) -> Unit
 ) {
+    val context = LocalContext.current
+    val imageAnalyzer = remember {
+        ImageAnalysis.Builder()
+            .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+            .build()
+            .also { analyzer ->
+                analyzer.setAnalyzer(
+                    ContextCompat.getMainExecutor(context)
+                ) { imageProxy -> onProcessImage(imageProxy) }
+            }
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -63,7 +76,8 @@ fun ScannContent(
     ) {
         // Camera fills the whole screen behind the UI
         CameraPreviewView(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
+            imageAnalyzer = imageAnalyzer
         )
         
         // UI Layer
@@ -111,7 +125,8 @@ private fun ScannContentPreview() {
             onBackClick = {},
             onTextSelected = {},
             onUseSelectedClick = {},
-            onScanAgainClick = {}
+            onScanAgainClick = {},
+            onProcessImage = {}
         )
     }
 }
