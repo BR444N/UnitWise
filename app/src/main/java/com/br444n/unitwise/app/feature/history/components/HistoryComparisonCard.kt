@@ -43,7 +43,7 @@ fun HistoryComparisonCard(
     modifier: Modifier = Modifier,
     productAName: String,
     productBName: String,
-    winnerName: String,
+    winnerName: String?,
     timestamp: Long,
     onViewDetailsClick: () -> Unit = {},
     onShareClick: () -> Unit = {}
