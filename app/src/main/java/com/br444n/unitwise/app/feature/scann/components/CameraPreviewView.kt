@@ -23,6 +23,7 @@ import com.br444n.unitwise.app.ui.theme.UnitWiseTheme
 @Composable
 fun CameraPreviewView(
     modifier: Modifier = Modifier,
+    isFlashOn: Boolean = false,
     cameraSelector: CameraSelector = CameraSelector.DEFAULT_BACK_CAMERA,
     imageAnalyzer: UseCase? = null
 ) {
@@ -62,11 +63,12 @@ fun CameraPreviewView(
                             if (imageAnalyzer != null) {
                                 useCases.add(imageAnalyzer)
                             }
-                            cameraProvider.bindToLifecycle(
+                            val camera = cameraProvider.bindToLifecycle(
                                 lifecycleOwner,
                                 cameraSelector,
                                 *useCases.toTypedArray()
                             )
+                            camera.cameraControl.enableTorch(isFlashOn)
                         } catch (exc: Exception) {
                             exc.printStackTrace()
                         }
