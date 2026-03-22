@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.br444n.unitwise.app.data.local.entity.ComparisonEntity
 import com.br444n.unitwise.app.feature.history.components.HistoryComparisonCard
+import com.br444n.unitwise.app.feature.history.components.HistoryEmptyState
 import com.br444n.unitwise.app.feature.history.components.HistorySearchBar
 import com.br444n.unitwise.app.feature.history.components.HistorySectionHeader
 import com.br444n.unitwise.app.feature.history.components.HistoryTopAppBar
@@ -89,47 +90,53 @@ fun HistoryContent(
             )
         }
     ) { innerPadding ->
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding),
-            contentPadding = PaddingValues(
-                start = 16.dp,
-                end = 16.dp,
-                top = 8.dp,
-                bottom = 16.dp
-            ),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            // Search bar (sticky-ish, first item)
-            item {
-                HistorySearchBar(
-                    query = searchQuery,
-                    onQueryChange = { searchQuery = it },
-                    modifier = Modifier.padding(horizontal = 0.dp)
-                )
-            }
+        if (uiState.comparisons.isEmpty()) {
+            HistoryEmptyState(
+                modifier = Modifier.padding(innerPadding)
+            )
+        } else {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding),
+                contentPadding = PaddingValues(
+                    start = 16.dp,
+                    end = 16.dp,
+                    top = 8.dp,
+                    bottom = 16.dp
+                ),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                // Search bar (sticky-ish, first item)
+                item {
+                    HistorySearchBar(
+                        query = searchQuery,
+                        onQueryChange = { searchQuery = it },
+                        modifier = Modifier.padding(horizontal = 0.dp)
+                    )
+                }
 
-            // Section header
-            item {
-                HistorySectionHeader(
-                    onClearAllClick = { showClearDialog.value = true }
-                )
-            }
+                // Section header
+                item {
+                    HistorySectionHeader(
+                        onClearAllClick = { showClearDialog.value = true }
+                    )
+                }
 
-            // Comparison cards
-            items(
-                items = filteredComparisons,
-                key = { it.entity.id }
-            ) { item ->
-                HistoryComparisonCard(
-                    productAName = item.entity.productAName,
-                    productBName = item.entity.productBName,
-                    winnerName = item.winnerName,
-                    timestamp = item.entity.timestamp,
-                    onViewDetailsClick = { onViewDetails(item.entity.id) },
-                    onShareClick = { onShareClick(item.entity) }
-                )
+                // Comparison cards
+                items(
+                    items = filteredComparisons,
+                    key = { it.entity.id }
+                ) { item ->
+                    HistoryComparisonCard(
+                        productAName = item.entity.productAName,
+                        productBName = item.entity.productBName,
+                        winnerName = item.winnerName,
+                        timestamp = item.entity.timestamp,
+                        onViewDetailsClick = { onViewDetails(item.entity.id) },
+                        onShareClick = { onShareClick(item.entity) }
+                    )
+                }
             }
         }
     }
