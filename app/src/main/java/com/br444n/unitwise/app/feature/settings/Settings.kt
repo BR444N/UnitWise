@@ -41,6 +41,7 @@ fun SettingsScreen(
         topBar = {
             UnitWiseDefaultTopAppBar(
                 title = stringResource(id = R.string.settings_desc),
+                navigationContentDescription = stringResource(id = R.string.navigate_up),
                 onBackClick = onBackClick
             )
         },
