@@ -50,8 +50,8 @@ fun ComparisonScreen(
     Scaffold(
         topBar = {
             UnitWiseDefaultTopAppBar(
-                // Intentionally leaving title empty or providing a default if needed
                 title = stringResource(id = R.string.comparison_result),
+                navigationContentDescription = stringResource(id = R.string.navigate_up),
                 onBackClick = onBackClick
             )
         },
