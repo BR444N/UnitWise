@@ -88,6 +88,7 @@ fun ScannContent(
                 previewWidth = it.width
                 previewHeight = it.height
             },
+            isFlashOn = state.isFlashOn,
             imageAnalyzer = imageAnalyzer
         )
         
