@@ -35,22 +35,33 @@ import com.br444n.unitwise.R
 import com.br444n.unitwise.app.ui.theme.Badge
 import com.br444n.unitwise.app.ui.theme.UnitWiseTheme
 
+private data class LanguageItem(
+    val code: String,
+    val nameResId: Int
+)
+
 @Composable
 fun LanguageSelectorCard(
     modifier: Modifier = Modifier,
-    selectedLanguage: String,
+    selectedLanguageCode: String,
     onLanguageSelected: (String) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
     
-    val languages = listOf(
-        stringResource(id = R.string.lang_en),
-        stringResource(id = R.string.lang_es),
-        stringResource(id = R.string.lang_fr),
-        stringResource(id = R.string.lang_de),
-        stringResource(id = R.string.lang_it),
-        stringResource(id = R.string.lang_pt)
-    )
+    val languages = remember {
+        listOf(
+            LanguageItem("en", R.string.lang_en),
+            LanguageItem("es", R.string.lang_es),
+            LanguageItem("fr", R.string.lang_fr),
+            LanguageItem("de", R.string.lang_de),
+            LanguageItem("it", R.string.lang_it),
+            LanguageItem("pt", R.string.lang_pt)
+        )
+    }
+
+    val currentLanguageName = languages.find { it.code == selectedLanguageCode }?.nameResId?.let { 
+        stringResource(it) 
+    } ?: stringResource(R.string.lang_en)
 
     Row(
         modifier = modifier
@@ -100,7 +111,7 @@ fun LanguageSelectorCard(
             modifier = Modifier.padding(start = 8.dp)
         ) {
             Text(
-                text = selectedLanguage,
+                text = currentLanguageName,
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.primary,
                 fontWeight = FontWeight.Medium
@@ -116,11 +127,11 @@ fun LanguageSelectorCard(
                 expanded = expanded,
                 onDismissRequest = { expanded = false }
             ) {
-                languages.forEach { language ->
+                languages.forEach { languageItem ->
                     DropdownMenuItem(
-                        text = { Text(language) },
+                        text = { Text(stringResource(languageItem.nameResId)) },
                         onClick = {
-                            onLanguageSelected(language)
+                            onLanguageSelected(languageItem.code)
                             expanded = false
                         }
                     )
@@ -135,7 +146,7 @@ fun LanguageSelectorCard(
 fun LanguageSelectorCardPreview() {
     UnitWiseTheme {
         LanguageSelectorCard(
-            selectedLanguage = "English",
+            selectedLanguageCode = "en",
             onLanguageSelected = {}
         )
     }
