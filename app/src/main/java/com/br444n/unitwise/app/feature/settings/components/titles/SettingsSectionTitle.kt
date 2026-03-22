@@ -21,13 +21,13 @@ fun SettingsSectionTitle(
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier.padding(horizontal = 16.dp)) {
-        Spacer(modifier = Modifier.height(24.dp))
         Text(
             text = text,
             style = MaterialTheme.typography.titleSmall,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.primary
         )
+        Spacer(modifier = Modifier.height(8.dp))
     }
 }
 
