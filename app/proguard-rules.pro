@@ -12,10 +12,16 @@
 #   public *;
 #}
 
-# Uncomment this to preserve the line number information for
-# debugging stack traces.
-#-keepattributes SourceFile,LineNumberTable
+# Preserve line number information for debugging stack traces.
+-keepattributes SourceFile,LineNumberTable
 
-# If you keep the line number information, uncomment this to
-# hide the original source file name.
-#-renamesourcefileattribute SourceFile
+# Room persistence library
+-keep class com.br444n.unitwise.app.data.local.entity.** { *; }
+-keep interface com.br444n.unitwise.app.data.local.dao.** { *; }
+
+# Lottie animations - Narrow to model classes
+-keepclassmembers class com.airbnb.lottie.model.** { *; }
+
+# ML Kit Text Recognition - Specific to the recognizer API
+-keep class com.google.mlkit.vision.text.TextRecognizer { *; }
+-keep class com.google.mlkit.vision.text.Text { *; }
