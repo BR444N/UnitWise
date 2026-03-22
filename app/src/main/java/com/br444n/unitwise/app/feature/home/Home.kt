@@ -33,6 +33,7 @@ fun HomeScreen(
     onNavigateToComparison: (Int) -> Unit,
     onNavigateToHistory: () -> Unit = {},
     onNavigateToScann: (String) -> Unit = {},
+    onNavigateToSettings: () -> Unit = {},
     viewModel: HomeViewModel = viewModel(factory = HomeViewModel.Factory)
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -45,7 +46,7 @@ fun HomeScreen(
         Scaffold(
             topBar = {
                 UnitWiseTopAppBar(
-                    onSettingsClick = { /* Navigate to settings */ }
+                    onSettingsClick = onNavigateToSettings
                 )
             },
             bottomBar = {
