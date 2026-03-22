@@ -43,9 +43,17 @@ ksp {
 }
 
 dependencies {
+    // Core AndroidX & Architecture
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
+    implementation(libs.lifecycle.viewmodel)
+    implementation(libs.room.runtime)
+    implementation(libs.room.ktx)
+    implementation(libs.navigation.compose)
+    implementation(libs.splashscreen)
+
+    // Jetpack Compose & UI
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.ui.graphics)
@@ -54,41 +62,31 @@ dependencies {
     implementation(libs.androidx.compose.ui.text)
     implementation(libs.androidx.ui)
     implementation(libs.androidx.compose.foundation.layout)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
-    androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.androidx.compose.ui.test.junit4)
-    debugImplementation(libs.androidx.compose.ui.tooling)
-    debugImplementation(libs.androidx.compose.ui.test.manifest)
-
-    // Material 3
     implementation(libs.material3)
     implementation(libs.material.icons.extended)
 
-    // Lifecycle / MVVM
-    implementation(libs.lifecycle.viewmodel)
-
-    // Navigation
-    implementation(libs.navigation.compose)
-
-    // Splash Screen
-    implementation(libs.splashscreen)
-
-    // CameraX
+    // Feature Libraries
     implementation(libs.camerax.core)
     implementation(libs.camerax.camera2)
     implementation(libs.camerax.lifecycle)
     implementation(libs.camerax.view)
-
-    // ML Kit OCR
     implementation(libs.mlkit.text.recognition)
-
-    // Lottie animations
     implementation(libs.lottie.compose)
 
-    // Room & KSP
-    implementation(libs.room.runtime)
-    implementation(libs.room.ktx)
+    // --- Testing Dependencies ---
+    // Unit Testing
+    testImplementation(libs.junit)
+
+    // Instrumentation Testing
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
+    androidTestImplementation(platform(libs.androidx.compose.bom))
+    androidTestImplementation(libs.androidx.compose.ui.test.junit4)
+
+    // Debug Utilities
+    debugImplementation(libs.androidx.compose.ui.tooling)
+    debugImplementation(libs.androidx.compose.ui.test.manifest)
+
+    // Annotation Processors
     ksp(libs.room.compiler)
 }
