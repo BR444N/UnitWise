@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -48,8 +49,11 @@ import androidx.compose.ui.unit.dp
 import com.br444n.unitwise.R
 import com.br444n.unitwise.app.domain.model.MeasurementUnit.SUPPORTED_UNITS
 import com.br444n.unitwise.app.feature.home.isValid
+import com.br444n.unitwise.app.ui.theme.Badge
 import com.br444n.unitwise.app.ui.theme.BrandPrimaryUnfocused
 import com.br444n.unitwise.app.ui.theme.UnitWiseTheme
+import androidx.compose.material3.HorizontalDivider
+
 
 data class ProductInputState(
     val productName: String = "",
@@ -216,7 +220,6 @@ private fun ProductContentRow(
     onFocusChange: (Boolean) -> Unit,
     isReadOnly: Boolean
 ) {
-    var expandedUnitDropdown by remember { mutableStateOf(false) }
 
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
         OutlinedTextField(
@@ -232,39 +235,84 @@ private fun ProductContentRow(
             singleLine = true,
             shape = RoundedCornerShape(12.dp)
         )
-        ExposedDropdownMenuBox(
-            expanded = expandedUnitDropdown && !isReadOnly,
-            onExpandedChange = { if (!isReadOnly) expandedUnitDropdown = !expandedUnitDropdown },
-            modifier = Modifier.weight(1f)
-        ) {
-            OutlinedTextField(
-                value = selectedUnit,
-                onValueChange = {},
-                readOnly = true,
-                enabled = !isReadOnly,
-                trailingIcon = { 
-                    if (!isReadOnly) {
-                        ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedUnitDropdown) 
-                    }
-                },
-                modifier = Modifier.menuAnchor(type = ExposedDropdownMenuAnchorType.PrimaryNotEditable),
-                label = { Text(stringResource(id = R.string.unit_label)) },
-                shape = RoundedCornerShape(12.dp)
-            )
-            ExposedDropdownMenu(
-                expanded = expandedUnitDropdown,
-                onDismissRequest = { expandedUnitDropdown = false }
-            ) {
-                SUPPORTED_UNITS.forEach { selectionOption ->
-                    DropdownMenuItem(
-                        text = { Text(selectionOption) },
-                        onClick = {
-                            onUnitChange(selectionOption)
-                            expandedUnitDropdown = false
-                        }
-                    )
+        UnitSelectorField(
+            selectedUnit = selectedUnit,
+            onUnitChange = onUnitChange,
+            isReadOnly = isReadOnly
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun RowScope.UnitSelectorField(
+    selectedUnit: String,
+    onUnitChange: (String) -> Unit,
+    isReadOnly: Boolean
+) {
+    val expanded = remember { mutableStateOf(false) }
+
+    ExposedDropdownMenuBox(
+        expanded = expanded.value && !isReadOnly,
+        onExpandedChange = { if (!isReadOnly) expanded.value = !expanded.value },
+        modifier = Modifier.weight(1f)
+    ) {
+        OutlinedTextField(
+            value = selectedUnit,
+            onValueChange = {},
+            readOnly = true,
+            enabled = !isReadOnly,
+            trailingIcon = { 
+                if (!isReadOnly) {
+                    ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded.value) 
                 }
-            }
+            },
+            modifier = Modifier.menuAnchor(type = ExposedDropdownMenuAnchorType.PrimaryNotEditable),
+            label = { Text(stringResource(id = R.string.unit_label)) },
+            shape = RoundedCornerShape(12.dp)
+        )
+        ExposedDropdownMenu(
+            expanded = expanded.value,
+            onDismissRequest = { expanded.value = false },
+            shape = RoundedCornerShape(16.dp),
+            containerColor = MaterialTheme.colorScheme.surface
+        ) {
+            UnitMenuItems(
+                selectedUnit = selectedUnit,
+                onUnitChange = {
+                    onUnitChange(it)
+                    expanded.value = false
+                }
+            )
+        }
+    }
+}
+
+@Composable
+private fun UnitMenuItems(
+    selectedUnit: String,
+    onUnitChange: (String) -> Unit
+) {
+    SUPPORTED_UNITS.forEachIndexed { index, selectionOption ->
+        val isSelected = selectedUnit == selectionOption
+        
+        DropdownMenuItem(
+            text = { 
+                Text(
+                    text = selectionOption,
+                    color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
+                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
+                ) 
+            },
+            onClick = { onUnitChange(selectionOption) }
+        )
+        
+        if (index < SUPPORTED_UNITS.size - 1) {
+            HorizontalDivider(
+                modifier = Modifier.padding(horizontal = 12.dp),
+                color = Badge.copy(alpha = 0.5f),
+                thickness = 0.5.dp
+            )
         }
     }
 }
