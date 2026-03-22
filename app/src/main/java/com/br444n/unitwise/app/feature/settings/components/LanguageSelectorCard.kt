@@ -11,11 +11,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -105,35 +107,72 @@ fun LanguageSelectorCard(
             )
         }
 
-        // Dropdown Trigger (Text + Arrow)
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(start = 8.dp)
+        LanguageDropdownSection(
+            currentLanguageName = currentLanguageName,
+            expanded = expanded,
+            onExpandedChange = { expanded = it },
+            languages = languages,
+            selectedLanguageCode = selectedLanguageCode,
+            onLanguageSelected = onLanguageSelected
+        )
+    }
+}
+
+@Composable
+private fun LanguageDropdownSection(
+    currentLanguageName: String,
+    expanded: Boolean,
+    onExpandedChange: (Boolean) -> Unit,
+    languages: List<LanguageItem>,
+    selectedLanguageCode: String,
+    onLanguageSelected: (String) -> Unit
+) {
+    // Dropdown Trigger (Text + Arrow)
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.padding(start = 8.dp)
+    ) {
+        Text(
+            text = currentLanguageName,
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.primary,
+            fontWeight = FontWeight.Medium
+        )
+        Icon(
+            imageVector = Icons.Default.KeyboardArrowDown,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.size(24.dp)
+        )
+        
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { onExpandedChange(false) },
+            shape = RoundedCornerShape(16.dp),
+            containerColor = MaterialTheme.colorScheme.surface
         ) {
-            Text(
-                text = currentLanguageName,
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.primary,
-                fontWeight = FontWeight.Medium
-            )
-            Icon(
-                imageVector = Icons.Default.KeyboardArrowDown,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.size(24.dp)
-            )
-            
-            DropdownMenu(
-                expanded = expanded,
-                onDismissRequest = { expanded = false }
-            ) {
-                languages.forEach { languageItem ->
-                    DropdownMenuItem(
-                        text = { Text(stringResource(languageItem.nameResId)) },
-                        onClick = {
-                            onLanguageSelected(languageItem.code)
-                            expanded = false
-                        }
+            languages.forEachIndexed { index, languageItem ->
+                val isSelected = selectedLanguageCode == languageItem.code
+                
+                DropdownMenuItem(
+                    text = { 
+                        Text(
+                            text = stringResource(languageItem.nameResId),
+                            color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
+                            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
+                        ) 
+                    },
+                    onClick = {
+                        onLanguageSelected(languageItem.code)
+                        onExpandedChange(false)
+                    }
+                )
+                
+                if (index < languages.size - 1) {
+                    HorizontalDivider(
+                        modifier = Modifier.padding(horizontal = 12.dp),
+                        color = Badge.copy(alpha = 0.5f),
+                        thickness = 0.5.dp
                     )
                 }
             }
