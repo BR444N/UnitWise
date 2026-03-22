@@ -36,6 +36,7 @@ fun ComparisonScreen(
     modifier: Modifier = Modifier,
     comparisonId: Int,
     onBackClick: () -> Unit,
+    onNavigate: (Int) -> Unit = {},
     viewModel: ComparisonViewModel = viewModel(factory = ComparisonViewModel.Factory)
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -56,7 +57,8 @@ fun ComparisonScreen(
         },
         bottomBar = {
             UnitWiseBottomNavigation(
-                onNavigate = { /* Handle navigation if needed */ }
+                selectedIndex = -1, // Detail screen, no tab highlighted
+                onNavigate = onNavigate
             )
         },
         modifier = modifier.fillMaxSize()
