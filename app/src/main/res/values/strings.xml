@@ -1,3 +1,87 @@
 <resources>
+
+    <!-- HOME STRINGS -->
     <string name="app_name">UnitWise</string>
+    <string name="logo_desc">UnitWise Logo</string>
+    <string name="settings_desc">Settings</string>
+    <string name="scan_hint">Scan or type name</string>
+    <string name="scan_desc">Scan Barcode</string>
+    <string name="content_label">Content</string>
+    <string name="unit_label">Unit</string>
+    <string name="price_label">Price</string>
+    <string name="quantity_label">Quantity</string>
+    <string name="home_tab">Home</string>
+    <string name="home_header_title">Compare products</string>
+    <string name="home_header_subtitle">Find the best values for your money</string>
+
+    <!-- HISTORY STRINGS -->
+    <string name="history_tab">History</string>
+    <string name="history_title">History</string>
+    <string name="more_options">More options</string>
+    <string name="search_comparison_hint">Search comparison…</string>
+    <string name="recent_comparisons">Recent Comparisons</string>
+    <string name="clear_all">Clear all</string>
+    <string name="comparison_title_format">%1$s vs %2$s</string>
+    <string name="comparison_default_product_a">Product A</string>
+    <string name="comparison_default_product_b">Product B</string>
+    <string name="view_details">View details</string>
+    <string name="share">Share</string>
+    <string name="best_value_micro_badge">Best value: %1$s</string>
+    <string name="clear_history_dialog_title">Clear History</string>
+    <string name="clear_history_dialog_message">Are you sure you want to delete all comparisons? This action cannot be undone.</string>
+    <string name="cancel">Cancel</string>
+    <string name="delete">Delete</string>
+
+    <!-- HISTORY STRINGS (EMPTY STATE)-->
+    <string name="history_empty_title">There are no comparisons yet</string>
+    <string name="history_empty_subtitle">Start scanning products to see your savings here. Your history will be saved automatically</string>
+
+    <!-- COMPARISON STRINGS -->
+    <string name="product_a_title">Product A</string>
+    <string name="product_b_title">Product B</string>
+    <string name="smart_choice_title">Smart Choice Found</string>
+    <string name="smart_choice_subtitle">The %1$s offers the best value for your money today.</string>
+    <string name="best_value_badge">BEST VALUE</string>
+    <string name="why_better_title">Why this is better?</string>
+    <string name="why_better_saving_per_unit">You save $%1$s per %2$s.</string>
+    <string name="why_better_monthly_saving">Estimated monthly savings for your household: $%1$s</string>
+    <string name="comparison_result">Comparison Result</string>
+    <string name="tie_title">It\'s a tie!</string>
+    <string name="tie_subtitle">Same value found</string>
+    <string name="why_tie_title">Why is this a tie?</string>
+    <string name="tie_label_unit_price">Unit price</string>
+    <string name="tie_value_unit_price">$%1$s / %2$s</string>
+    <string name="tie_label_content">Content</string>
+    <string name="tie_label_quantity">Quantity</string>
+    <string name="tie_explanation">Both products offer identical value for money based on current retail prices and volume metrics. Your choice depends on brand preference, availability or quality preference.</string>
+
+    <!-- SCAN STRINGS -->
+    <string name="toggle_flash">Toggle flash</string>
+    <string name="navigate_up">Navigate up</string>
+    <string name="scan_instruction">Align text within the frame</string>
+    <string name="detected_text_title">Detected Text</string>
+    <string name="detected_text_subtitle">Select the information you wanted to add</string>
+    <string name="use_selected_text">Use selected text</string>
+    <string name="scan_again">Scan again</string>
+
+    <!-- SETTINGS STRINGS -->
+    <string name="settings_dark_theme_title">Dark theme</string>
+    <string name="settings_dark_theme_subtitle">Reduce glare and improve battery life</string>
+    <string name="settings_appearance">APPEARANCE</string>
+    <string name="settings_preferences">PREFERENCES</string>
+    <string name="settings_about">ABOUT</string>
+    <string name="settings_language_title">App Language</string>
+    <string name="settings_language_subtitle">Change the application language</string>
+    <string name="lang_en">English</string>
+    <string name="lang_es">Spanish</string>
+    <string name="lang_fr">Français</string>
+    <string name="lang_de">Deutsch</string>
+    <string name="lang_it">Italiano</string>
+    <string name="lang_pt">Portuguese</string>
+    <string name="settings_version_title">App version</string>
+    <string name="settings_version_subtitle">Version %1$s</string>
+    <string name="settings_developer_title">Developer information</string>
+    <string name="settings_developer_subtitle">Created by Brandon Martínez</string>
+    <string name="settings_header_tagline">Smart shopping by Unitwise</string>
+
 </resources>

@@ -1,2 +1,87 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+
+    <!-- HOME STRINGS -->
+    <string name="app_name">UnitWise</string>
+    <string name="logo_desc">UnitWise-Logo</string>
+    <string name="settings_desc">Einstellungen</string>
+    <string name="scan_hint">Scannen oder Namen eingeben</string>
+    <string name="scan_desc">Barcode scannen</string>
+    <string name="content_label">Inhalt</string>
+    <string name="unit_label">Einheit</string>
+    <string name="price_label">Preis</string>
+    <string name="quantity_label">Menge</string>
+    <string name="home_tab">Startseite</string>
+    <string name="home_header_title">Produkte vergleichen</string>
+    <string name="home_header_subtitle">Finden Sie den besten Wert für Ihr Geld</string>
+
+    <!-- HISTORY STRINGS -->
+    <string name="history_tab">Verlauf</string>
+    <string name="history_title">Verlauf</string>
+    <string name="more_options">Weitere Optionen</string>
+    <string name="search_comparison_hint">Vergleich suchen…</string>
+    <string name="recent_comparisons">Aktuelle Vergleiche</string>
+    <string name="clear_all">Alles löschen</string>
+    <string name="comparison_title_format">%1$s vs %2$s</string>
+    <string name="comparison_default_product_a">Produkt A</string>
+    <string name="comparison_default_product_b">Produkt B</string>
+    <string name="view_details">Details anzeigen</string>
+    <string name="share">Teilen</string>
+    <string name="best_value_micro_badge">Bester Wert: %1$s</string>
+    <string name="clear_history_dialog_title">Verlauf löschen</string>
+    <string name="clear_history_dialog_message">Möchten Sie wirklich alle Vergleiche löschen? Diese Aktion kann nicht rückgängig gemacht werden.</string>
+    <string name="cancel">Abbrechen</string>
+    <string name="delete">Löschen</string>
+
+    <!-- HISTORY STRINGS (EMPTY STATE)-->
+    <string name="history_empty_title">Es gibt noch keine Vergleiche</string>
+    <string name="history_empty_subtitle">Beginnen Sie mit dem Scannen von Produkten, um Ihre Ersparnisse hier zu sehen. Ihr Verlauf wird automatisch gespeichert</string>
+
+    <!-- COMPARISON STRINGS -->
+    <string name="product_a_title">Produkt A</string>
+    <string name="product_b_title">Produkt B</string>
+    <string name="smart_choice_title">Intelligente Wahl gefunden</string>
+    <string name="smart_choice_subtitle">Das %1$s bietet heute das beste Preis-Leistungs-Verhältnis.</string>
+    <string name="best_value_badge">BESTER WERT</string>
+    <string name="why_better_title">Warum ist das besser?</string>
+    <string name="why_better_saving_per_unit">Sie sparen $%1$s pro %2$s.</string>
+    <string name="why_better_monthly_saving">Geschätzte monatliche Ersparnis für Ihren Haushalt: $%1$s</string>
+    <string name="comparison_result">Vergleichsergebnis</string>
+    <string name="tie_title">Es ist ein Unentschieden!</string>
+    <string name="tie_subtitle">Gleicher Wert gefunden</string>
+    <string name="why_tie_title">Warum ist das ein Unentschieden?</string>
+    <string name="tie_label_unit_price">Einzelpreis</string>
+    <string name="tie_value_unit_price">$%1$s / %2$s</string>
+    <string name="tie_label_content">Inhalt</string>
+    <string name="tie_label_quantity">Menge</string>
+    <string name="tie_explanation">Beide Produkte bieten basierend auf aktuellen Einzelhandelspreisen und Volumenmetriken ein identisches Preis-Leistungs-Verhältnis. Ihre Wahl hängt von Markenpräferenz, Verfügbarkeit oder Qualität ab.</string>
+
+    <!-- SCAN STRINGS -->
+    <string name="toggle_flash">Blitz umschalten</string>
+    <string name="navigate_up">Nach oben navigieren</string>
+    <string name="scan_instruction">Text im Rahmen ausrichten</string>
+    <string name="detected_text_title">Erkannter Text</string>
+    <string name="detected_text_subtitle">Wählen Sie die Informationen aus, die Sie hinzufügen möchten</string>
+    <string name="use_selected_text">Ausgewählten Text verwenden</string>
+    <string name="scan_again">Erneut scannen</string>
+
+    <!-- SETTINGS STRINGS -->
+    <string name="settings_dark_theme_title">Dunkles Design</string>
+    <string name="settings_dark_theme_subtitle">Blendung reduzieren und Akkulaufzeit verbessern</string>
+    <string name="settings_appearance">ERSCHEINUNGSBILD</string>
+    <string name="settings_preferences">EINSTELLUNGEN</string>
+    <string name="settings_about">ÜBER</string>
+    <string name="settings_language_title">App-Sprache</string>
+    <string name="settings_language_subtitle">Sprache der Anwendung ändern</string>
+    <string name="lang_en">Englisch</string>
+    <string name="lang_es">Spanisch</string>
+    <string name="lang_fr">Français</string>
+    <string name="lang_de">Deutsch</string>
+    <string name="lang_it">Italiano</string>
+    <string name="lang_pt">Portugiesisch</string>
+    <string name="settings_version_title">App-Version</string>
+    <string name="settings_version_subtitle">Version %1$s</string>
+    <string name="settings_developer_title">Entwicklerinformationen</string>
+    <string name="settings_developer_subtitle">Erstellt von Brandon Martínez</string>
+    <string name="settings_header_tagline">Smartes Einkaufen mit Unitwise</string>
+
+</resources>

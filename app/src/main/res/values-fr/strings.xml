@@ -1,2 +1,87 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+
+    <!-- HOME STRINGS -->
+    <string name="app_name">UnitWise</string>
+    <string name="logo_desc">Logo UnitWise</string>
+    <string name="settings_desc">Paramètres</string>
+    <string name="scan_hint">Scanner ou saisir le nom</string>
+    <string name="scan_desc">Scanner le code-barres</string>
+    <string name="content_label">Contenu</string>
+    <string name="unit_label">Unité</string>
+    <string name="price_label">Prix</string>
+    <string name="quantity_label">Quantité</string>
+    <string name="home_tab">Accueil</string>
+    <string name="home_header_title">Comparer les produits</string>
+    <string name="home_header_subtitle">Trouver le meilleur rapport qualité-prix</string>
+
+    <!-- HISTORY STRINGS -->
+    <string name="history_tab">Historique</string>
+    <string name="history_title">Historique</string>
+    <string name="more_options">Plus d\'options</string>
+    <string name="search_comparison_hint">Rechercher une comparaison…</string>
+    <string name="recent_comparisons">Comparaisons récentes</string>
+    <string name="clear_all">Tout effacer</string>
+    <string name="comparison_title_format">%1$s vs %2$s</string>
+    <string name="comparison_default_product_a">Produit A</string>
+    <string name="comparison_default_product_b">Produit B</string>
+    <string name="view_details">Voir les détails</string>
+    <string name="share">Partager</string>
+    <string name="best_value_micro_badge">Meilleure offre : %1$s</string>
+    <string name="clear_history_dialog_title">Effacer l\'historique</string>
+    <string name="clear_history_dialog_message">Voulez-vous vraiment supprimer toutes les comparaisons ? Cette action est irréversible.</string>
+    <string name="cancel">Annuler</string>
+    <string name="delete">Supprimer</string>
+
+    <!-- HISTORY STRINGS (EMPTY STATE)-->
+    <string name="history_empty_title">Il n\'y a pas encore de comparaison</string>
+    <string name="history_empty_subtitle">Commencez à scanner les produits pour voir vos économies ici. Votre historique sera enregistré automatiquement</string>
+
+    <!-- COMPARISON STRINGS -->
+    <string name="product_a_title">Produit A</string>
+    <string name="product_b_title">Produit B</string>
+    <string name="smart_choice_title">Choix intelligent trouvé</string>
+    <string name="smart_choice_subtitle">Le %1$s offre aujourd\'hui le meilleur rapport qualité-prix.</string>
+    <string name="best_value_badge">MEILLEUR PRIX</string>
+    <string name="why_better_title">Pourquoi est-ce meilleur ?</string>
+    <string name="why_better_saving_per_unit">Vous économisez $%1$s par %2$s.</string>
+    <string name="why_better_monthly_saving">Économies mensuelles estimées pour votre foyer : $%1$s</string>
+    <string name="comparison_result">Résultat de la comparaison</string>
+    <string name="tie_title">C\'est une égalité !</string>
+    <string name="tie_subtitle">Valeur identique trouvée</string>
+    <string name="why_tie_title">Pourquoi est-ce une égalité ?</string>
+    <string name="tie_label_unit_price">Prix unitaire</string>
+    <string name="tie_value_unit_price">$%1$s / %2$s</string>
+    <string name="tie_label_content">Contenu</string>
+    <string name="tie_label_quantity">Quantité</string>
+    <string name="tie_explanation">Les deux produits offrent un rapport qualité-prix identique en fonction des prix de détail actuels et des indicateurs de volume. Votre choix dépend de la préférence de la marque, de la disponibilité ou de la préférence de qualité.</string>
+
+    <!-- SCAN STRINGS -->
+    <string name="toggle_flash">Activer/désactiver le flash</string>
+    <string name="navigate_up">Naviguer vers le haut</string>
+    <string name="scan_instruction">Aligner le texte dans le cadre</string>
+    <string name="detected_text_title">Texte détecté</string>
+    <string name="detected_text_subtitle">Sélectionnez les informations que vous souhaitez ajouter</string>
+    <string name="use_selected_text">Utiliser le texte sélectionné</string>
+    <string name="scan_again">Scanner à nouveau</string>
+
+    <!-- SETTINGS STRINGS -->
+    <string name="settings_dark_theme_title">Thème sombre</string>
+    <string name="settings_dark_theme_subtitle">Réduire l\'éblouissement et améliorer l\'autonomie de la batterie</string>
+    <string name="settings_appearance">APPARENCE</string>
+    <string name="settings_preferences">PRÉFÉRENCES</string>
+    <string name="settings_about">À PROPOS</string>
+    <string name="settings_language_title">Langue de l\'application</string>
+    <string name="settings_language_subtitle">Changer la langue de l\'application</string>
+    <string name="lang_en">Anglais</string>
+    <string name="lang_es">Espagnol</string>
+    <string name="lang_fr">Français</string>
+    <string name="lang_de">Allemand</string>
+    <string name="lang_it">Italien</string>
+    <string name="lang_pt">Portugais</string>
+    <string name="settings_version_title">Version de l\'application</string>
+    <string name="settings_version_subtitle">Version %1$s</string>
+    <string name="settings_developer_title">Informations sur le développeur</string>
+    <string name="settings_developer_subtitle">Créé par Brandon Martínez</string>
+    <string name="settings_header_tagline">Achats intelligents par Unitwise</string>
+
+</resources>
