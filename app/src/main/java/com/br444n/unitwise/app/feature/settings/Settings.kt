@@ -79,7 +79,7 @@ fun SettingsScreen(
             }
             item {
                 LanguageSelectorCard(
-                    selectedLanguage = uiState.selectedLanguage,
+                    selectedLanguageCode = uiState.selectedLanguage,
                     onLanguageSelected = { viewModel.updateLanguage(it) }
                 )
             }
