@@ -16,11 +16,11 @@ class MainViewModel(
     userPreferencesRepository: UserPreferencesRepository
 ) : ViewModel() {
 
-    val isDarkTheme: StateFlow<Boolean> = userPreferencesRepository.isDarkTheme
+    val isDarkTheme: StateFlow<Boolean?> = userPreferencesRepository.isDarkTheme
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
-            initialValue = false
+            initialValue = null
         )
 
     companion object {
