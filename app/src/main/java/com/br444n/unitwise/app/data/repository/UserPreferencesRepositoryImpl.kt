@@ -27,11 +27,11 @@ class UserPreferencesRepositoryImpl(
     override val selectedLanguage: Flow<String> = callbackFlow {
         val listener = SharedPreferences.OnSharedPreferenceChangeListener { prefs, key ->
             if (key == SELECTED_LANGUAGE) {
-                trySend(prefs.getString(SELECTED_LANGUAGE, "English") ?: "English")
+                trySend(prefs.getString(SELECTED_LANGUAGE, "en") ?: "en")
             }
         }
         sharedPreferences.registerOnSharedPreferenceChangeListener(listener)
-        trySend(sharedPreferences.getString(SELECTED_LANGUAGE, "English") ?: "English")
+        trySend(sharedPreferences.getString(SELECTED_LANGUAGE, "en") ?: "en")
         awaitClose {
             sharedPreferences.unregisterOnSharedPreferenceChangeListener(listener)
         }
