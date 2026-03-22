@@ -23,6 +23,13 @@ class MainViewModel(
             initialValue = null
         )
 
+    val selectedLanguage: StateFlow<String?> = userPreferencesRepository.selectedLanguage
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = null
+        )
+
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
