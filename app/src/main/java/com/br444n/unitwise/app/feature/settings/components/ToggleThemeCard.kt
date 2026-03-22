@@ -1,6 +1,7 @@
 package com.br444n.unitwise.app.feature.settings.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -38,6 +39,7 @@ fun ToggleThemeCard(
     Row(
         modifier = modifier
             .fillMaxWidth()
+            .clickable { onToggleTheme(!isDarkTheme) }
             .padding(vertical = 12.dp, horizontal = 16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
