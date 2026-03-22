@@ -51,7 +51,11 @@ fun AppNavigation(
             arguments = listOf(navArgument("id") { type = NavType.IntType })
         ) { backStackEntry ->
             val id = backStackEntry.arguments?.getInt("id") ?: return@composable
-            ComparisonScreen(comparisonId = id, onBackClick = { navController.popBackStack() })
+            ComparisonScreen(
+                comparisonId = id,
+                onBackClick = { navController.popBackStack() },
+                onNavigate = { index -> handleBottomTabNav(index, -1, navController) }
+            )
         }
         composable(Screen.HISTORY) {
             HistoryScreen(
