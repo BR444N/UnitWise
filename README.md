@@ -95,6 +95,18 @@ UnitWise solves this by:
 
 ---
 
+# 🖼️ Visual Evolution: AI Inspiration vs. Human-Centered Design
+
+This table showcases the iterative process of taking raw AI concepts and refining them into a production-ready Android interface.
+
+|                       Stitch AI Exploration (Inspiration)                        | Human-Centered Refinement (Final Design) | Key Iteration Detail |
+|:--------------------------------------------------------------------------------:| :---: | :--- |
+|     <img src="assets/UI_UnitWise.png" width="180" alt="Stitch AI Concept 1">     | <img src="assets/UI_UnitWise.png" width="180" alt="UnitWise Final 1"> | **Simplified UX:** Transitioned from complex AI layouts to a streamlined, single-screen input optimized for one-handed use in-store. |
+| <img src="assets/UI_UnitWise.png" width="180" alt="Stitch AI Concept 2"> | <img src="assets/UI_UnitWise.png" width="180" alt="UnitWise Final 2"> | **Clear Hierarchy:** Replaced generic list views with prominent "Winner" badges and real-time savings calculations for immediate decision-making. |
+| <img src="assets/UI_UnitWise.png" width="180" alt="Stitch AI Concept 3"> | <img src="assets/UI_UnitWise.png" width="180" alt="UnitWise Final 3"> | **Native Feel:** Adapted AI aesthetics to strictly follow Material 3 guidelines, ensuring accessibility and a cohesive Android experience. |
+
+---
+
 # 🛠️ Tech Stack
 
 ## 📱 Core & UI
