@@ -43,7 +43,7 @@ class HomeViewModel(
                 productB = _uiState.value.productB
             ).toInt()
 
-            delay(1500) // Simulate calculation delay for 1.5s
+            delay(CALCULATION_DELAY) // Simulate calculation delay
             
             // Clear the inputs returning to initial defaults but empty strings!
             _uiState.update { 
@@ -58,6 +58,8 @@ class HomeViewModel(
     }
 
     companion object {
+        private const val CALCULATION_DELAY = 1500L
+
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 val application = (this[APPLICATION_KEY] as UnitWiseApplication)
