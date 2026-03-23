@@ -42,14 +42,16 @@ The app focuses on simplicity, clarity, and real-world usefulness during everyda
 
 ## Table of Content
 
-- []()
-- []()
-- []()
-- []()
-- []()
-- []()
-- []()
-- []()
+- [# 🛒 UnitWise — Smart Grocery Comparison App](#-unitwise--smart-grocery-comparison-app)
+- [# ✨ Features](#-features)
+- [# 🔜 Coming Soon](#-coming-soon)
+- [# 🧠 Problem It Solves](#-problem-it-solves)
+- [# 🛠️ Tech Stack](#-tech-stack)
+- [# 📱 Platform](#-platform)
+- [# 🚀 Project Status](#-project-status)
+- [# 🔒 Privacy](#-privacy)
+- [# 🤝 Contribution](#-contribution)
+- [# 👨‍💻 Author](#-author)
 
 ---
 
@@ -81,6 +83,18 @@ Minimal and accessibility-focused design system.
 
 ---
 
+# 🧠 Problem It Solves
+
+Many supermarket products use different sizes and prices, making it difficult to know which option is actually cheaper.
+
+UnitWise solves this by:
+
+- Standardizing price comparisons.
+- Showing the real cost per unit.
+- Reducing decision time while shopping.
+
+---
+
 # 🛠️ Tech Stack
 
 ## 📱 Core & UI
@@ -106,3 +120,53 @@ Minimal and accessibility-focused design system.
 
 ---
 
+# 📱 Platform
+
+* Android Native Application
+* Minimum SDK: **24+**
+* Target SDK: **Latest Android version (36)**
+
+---
+
+# 🚀 Project Status
+
+Current stage:
+
+* ✅ MVP completed
+* ✅ Closed testing on Google Play
+* 🔄 Continuous improvements and UX refinements
+
+---
+
+# Design Process
+
+The UI design combines:
+
+* AI-assisted exploration using Stitch AI
+* Manual UX/UI refinement and decision-making
+* Iterative usability validation
+
+AI designs were used as inspiration, while final interfaces were adapted to better match real user workflows.
+
+---
+
+# 🔒 Privacy
+
+- UnitWise does not require unnecessary personal data.
+- All comparisons are stored locally.
+
+---
+
+# 🤝 Contribution
+
+This project is currently maintained as a personal production app.
+**Suggestions and feedback are welcome through issues.**
+
+---
+
+# 👨‍💻 Author
+**[BR444N](https://github.com/BR444N)**
+
+Developed as a native Android project focused on learning, product design, and real-world usability.
+
+📧 **Contact:** [josebrandonmartinezrios@duck.com](mailto:josebrandonmartinezrios@duck.com)
