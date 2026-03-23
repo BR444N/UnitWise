@@ -4,8 +4,12 @@
   <a href="https://kotlinlang.org/">
     <img src="https://img.shields.io/badge/Kotlin-102214.svg?style=for-the-badge&logo=kotlin&logoColor=white" alt="KOTLIN" />
   </a>
-  <img src="https://img.shields.io/badge/Jetpack%20Compose-102214.svg?style=for-the-badge&logo=jetpack-compose&logoColor=white" alt="JETPACK COMPOSE"/>
-  <img src="https://img.shields.io/badge/Android%20Studio-102214.svg?style=for-the-badge&logo=android-studio&logoColor=white" alt="ANDROID STUDIO" />
+  <a href="https://developer.android.com/compose">
+    <img src="https://img.shields.io/badge/Jetpack%20Compose-102214.svg?style=for-the-badge&logo=jetpack-compose&logoColor=white" alt="JETPACK COMPOSE"/>
+  </a>
+  <a href="https://developer.android.com/studio?hl=es-419">
+    <img src="https://img.shields.io/badge/Android%20Studio-102214.svg?style=for-the-badge&logo=android-studio&logoColor=white" alt="ANDROID STUDIO" />
+  </a>
   <img src="https://img.shields.io/badge/Google%20Play-102214.svg?style=for-the-badge&logo=google-play&logoColor=white" alt="GOOGLE PLAY" />
 </p>
 
