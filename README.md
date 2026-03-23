@@ -46,6 +46,7 @@ The app focuses on simplicity, clarity, and real-world usefulness during everyda
 - [# ✨ Features](#-features)
 - [# 🔜 Coming Soon](#-coming-soon)
 - [# 🧠 Problem It Solves](#-problem-it-solves)
+- [# 🖼️ Visual Evolution: Stitch AI Inspiration vs. Human-Centered Design](#-visual-evolution-stitch-ai-inspiration-vs-human-centered-design)
 - [# 🛠️ Tech Stack](#-tech-stack)
 - [# 📱 Platform](#-platform)
 - [# 🚀 Project Status](#-project-status)
@@ -95,9 +96,9 @@ UnitWise solves this by:
 
 ---
 
-### 🖼️ Visual Evolution: AI Inspiration vs. Human-Centered Design
+### 🖼️ Visual Evolution: Stitch AI Inspiration vs. Human-Centered Design
 
-This table showcases the iterative process of taking raw AI concepts and refining them into a production-ready Android interface, prioritizing utility over unnecessary complexity.
+In today's industry, AI-driven prototyping is becoming a key standard for rapid ideation. This project utilizes **Stitch AI** for initial concept mapping, followed by a rigorous human-led refinement process to ensure the interface meets real-world Android production standards.
 
 | Stitch AI Exploration (Inspiration) | Human-Centered Refinement (Final Design) | Key Iteration Detail |
 | :---: | :---: | :--- |
