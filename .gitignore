@@ -17,3 +17,7 @@ local.properties
 *idea/firebender
 *.agent
 .idea/deploymentTargetSelector.xml
+*.kotlin/errors
+.idea/deviceManager.xml
+.idea/androidTestResultsUserPreferences.xml
+compile_log.txt
