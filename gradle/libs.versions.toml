@@ -28,6 +28,12 @@ ksp = "2.0.21-1.0.25"
 junit = "4.13.2"
 junitVersion = "1.3.0"
 espressoCore = "3.7.0"
+mockk = "1.14.9"
+coroutinesTest = "1.10.2"
+turbine = "1.2.1"
+truth = "1.4.5"
+androidxTestCore = "1.7.0"
+androidxTestRules = "1.7.0"
 
 [libraries]
 # Core AndroidX & Architecture
@@ -68,6 +74,15 @@ androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "j
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 androidx-compose-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-compose-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
+
+# Testing Extras
+mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
+mockk-android = { group = "io.mockk", name = "mockk-android", version.ref = "mockk" }
+coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutinesTest" }
+turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }
+google-truth = { group = "com.google.truth", name = "truth", version.ref = "truth" }
+androidx-test-core-ktx = { group = "androidx.test", name = "core-ktx", version.ref = "androidxTestCore" }
+androidx-test-rules = { group = "androidx.test", name = "rules", version.ref = "androidxTestRules" }
 
 [plugins]
 # Android & Kotlin Plugins
