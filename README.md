@@ -29,3 +29,80 @@
     <img alt="License" src="https://img.shields.io/badge/License-MIT-102214.svg?style=for-the-badge&logo=open-source-initiative&logoColor=white"/>
   </a>
 </p>
+
+# 🛒 UnitWise — Smart Grocery Comparison App
+
+**UnitWise** is an Android application designed to help users **compare supermarket products and save money** by identifying the best value based on unit pricing.
+
+Instead of guessing which product is cheaper, UnitWise calculates and compares prices automatically, allowing users to make faster and smarter shopping decisions.
+
+The app focuses on simplicity, clarity, and real-world usefulness during everyday grocery supermarket shopping.
+
+---
+
+## Table of Content
+
+- []()
+- []()
+- []()
+- []()
+- []()
+- []()
+- []()
+- []()
+
+---
+
+# ✨ Features
+
+- **📊 Product Comparison:**
+Compare multiple grocery products by price and quantity.
+Automatic unit price calculation.
+
+- **📷 Camera Product Scanning:**
+Scan product names using the device camera.
+Quickly add products without manual typing.
+
+- **🧾 Comparison History:**
+Save previous comparisons.
+Revisit and reuse results anytime.
+
+- **🎨 Modern UI:**
+Built with Jetpack Compose.
+Minimal and accessibility-focused design system.
+
+---
+
+# 🔜 Coming Soon
+
+- **🔗 Share Comparisons:**
+  Share results with friends or family.
+  Generate shareable comparison summaries.
+
+---
+
+# 🛠️ Tech Stack
+
+## 📱 Core & UI
+* **[Kotlin](https://kotlinlang.org/):** Main language utilizing Coroutines and Flow for asynchronous programming.
+* **[Jetpack Compose](https://developer.android.com/compose):** Modern declarative UI with Material 3 and Material Icons Extended.
+* **[Lottie Compose](https://github.com/airbnb/lottie-android):** Interactive vector animations for enhanced UX.
+* **[Splashscreen API](https://developer.android.com/develop/ui/views/launch/splash-screen):** Native implementation for the application's launch screen.
+
+## 🏛️ Architecture & Data
+* **[MVVM (Model-View-ViewModel)](https://www.geeksforgeeks.org/android/mvvm-model-view-viewmodel-architecture-pattern-in-android/):** Pattern used for separation of concerns between business logic and UI.
+* **[Room Persistence](https://developer.android.com/training/data-storage/room):** Local database with KSP (Kotlin Symbol Processing) support.
+* **[Navigation Compose](https://developer.android.com/develop/ui/compose/navigation):** Robust route management and screen-to-screen navigation.
+* **[Lifecycle & ViewModel](https://developer.android.com/topic/libraries/architecture/viewmodel):** Efficient UI state management and lifecycle handling.
+
+## 🔍 AI & Hardware Integration
+* **[ML Kit Text Recognition](https://developers.google.com/ml-kit/vision/text-recognition):** On-device image processing for automatic price and product detection.
+* **[CameraX](https://developer.android.com/training/camerax):** Robust camera integration for scanning price tags or grocery receipts.
+
+## 🧪 Testing & Quality Assurance (QA)
+* **Unit Testing:** [JUnit](https://junit.org/), [MockK](https://mockk.io/) for mocking, [Turbine](https://github.com/cashapp/turbine) for Flow testing, and [Google Truth](https://truth.dev/) for fluent assertions.
+* **UI & Instrumentation Testing:** [Espresso](https://developer.android.com/training/testing/espresso) and Compose UI Test to ensure interface integrity.
+* **KSP (Kotlin Symbol Processing):** High-performance code generation for Room database.
+
+---
+
