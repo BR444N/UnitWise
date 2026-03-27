@@ -1,10 +1,13 @@
 package com.br444n.unitwise.app.feature.history
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -14,6 +17,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -24,9 +28,12 @@ import com.br444n.unitwise.app.feature.history.components.HistoryEmptyState
 import com.br444n.unitwise.app.feature.history.components.HistorySearchBar
 import com.br444n.unitwise.app.feature.history.components.HistorySectionHeader
 import com.br444n.unitwise.app.feature.history.components.HistoryTopAppBar
+import com.br444n.unitwise.app.ui.components.rememberBottomNavVisibility
 import com.br444n.unitwise.app.ui.components.UnitWiseBottomNavigation
 import com.br444n.unitwise.app.ui.theme.UnitWiseTheme
 import com.br444n.unitwise.app.feature.history.dialog.ClearHistoryDialog
+
+private val HistoryBottomNavOverlayPadding = 96.dp
 
 @Composable
 fun HistoryScreen(
@@ -58,6 +65,10 @@ fun HistoryContent(
 ) {
     var searchQuery by remember { mutableStateOf("") }
     val showClearDialog = remember { mutableStateOf(false) }
+    val listState = rememberLazyListState()
+    val isBottomNavVisible = rememberBottomNavVisibility {
+        (listState.firstVisibleItemIndex * 100_000) + listState.firstVisibleItemScrollOffset
+    }
 
     if (showClearDialog.value) {
         ClearHistoryDialog(
@@ -77,74 +88,79 @@ fun HistoryContent(
         }
     }
 
-    Scaffold(
-        modifier = modifier.fillMaxSize(),
-        containerColor = MaterialTheme.colorScheme.background,
-        topBar = {
-            HistoryTopAppBar()
-        },
-        bottomBar = {
-            UnitWiseBottomNavigation(
-                selectedIndex = 1,
-                onNavigate = onNavigate
-            )
-        }
-    ) { innerPadding ->
-        when {
-            uiState.isLoading -> {
-                // Keep background clean while loading to avoid flickers
+    Box(
+        modifier = modifier.fillMaxSize()
+    ) {
+        Scaffold(
+            modifier = Modifier.fillMaxSize(),
+            containerColor = MaterialTheme.colorScheme.background,
+            topBar = {
+                HistoryTopAppBar()
             }
-            uiState.comparisons.isEmpty() -> {
-                HistoryEmptyState(
-                    modifier = Modifier.padding(innerPadding)
-                )
-            }
-            else -> {
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(innerPadding),
-                    contentPadding = PaddingValues(
-                        start = 16.dp,
-                        end = 16.dp,
-                        top = 8.dp,
-                        bottom = 16.dp
-                    ),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    // Search bar (sticky-ish, first item)
-                    item {
-                        HistorySearchBar(
-                            query = searchQuery,
-                            onQueryChange = { searchQuery = it },
-                            modifier = Modifier.padding(horizontal = 0.dp)
-                        )
-                    }
+        ) { innerPadding ->
+            when {
+                uiState.isLoading -> {
+                    // Keep background clean while loading to avoid flickers
+                }
+                uiState.comparisons.isEmpty() -> {
+                    HistoryEmptyState(
+                        modifier = Modifier.padding(innerPadding)
+                    )
+                }
+                else -> {
+                    LazyColumn(
+                        state = listState,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(innerPadding),
+                        contentPadding = PaddingValues(
+                            start = 16.dp,
+                            end = 16.dp,
+                            top = 8.dp,
+                            bottom = HistoryBottomNavOverlayPadding
+                        ),
+                        verticalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
+                        item {
+                            HistorySearchBar(
+                                query = searchQuery,
+                                onQueryChange = { searchQuery = it },
+                                modifier = Modifier.padding(horizontal = 0.dp)
+                            )
+                        }
 
-                    // Section header
-                    item {
-                        HistorySectionHeader(
-                            onClearAllClick = { showClearDialog.value = true }
-                        )
-                    }
+                        item {
+                            HistorySectionHeader(
+                                onClearAllClick = { showClearDialog.value = true }
+                            )
+                        }
 
-                    // Comparison cards
-                    items(
-                        items = filteredComparisons,
-                        key = { it.entity.id }
-                    ) { item ->
-                        HistoryComparisonCard(
-                            productAName = item.entity.productAName,
-                            productBName = item.entity.productBName,
-                            winnerName = item.winnerName,
-                            timestamp = item.entity.timestamp,
-                            onViewDetailsClick = { onViewDetails(item.entity.id) },
-                            onShareClick = { onShareClick(item.entity) }
-                        )
+                        items(
+                            items = filteredComparisons,
+                            key = { it.entity.id }
+                        ) { item ->
+                            HistoryComparisonCard(
+                                productAName = item.entity.productAName,
+                                productBName = item.entity.productBName,
+                                winnerName = item.winnerName,
+                                timestamp = item.entity.timestamp,
+                                onViewDetailsClick = { onViewDetails(item.entity.id) },
+                                onShareClick = { onShareClick(item.entity) }
+                            )
+                        }
                     }
                 }
             }
         }
+
+        UnitWiseBottomNavigation(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .fillMaxWidth(),
+            visible = isBottomNavVisible,
+            selectedIndex = 1,
+            onNavigate = onNavigate
+        )
     }
 }
 
