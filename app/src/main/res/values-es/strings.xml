@@ -10,6 +10,7 @@
     <string name="unit_label">Unidad</string>
     <string name="price_label">Precio</string>
     <string name="quantity_label">Cantidad</string>
+    <string name="quantity_min_error">Mín. 1</string>
     <string name="home_tab">Inicio</string>
     <string name="home_header_title">Compara productos</string>
     <string name="home_header_subtitle">Encuentra los mejores valores por tu dinero</string>
