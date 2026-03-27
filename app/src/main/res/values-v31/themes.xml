@@ -1,10 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <!--
+        Native Android 12+ splash theme.
+        API 31+ uses this override instead of the compat attrs from values/themes.xml,
+        then hands off to Theme.UnitWise.App after installSplashScreen().
+    -->
     <style name="Theme.UnitWise" parent="Theme.SplashScreen">
+        <item name="android:windowSplashScreenBackground">@color/white</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/splash_icon_v31</item>
+        <item name="postSplashScreenTheme">@style/Theme.UnitWise.App</item>
+    </style>
+
+    <!--
+        Shared post-splash app theme for Android 12+.
+        It stays NoActionBar for parity with pre-31 behavior and to avoid showing a toolbar.
+    -->
+    <style name="Theme.UnitWise.App" parent="android:Theme.Material.Light.NoActionBar">
         <item name="android:windowBackground">@color/white</item>
         <item name="android:windowNoTitle">true</item>
-        <item name="android:windowSplashScreenAnimationDuration">3000</item>
-        <item name="windowSplashScreenAnimatedIcon">@drawable/splash_icon</item>
     </style>
 </resources>
