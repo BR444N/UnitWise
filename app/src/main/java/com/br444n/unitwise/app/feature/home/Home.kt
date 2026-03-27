@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -14,6 +15,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -25,10 +27,29 @@ import com.br444n.unitwise.app.feature.home.components.HomeHeaderText
 import com.br444n.unitwise.app.feature.home.components.ProductInputActions
 import com.br444n.unitwise.app.feature.home.components.ProductInputCard
 import com.br444n.unitwise.app.feature.home.components.ProductInputFocusConfig
+import com.br444n.unitwise.app.feature.home.components.ProductInputState
 import com.br444n.unitwise.app.feature.home.components.UnitWiseTopAppBar
+import com.br444n.unitwise.app.ui.components.rememberBottomNavVisibility
 import com.br444n.unitwise.app.ui.components.UnitWiseBottomNavigation
 import com.br444n.unitwise.app.ui.components.UnitWiseLoading
 import com.br444n.unitwise.app.ui.theme.UnitWiseTheme
+
+private val BottomNavOverlayPadding = 96.dp
+
+private data class HomeContentCallbacks(
+    val onNavigateToComparison: (Int) -> Unit,
+    val onNavigateToHistory: () -> Unit,
+    val onNavigateToSettings: () -> Unit,
+    val handleScanClick: (String) -> Unit,
+    val onUpdateProductA: (ProductInputState) -> Unit,
+    val onUpdateProductB: (ProductInputState) -> Unit,
+    val onCalculate: ((Int) -> Unit) -> Unit
+)
+
+private data class HomeFocusConfigs(
+    val productA: ProductInputFocusConfig,
+    val productB: ProductInputFocusConfig
+)
 
 @Composable
 fun HomeScreen(
@@ -55,21 +76,53 @@ fun HomeScreen(
         onPermissionGranted = { target -> onNavigateToScann(target) }
     )
 
+    HomeContent(
+        modifier = modifier,
+        uiState = uiState,
+        callbacks = HomeContentCallbacks(
+            onNavigateToComparison = onNavigateToComparison,
+            onNavigateToHistory = onNavigateToHistory,
+            onNavigateToSettings = onNavigateToSettings,
+            handleScanClick = handleScanClick,
+            onUpdateProductA = viewModel::updateProductA,
+            onUpdateProductB = viewModel::updateProductB,
+            onCalculate = viewModel::calculate
+        ),
+        focusConfigs = HomeFocusConfigs(
+            productA = ProductInputFocusConfig(
+                productName = productANameFocus,
+                contentAmount = productAContentFocus,
+                unit = productAUnitFocus,
+                price = productAPriceFocus,
+                quantity = productAQuantityFocus,
+                nextProductName = productBNameFocus
+            ),
+            productB = ProductInputFocusConfig(
+                productName = productBNameFocus,
+                contentAmount = productBContentFocus,
+                unit = productBUnitFocus,
+                price = productBPriceFocus,
+                quantity = productBQuantityFocus
+            )
+        )
+    )
+}
+
+@Composable
+private fun HomeContent(
+    modifier: Modifier = Modifier,
+    uiState: HomeUiState,
+    callbacks: HomeContentCallbacks,
+    focusConfigs: HomeFocusConfigs
+) {
+    val scrollState = rememberScrollState()
+    val isBottomNavVisible = rememberBottomNavVisibility { scrollState.value }
+    
     Box(modifier = modifier.fillMaxSize()) {
         Scaffold(
             topBar = {
                 UnitWiseTopAppBar(
-                    onSettingsClick = onNavigateToSettings
-                )
-            },
-            bottomBar = {
-                UnitWiseBottomNavigation(
-                    onNavigate = { index ->
-                        when (index) {
-                            1 -> onNavigateToHistory()
-                            else -> { /* already on Home */ }
-                        }
-                    }
+                    onSettingsClick = callbacks.onNavigateToSettings
                 )
             },
             modifier = Modifier.fillMaxSize()
@@ -79,7 +132,8 @@ fun HomeScreen(
                     .fillMaxSize()
                     .padding(innerPadding)
                     .padding(horizontal = 16.dp)
-                    .verticalScroll(rememberScrollState()),
+                    .padding(bottom = BottomNavOverlayPadding)
+                    .verticalScroll(scrollState),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 HomeHeaderText(modifier = Modifier.padding(top = 16.dp))
@@ -89,32 +143,25 @@ fun HomeScreen(
                     state = uiState.productA,
                     actions = ProductInputActions(
                         onProductNameChange = {
-                            viewModel.updateProductA(
+                            callbacks.onUpdateProductA(
                                 uiState.productA.copy(
                                     productName = it
                                 )
                             )
                         },
                         onContentAmountChange = {
-                            viewModel.updateProductA(
+                            callbacks.onUpdateProductA(
                                 uiState.productA.copy(
                                     contentAmount = it
                                 )
                             )
                         },
-                        onUnitChange = { viewModel.updateProductA(uiState.productA.copy(selectedUnit = it)) },
-                        onPriceChange = { viewModel.updateProductA(uiState.productA.copy(price = it)) },
-                        onQuantityChange = { viewModel.updateProductA(uiState.productA.copy(quantity = it)) },
-                        onScanClick = { handleScanClick("A") }
+                        onUnitChange = { callbacks.onUpdateProductA(uiState.productA.copy(selectedUnit = it)) },
+                        onPriceChange = { callbacks.onUpdateProductA(uiState.productA.copy(price = it)) },
+                        onQuantityChange = { callbacks.onUpdateProductA(uiState.productA.copy(quantity = it)) },
+                        onScanClick = { callbacks.handleScanClick("A") }
                     ),
-                    focusConfig = ProductInputFocusConfig(
-                        productName = productANameFocus,
-                        contentAmount = productAContentFocus,
-                        unit = productAUnitFocus,
-                        price = productAPriceFocus,
-                        quantity = productAQuantityFocus,
-                        nextProductName = productBNameFocus
-                    )
+                    focusConfig = focusConfigs.productA
                 )
 
                 ProductInputCard(
@@ -122,40 +169,47 @@ fun HomeScreen(
                     state = uiState.productB,
                     actions = ProductInputActions(
                         onProductNameChange = {
-                            viewModel.updateProductB(
+                            callbacks.onUpdateProductB(
                                 uiState.productB.copy(
                                     productName = it
                                 )
                             )
                         },
                         onContentAmountChange = {
-                            viewModel.updateProductB(
+                            callbacks.onUpdateProductB(
                                 uiState.productB.copy(
                                     contentAmount = it
                                 )
                             )
                         },
-                        onUnitChange = { viewModel.updateProductB(uiState.productB.copy(selectedUnit = it)) },
-                        onPriceChange = { viewModel.updateProductB(uiState.productB.copy(price = it)) },
-                        onQuantityChange = { viewModel.updateProductB(uiState.productB.copy(quantity = it)) },
-                        onScanClick = { handleScanClick("B") }
+                        onUnitChange = { callbacks.onUpdateProductB(uiState.productB.copy(selectedUnit = it)) },
+                        onPriceChange = { callbacks.onUpdateProductB(uiState.productB.copy(price = it)) },
+                        onQuantityChange = { callbacks.onUpdateProductB(uiState.productB.copy(quantity = it)) },
+                        onScanClick = { callbacks.handleScanClick("B") }
                     ),
-                    focusConfig = ProductInputFocusConfig(
-                        productName = productBNameFocus,
-                        contentAmount = productBContentFocus,
-                        unit = productBUnitFocus,
-                        price = productBPriceFocus,
-                        quantity = productBQuantityFocus
-                    )
+                    focusConfig = focusConfigs.productB
                 )
 
                 CalculateButton(
-                    onClick = { viewModel.calculate(onNavigateToComparison) },
+                    onClick = { callbacks.onCalculate(callbacks.onNavigateToComparison) },
                     enabled = uiState.isCalculateEnabled && !uiState.isLoading,
                     modifier = Modifier.padding(bottom = 24.dp)
                 )
             }
         } // End Scaffold
+
+        UnitWiseBottomNavigation(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .fillMaxWidth(),
+            visible = isBottomNavVisible,
+            onNavigate = { index ->
+                when (index) {
+                    1 -> callbacks.onNavigateToHistory()
+                    else -> { /* already on Home */ }
+                }
+            }
+        )
 
         if (uiState.isLoading) {
             UnitWiseLoading()
@@ -167,9 +221,49 @@ fun HomeScreen(
 @Composable
 fun HomeScreenPreview() {
     UnitWiseTheme {
-        HomeScreen(
-            onNavigateToComparison = {},
-            onNavigateToScann = {}
+        HomeContent(
+            uiState = HomeUiState(
+                productA = ProductInputState(
+                    productName = "Greek Yogurt",
+                    contentAmount = "500",
+                    selectedUnit = "g",
+                    price = "24.50",
+                    quantity = "2"
+                ),
+                productB = ProductInputState(
+                    productName = "Natural Yogurt",
+                    contentAmount = "1.25",
+                    selectedUnit = "kg",
+                    price = "56.90",
+                    quantity = "1"
+                )
+            ),
+            callbacks = HomeContentCallbacks(
+                onNavigateToComparison = {},
+                onNavigateToHistory = {},
+                onNavigateToSettings = {},
+                handleScanClick = {},
+                onUpdateProductA = {},
+                onUpdateProductB = {},
+                onCalculate = {}
+            ),
+            focusConfigs = HomeFocusConfigs(
+                productA = ProductInputFocusConfig(
+                    productName = remember { FocusRequester() },
+                    contentAmount = remember { FocusRequester() },
+                    unit = remember { FocusRequester() },
+                    price = remember { FocusRequester() },
+                    quantity = remember { FocusRequester() },
+                    nextProductName = remember { FocusRequester() }
+                ),
+                productB = ProductInputFocusConfig(
+                    productName = remember { FocusRequester() },
+                    contentAmount = remember { FocusRequester() },
+                    unit = remember { FocusRequester() },
+                    price = remember { FocusRequester() },
+                    quantity = remember { FocusRequester() }
+                )
+            )
         )
     }
 }
