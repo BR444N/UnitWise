@@ -11,7 +11,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -22,6 +24,7 @@ import com.br444n.unitwise.app.feature.home.components.CalculateButton
 import com.br444n.unitwise.app.feature.home.components.HomeHeaderText
 import com.br444n.unitwise.app.feature.home.components.ProductInputActions
 import com.br444n.unitwise.app.feature.home.components.ProductInputCard
+import com.br444n.unitwise.app.feature.home.components.ProductInputFocusConfig
 import com.br444n.unitwise.app.feature.home.components.UnitWiseTopAppBar
 import com.br444n.unitwise.app.ui.components.UnitWiseBottomNavigation
 import com.br444n.unitwise.app.ui.components.UnitWiseLoading
@@ -37,6 +40,16 @@ fun HomeScreen(
     viewModel: HomeViewModel = viewModel(factory = HomeViewModel.Factory)
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val productANameFocus = remember { FocusRequester() }
+    val productAContentFocus = remember { FocusRequester() }
+    val productAUnitFocus = remember { FocusRequester() }
+    val productAPriceFocus = remember { FocusRequester() }
+    val productAQuantityFocus = remember { FocusRequester() }
+    val productBNameFocus = remember { FocusRequester() }
+    val productBContentFocus = remember { FocusRequester() }
+    val productBUnitFocus = remember { FocusRequester() }
+    val productBPriceFocus = remember { FocusRequester() }
+    val productBQuantityFocus = remember { FocusRequester() }
     @Suppress("UNUSED_VARIABLE")
     val handleScanClick: (String) -> Unit = rememberCameraPermissionHandler(
         onPermissionGranted = { target -> onNavigateToScann(target) }
@@ -93,6 +106,14 @@ fun HomeScreen(
                         onPriceChange = { viewModel.updateProductA(uiState.productA.copy(price = it)) },
                         onQuantityChange = { viewModel.updateProductA(uiState.productA.copy(quantity = it)) },
                         onScanClick = { handleScanClick("A") }
+                    ),
+                    focusConfig = ProductInputFocusConfig(
+                        productName = productANameFocus,
+                        contentAmount = productAContentFocus,
+                        unit = productAUnitFocus,
+                        price = productAPriceFocus,
+                        quantity = productAQuantityFocus,
+                        nextProductName = productBNameFocus
                     )
                 )
 
@@ -118,6 +139,13 @@ fun HomeScreen(
                         onPriceChange = { viewModel.updateProductB(uiState.productB.copy(price = it)) },
                         onQuantityChange = { viewModel.updateProductB(uiState.productB.copy(quantity = it)) },
                         onScanClick = { handleScanClick("B") }
+                    ),
+                    focusConfig = ProductInputFocusConfig(
+                        productName = productBNameFocus,
+                        contentAmount = productBContentFocus,
+                        unit = productBUnitFocus,
+                        price = productBPriceFocus,
+                        quantity = productBQuantityFocus
                     )
                 )
 
