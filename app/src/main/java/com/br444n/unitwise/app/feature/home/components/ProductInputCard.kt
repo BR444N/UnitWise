@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.QrCodeScanner
@@ -40,9 +41,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -76,12 +82,34 @@ data class ProductInputActions(
     val onScanClick: () -> Unit = {}
 )
 
+data class ProductInputFocusConfig(
+    val productName: FocusRequester,
+    val contentAmount: FocusRequester,
+    val unit: FocusRequester,
+    val price: FocusRequester,
+    val quantity: FocusRequester,
+    val nextProductName: FocusRequester? = null
+)
+
+private data class ProductContentFocusConfig(
+    val contentAmount: FocusRequester?,
+    val unit: FocusRequester?,
+    val price: FocusRequester?
+)
+
+private data class ProductPriceQuantityFocusConfig(
+    val price: FocusRequester?,
+    val quantity: FocusRequester?,
+    val nextProductName: FocusRequester?
+)
+
 @Composable
 fun ProductInputCard(
     modifier: Modifier = Modifier,
     title: String,
     state: ProductInputState,
     actions: ProductInputActions,
+    focusConfig: ProductInputFocusConfig? = null,
     isReadOnly: Boolean = false,
 ) {
     var isFocused by remember { mutableStateOf(false) }
@@ -106,6 +134,8 @@ fun ProductInputCard(
                 onProductNameChange = actions.onProductNameChange,
                 onScanClick = actions.onScanClick,
                 onFocusChange = { isFocused = it },
+                focusRequester = focusConfig?.productName,
+                nextFocusRequester = focusConfig?.contentAmount,
                 isReadOnly = isReadOnly
             )
             Spacer(modifier = Modifier.height(12.dp))
@@ -116,6 +146,11 @@ fun ProductInputCard(
                 selectedUnit = state.selectedUnit,
                 onUnitChange = actions.onUnitChange,
                 onFocusChange = onFocusChange,
+                focusConfig = ProductContentFocusConfig(
+                    contentAmount = focusConfig?.contentAmount,
+                    unit = focusConfig?.unit,
+                    price = focusConfig?.price
+                ),
                 isReadOnly = isReadOnly
             )
             Spacer(modifier = Modifier.height(12.dp))
@@ -126,6 +161,11 @@ fun ProductInputCard(
                 quantity = state.quantity,
                 onQuantityChange = actions.onQuantityChange,
                 onFocusChange = onFocusChange,
+                focusConfig = ProductPriceQuantityFocusConfig(
+                    price = focusConfig?.price,
+                    quantity = focusConfig?.quantity,
+                    nextProductName = focusConfig?.nextProductName
+                ),
                 isReadOnly = isReadOnly
             )
         }
@@ -165,6 +205,8 @@ private fun ProductNameField(
     onProductNameChange: (String) -> Unit,
     onScanClick: () -> Unit,
     onFocusChange: (Boolean) -> Unit,
+    focusRequester: FocusRequester?,
+    nextFocusRequester: FocusRequester?,
     isReadOnly: Boolean
 ) {
     OutlinedTextField(
@@ -172,9 +214,14 @@ private fun ProductNameField(
         onValueChange = { onProductNameChange(sanitizeProductNameInput(it)) },
         modifier = Modifier
             .fillMaxWidth()
+            .thenFocusRequester(focusRequester)
             .onFocusChanged { onFocusChange(it.isFocused) },
         readOnly = isReadOnly,
         enabled = !isReadOnly,
+        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+        keyboardActions = KeyboardActions(
+            onNext = { nextFocusRequester?.requestFocus() }
+        ),
         placeholder = { Text(stringResource(id = R.string.scan_hint)) },
         trailingIcon = if (isReadOnly) null else {
             { ScanIconTooltip(onScanClick) }
@@ -222,8 +269,10 @@ private fun ProductContentRow(
     selectedUnit: String,
     onUnitChange: (String) -> Unit,
     onFocusChange: (Boolean) -> Unit,
+    focusConfig: ProductContentFocusConfig,
     isReadOnly: Boolean
 ) {
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
         OutlinedTextField(
@@ -231,10 +280,20 @@ private fun ProductContentRow(
             onValueChange = { onContentAmountChange(sanitizeDecimalInput(it, CONTENT_AMOUNT_MAX_LENGTH)) },
             modifier = Modifier
                 .weight(1f)
+                .thenFocusRequester(focusConfig.contentAmount)
                 .onFocusChanged { onFocusChange(it.isFocused) },
             readOnly = isReadOnly,
             enabled = !isReadOnly,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Decimal,
+                imeAction = ImeAction.Next
+            ),
+            keyboardActions = KeyboardActions(
+                onNext = {
+                    keyboardController?.hide()
+                    focusConfig.unit?.requestFocus()
+                }
+            ),
             label = { Text(stringResource(id = R.string.content_label)) },
             singleLine = true,
             shape = RoundedCornerShape(12.dp)
@@ -242,6 +301,8 @@ private fun ProductContentRow(
         UnitSelectorField(
             selectedUnit = selectedUnit,
             onUnitChange = onUnitChange,
+            focusRequester = focusConfig.unit,
+            nextFocusRequester = focusConfig.price,
             isReadOnly = isReadOnly
         )
     }
@@ -252,6 +313,8 @@ private fun ProductContentRow(
 private fun RowScope.UnitSelectorField(
     selectedUnit: String,
     onUnitChange: (String) -> Unit,
+    focusRequester: FocusRequester?,
+    nextFocusRequester: FocusRequester?,
     isReadOnly: Boolean
 ) {
     val expanded = remember { mutableStateOf(false) }
@@ -271,7 +334,14 @@ private fun RowScope.UnitSelectorField(
                     ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded.value) 
                 }
             },
-            modifier = Modifier.menuAnchor(type = ExposedDropdownMenuAnchorType.PrimaryNotEditable),
+            modifier = Modifier
+                .thenFocusRequester(focusRequester)
+                .onFocusChanged {
+                    if (it.isFocused && !isReadOnly) {
+                        expanded.value = true
+                    }
+                }
+                .menuAnchor(type = ExposedDropdownMenuAnchorType.PrimaryNotEditable),
             label = { Text(stringResource(id = R.string.unit_label)) },
             shape = RoundedCornerShape(12.dp)
         )
@@ -286,6 +356,7 @@ private fun RowScope.UnitSelectorField(
                 onUnitChange = {
                     onUnitChange(it)
                     expanded.value = false
+                    nextFocusRequester?.requestFocus()
                 }
             )
         }
@@ -328,9 +399,12 @@ private fun ProductPriceQuantityRow(
     quantity: String,
     onQuantityChange: (String) -> Unit,
     onFocusChange: (Boolean) -> Unit,
+    focusConfig: ProductPriceQuantityFocusConfig,
     isReadOnly: Boolean
 ) {
     val isQuantityZero = quantity.toIntOrNull() == 0
+    val focusManager = LocalFocusManager.current
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
         OutlinedTextField(
@@ -338,10 +412,17 @@ private fun ProductPriceQuantityRow(
             onValueChange = { onPriceChange(sanitizeDecimalInput(it, PRICE_MAX_LENGTH)) },
             modifier = Modifier
                 .weight(1f)
+                .thenFocusRequester(focusConfig.price)
                 .onFocusChanged { onFocusChange(it.isFocused) },
             readOnly = isReadOnly,
             enabled = !isReadOnly,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Decimal,
+                imeAction = ImeAction.Next
+            ),
+            keyboardActions = KeyboardActions(
+                onNext = { focusConfig.quantity?.requestFocus() }
+            ),
             label = { Text(stringResource(id = R.string.price_label)) },
             singleLine = true,
             shape = RoundedCornerShape(12.dp)
@@ -351,11 +432,22 @@ private fun ProductPriceQuantityRow(
             onValueChange = { onQuantityChange(sanitizeQuantityInput(it)) },
             modifier = Modifier
                 .weight(1f)
+                .thenFocusRequester(focusConfig.quantity)
                 .onFocusChanged { onFocusChange(it.isFocused) },
             readOnly = isReadOnly,
             enabled = !isReadOnly,
             isError = isQuantityZero,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Number,
+                imeAction = if (focusConfig.nextProductName != null) ImeAction.Next else ImeAction.Done
+            ),
+            keyboardActions = KeyboardActions(
+                onNext = { focusConfig.nextProductName?.requestFocus() },
+                onDone = {
+                    keyboardController?.hide()
+                    focusManager.clearFocus()
+                }
+            ),
             label = { Text(stringResource(id = R.string.quantity_label)) },
             supportingText = {
                 if (isQuantityZero) {
@@ -390,6 +482,14 @@ private fun sanitizeDecimalInput(input: String, maxLength: Int): String {
 
 private fun sanitizeQuantityInput(input: String): String {
     return input.filter(Char::isDigit).take(QUANTITY_MAX_LENGTH)
+}
+
+private fun Modifier.thenFocusRequester(focusRequester: FocusRequester?): Modifier {
+    return if (focusRequester != null) {
+        focusRequester(focusRequester)
+    } else {
+        this
+    }
 }
 
 @Preview(showBackground = true)
