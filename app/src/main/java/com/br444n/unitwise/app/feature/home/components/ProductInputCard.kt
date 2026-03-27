@@ -54,6 +54,10 @@ import com.br444n.unitwise.app.ui.theme.BrandPrimaryUnfocused
 import com.br444n.unitwise.app.ui.theme.UnitWiseTheme
 import androidx.compose.material3.HorizontalDivider
 
+private const val PRODUCT_NAME_MAX_LENGTH = 24
+private const val CONTENT_AMOUNT_MAX_LENGTH = 7
+private const val PRICE_MAX_LENGTH = 7
+private const val QUANTITY_MAX_LENGTH = 3
 
 data class ProductInputState(
     val productName: String = "",
@@ -165,7 +169,7 @@ private fun ProductNameField(
 ) {
     OutlinedTextField(
         value = productName,
-        onValueChange = { if (it.length <= 200) onProductNameChange(it) },
+        onValueChange = { onProductNameChange(sanitizeProductNameInput(it)) },
         modifier = Modifier
             .fillMaxWidth()
             .onFocusChanged { onFocusChange(it.isFocused) },
@@ -224,7 +228,7 @@ private fun ProductContentRow(
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
         OutlinedTextField(
             value = contentAmount,
-            onValueChange = onContentAmountChange,
+            onValueChange = { onContentAmountChange(sanitizeDecimalInput(it, CONTENT_AMOUNT_MAX_LENGTH)) },
             modifier = Modifier
                 .weight(1f)
                 .onFocusChanged { onFocusChange(it.isFocused) },
@@ -326,10 +330,12 @@ private fun ProductPriceQuantityRow(
     onFocusChange: (Boolean) -> Unit,
     isReadOnly: Boolean
 ) {
+    val isQuantityZero = quantity.toIntOrNull() == 0
+
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
         OutlinedTextField(
             value = price,
-            onValueChange = onPriceChange,
+            onValueChange = { onPriceChange(sanitizeDecimalInput(it, PRICE_MAX_LENGTH)) },
             modifier = Modifier
                 .weight(1f)
                 .onFocusChanged { onFocusChange(it.isFocused) },
@@ -342,18 +348,48 @@ private fun ProductPriceQuantityRow(
         )
         OutlinedTextField(
             value = quantity,
-            onValueChange = onQuantityChange,
+            onValueChange = { onQuantityChange(sanitizeQuantityInput(it)) },
             modifier = Modifier
                 .weight(1f)
                 .onFocusChanged { onFocusChange(it.isFocused) },
             readOnly = isReadOnly,
             enabled = !isReadOnly,
+            isError = isQuantityZero,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             label = { Text(stringResource(id = R.string.quantity_label)) },
+            supportingText = {
+                if (isQuantityZero) {
+                    Text(text = stringResource(id = R.string.quantity_min_error))
+                }
+            },
             singleLine = true,
             shape = RoundedCornerShape(12.dp)
         )
     }
+}
+
+private fun sanitizeProductNameInput(input: String): String {
+    return input.take(PRODUCT_NAME_MAX_LENGTH)
+}
+
+private fun sanitizeDecimalInput(input: String, maxLength: Int): String {
+    val normalized = buildString(input.length) {
+        var hasDecimalSeparator = false
+        input.forEach { char ->
+            when {
+                char.isDigit() -> append(char)
+                (char == '.' || char == ',') && !hasDecimalSeparator -> {
+                    append('.')
+                    hasDecimalSeparator = true
+                }
+            }
+        }
+    }
+    return normalized.take(maxLength)
+}
+
+private fun sanitizeQuantityInput(input: String): String {
+    return input.filter(Char::isDigit).take(QUANTITY_MAX_LENGTH)
 }
 
 @Preview(showBackground = true)

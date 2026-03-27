@@ -15,8 +15,10 @@ data class HomeUiState(
  * Validates that all fields in the ProductInputState are filled with valid data.
  */
 fun ProductInputState.isValid(): Boolean {
+    val quantityValue = quantity.toIntOrNull()
+
     return productName.isNotBlank() &&
             contentAmount.isNotBlank() && contentAmount.toDoubleOrNull() != null &&
             price.isNotBlank() && price.toDoubleOrNull() != null &&
-            quantity.isNotBlank() && quantity.toIntOrNull() != null
+            quantity.isNotBlank() && quantityValue != null && quantityValue > 0
 }
