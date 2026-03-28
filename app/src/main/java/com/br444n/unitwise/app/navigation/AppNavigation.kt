@@ -60,7 +60,11 @@ fun AppNavigation(
         composable(Screen.HISTORY) {
             HistoryScreen(
                 onNavigate = { index -> handleBottomTabNav(index, 1, navController) },
-                onViewDetails = { id -> navController.navigate(Screen.createComparisonRoute(id)) }
+                onViewDetails = { id -> navController.navigate(Screen.createComparisonRoute(id)) },
+                onEditComparison = { id ->
+                    navController.previousBackStackEntry?.savedStateHandle?.set("edit_comparison_id", id)
+                    navController.popBackStack()
+                }
             )
         }
         composable(
@@ -89,6 +93,7 @@ fun AppNavigation(
 private fun HomeResultHandler(backStackEntry: NavBackStackEntry, homeViewModel: HomeViewModel) {
     val resultA: String? = backStackEntry.savedStateHandle["scann_result_A"]
     val resultB: String? = backStackEntry.savedStateHandle["scann_result_B"]
+    val editComparisonId: Int? = backStackEntry.savedStateHandle["edit_comparison_id"]
 
     LaunchedEffect(resultA) {
         if (resultA != null) {
@@ -103,6 +108,13 @@ private fun HomeResultHandler(backStackEntry: NavBackStackEntry, homeViewModel: 
             val current = homeViewModel.uiState.value.productB
             homeViewModel.updateProductB(current.copy(productName = resultB))
             backStackEntry.savedStateHandle.remove<String>("scann_result_B")
+        }
+    }
+
+    LaunchedEffect(editComparisonId) {
+        if (editComparisonId != null) {
+            homeViewModel.loadComparisonForEdit(editComparisonId)
+            backStackEntry.savedStateHandle.remove<Int>("edit_comparison_id")
         }
     }
 }
