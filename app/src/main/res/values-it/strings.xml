@@ -27,6 +27,7 @@
     <string name="comparison_default_product_a">Prodotto A</string>
     <string name="comparison_default_product_b">Prodotto B</string>
     <string name="view_details">Visualizza dettagli</string>
+    <string name="edit">Modifica</string>
     <string name="share">Condividi</string>
     <string name="best_value_micro_badge">Miglior valore: %1$s</string>
     <string name="clear_history_dialog_title">Cancella cronologia</string>

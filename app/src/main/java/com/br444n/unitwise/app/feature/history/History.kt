@@ -23,6 +23,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.br444n.unitwise.app.data.local.entity.ComparisonEntity
+import com.br444n.unitwise.app.feature.history.components.HistoryComparisonCardActions
 import com.br444n.unitwise.app.feature.history.components.HistoryComparisonCard
 import com.br444n.unitwise.app.feature.history.components.HistoryEmptyState
 import com.br444n.unitwise.app.feature.history.components.HistorySearchBar
@@ -41,6 +42,7 @@ fun HistoryScreen(
     viewModel: HistoryViewModel = viewModel(factory = HistoryViewModel.Factory),
     onNavigate: (Int) -> Unit = {},
     onViewDetails: (Int) -> Unit = {},
+    onEditComparison: (Int) -> Unit = {},
     onShareClick: (ComparisonEntity) -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -48,6 +50,7 @@ fun HistoryScreen(
         uiState = uiState,
         onNavigate = onNavigate,
         onViewDetails = onViewDetails,
+        onEditComparison = onEditComparison,
         onShareClick = onShareClick,
         onClearAllClick = { viewModel.clearAll() },
         modifier = modifier
@@ -59,6 +62,7 @@ fun HistoryContent(
     uiState: HistoryUiState,
     onNavigate: (Int) -> Unit,
     onViewDetails: (Int) -> Unit,
+    onEditComparison: (Int) -> Unit,
     onShareClick: (ComparisonEntity) -> Unit,
     onClearAllClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -139,14 +143,17 @@ fun HistoryContent(
                             items = filteredComparisons,
                             key = { it.entity.id }
                         ) { item ->
-                            HistoryComparisonCard(
-                                productAName = item.entity.productAName,
-                                productBName = item.entity.productBName,
-                                winnerName = item.winnerName,
-                                timestamp = item.entity.timestamp,
+                        HistoryComparisonCard(
+                            productAName = item.entity.productAName,
+                            productBName = item.entity.productBName,
+                            winnerName = item.winnerName,
+                            timestamp = item.entity.timestamp,
+                            actions = HistoryComparisonCardActions(
+                                onEditClick = { onEditComparison(item.entity.id) },
                                 onViewDetailsClick = { onViewDetails(item.entity.id) },
                                 onShareClick = { onShareClick(item.entity) }
                             )
+                        )
                         }
                     }
                 }
@@ -172,6 +179,7 @@ fun HistoryScreenPreview() {
             uiState = HistoryUiState(),
             onNavigate = {},
             onViewDetails = {},
+            onEditComparison = {},
             onShareClick = {},
             onClearAllClick = {}
         )
