@@ -19,7 +19,9 @@ class MainActivity : ComponentActivity() {
 
     override fun attachBaseContext(newBase: Context) {
         val prefs = newBase.getSharedPreferences("user_prefs", MODE_PRIVATE)
-        val lang = prefs.getString("selected_language", "en") ?: "en"
+        val lang = LocaleHelper.normalizeLanguageCode(
+            prefs.getString("selected_language", "en") ?: "en"
+        )
         super.attachBaseContext(LocaleHelper.wrap(newBase, lang))
     }
 
@@ -41,8 +43,10 @@ class MainActivity : ComponentActivity() {
             if (isDarkTheme != null && selectedLanguage != null) {
                 // If the language changed at runtime, recreate the activity to apply it globally
                 LaunchedEffect(selectedLanguage) {
-                    val currentLocale = resources.configuration.locales[0].language
-                    if (selectedLanguage != currentLocale) {
+                    val currentLanguageCode = LocaleHelper.currentLanguageCode(resources.configuration)
+                    val targetLanguageCode = LocaleHelper.normalizeLanguageCode(selectedLanguage!!)
+
+                    if (targetLanguageCode != currentLanguageCode) {
                         recreate()
                     }
                 }
