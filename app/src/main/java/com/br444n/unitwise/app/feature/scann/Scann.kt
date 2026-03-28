@@ -51,10 +51,8 @@ private enum class CameraPermissionUiState {
 @Composable
 fun ScannScreen(
     onBackClick: () -> Unit,
-    onUseSelectedClick: (String) -> Unit,
-    viewModel: ScannViewModel = viewModel()
+    onUseSelectedClick: (String) -> Unit
 ) {
-    val state by viewModel.uiState.collectAsState()
     val context = LocalContext.current
     var permissionState by rememberSaveable {
         mutableStateOf(
@@ -83,14 +81,9 @@ fun ScannScreen(
 
     when (permissionState) {
         CameraPermissionUiState.Granted -> {
-            ScannContent(
-                state = state,
-                onFlashClick = viewModel::toggleFlash,
+            GrantedScannRoute(
                 onBackClick = onBackClick,
-                onTextSelected = viewModel::selectText,
-                onUseSelectedClick = { state.selectedText?.let { onUseSelectedClick(it) } },
-                onScanAgainClick = viewModel::scanAgain,
-                onProcessImage = viewModel::processImageProxy
+                onUseSelectedClick = onUseSelectedClick
             )
         }
         CameraPermissionUiState.Requesting -> {
@@ -112,6 +105,25 @@ fun ScannScreen(
             )
         }
     }
+}
+
+@Composable
+private fun GrantedScannRoute(
+    onBackClick: () -> Unit,
+    onUseSelectedClick: (String) -> Unit
+) {
+    val viewModel: ScannViewModel = viewModel()
+    val state by viewModel.uiState.collectAsState()
+
+    ScannContent(
+        state = state,
+        onFlashClick = viewModel::toggleFlash,
+        onBackClick = onBackClick,
+        onTextSelected = viewModel::selectText,
+        onUseSelectedClick = { state.selectedText?.let { onUseSelectedClick(it) } },
+        onScanAgainClick = viewModel::scanAgain,
+        onProcessImage = viewModel::processImageProxy
+    )
 }
 
 @Composable

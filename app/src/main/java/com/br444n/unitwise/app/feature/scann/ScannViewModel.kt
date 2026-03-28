@@ -4,6 +4,7 @@ import androidx.camera.core.ImageProxy
 import androidx.lifecycle.ViewModel
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
+import com.google.mlkit.vision.text.TextRecognizer
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -14,7 +15,7 @@ class ScannViewModel : ViewModel() {
     private val _uiState = MutableStateFlow(ScannUiState())
     val uiState: StateFlow<ScannUiState> = _uiState.asStateFlow()
 
-    private val textRecognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
+    private var textRecognizer: TextRecognizer? = null
     private var isProcessing = false
 
     fun toggleFlash() {
@@ -46,7 +47,7 @@ class ScannViewModel : ViewModel() {
         val rotation = imageProxy.imageInfo.rotationDegrees
         val image = InputImage.fromMediaImage(mediaImage, rotation)
         
-        textRecognizer.process(image)
+        getTextRecognizer().process(image)
             .addOnSuccessListener { visionText ->
                 handleVisionTextResult(
                     visionText = visionText,
@@ -110,8 +111,15 @@ class ScannViewModel : ViewModel() {
         _uiState.update { it.copy(detectedTexts = options.distinct()) }
     }
 
+    private fun getTextRecognizer(): TextRecognizer {
+        return textRecognizer ?: TextRecognition.getClient(
+            TextRecognizerOptions.DEFAULT_OPTIONS
+        ).also { textRecognizer = it }
+    }
+
     override fun onCleared() {
         super.onCleared()
-        textRecognizer.close()
+        textRecognizer?.close()
+        textRecognizer = null
     }
 }
