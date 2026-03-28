@@ -1,34 +1,51 @@
 package com.br444n.unitwise.app.feature.scann
 
+import android.Manifest
+import android.content.Context
+import android.content.pm.PackageManager
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.core.content.ContextCompat
 import com.br444n.unitwise.app.feature.scann.components.CameraPreviewView
+import com.br444n.unitwise.app.feature.scann.components.ScannPermissionContent
 import com.br444n.unitwise.app.feature.scann.components.ScannBottomSheet
 import com.br444n.unitwise.app.feature.scann.components.ScannTopAppBar
 import com.br444n.unitwise.app.feature.scann.components.ScannerOverlay
 import com.br444n.unitwise.app.ui.theme.UnitWiseTheme
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
-import androidx.core.content.ContextCompat
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import com.br444n.unitwise.R
 
 private const val PREVIEW_SELECTED_TEXT = "$24.50"
 private val PREVIEW_DETECTED_TEXTS = listOf("500g", PREVIEW_SELECTED_TEXT, "1kg", "Brand Name")
+
+private enum class CameraPermissionUiState {
+    Requesting,
+    Granted,
+    Denied
+}
 
 @Suppress("unused")
 @Composable
@@ -38,16 +55,63 @@ fun ScannScreen(
     viewModel: ScannViewModel = viewModel()
 ) {
     val state by viewModel.uiState.collectAsState()
+    val context = LocalContext.current
+    var permissionState by rememberSaveable {
+        mutableStateOf(
+            if (context.hasCameraPermission()) {
+                CameraPermissionUiState.Granted
+            } else {
+                CameraPermissionUiState.Requesting
+            }
+        )
+    }
+    val permissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        permissionState = if (isGranted) {
+            CameraPermissionUiState.Granted
+        } else {
+            CameraPermissionUiState.Denied
+        }
+    }
 
-    ScannContent(
-        state = state,
-        onFlashClick = viewModel::toggleFlash,
-        onBackClick = onBackClick,
-        onTextSelected = viewModel::selectText,
-        onUseSelectedClick = { state.selectedText?.let { onUseSelectedClick(it) } },
-        onScanAgainClick = viewModel::scanAgain,
-        onProcessImage = viewModel::processImageProxy
-    )
+    LaunchedEffect(permissionState) {
+        if (permissionState == CameraPermissionUiState.Requesting && !context.hasCameraPermission()) {
+            permissionLauncher.launch(Manifest.permission.CAMERA)
+        }
+    }
+
+    when (permissionState) {
+        CameraPermissionUiState.Granted -> {
+            ScannContent(
+                state = state,
+                onFlashClick = viewModel::toggleFlash,
+                onBackClick = onBackClick,
+                onTextSelected = viewModel::selectText,
+                onUseSelectedClick = { state.selectedText?.let { onUseSelectedClick(it) } },
+                onScanAgainClick = viewModel::scanAgain,
+                onProcessImage = viewModel::processImageProxy
+            )
+        }
+        CameraPermissionUiState.Requesting -> {
+            ScannPermissionContent(
+                onBackClick = onBackClick,
+                title = stringResource(id = R.string.camera_permission_loading_title),
+                description = stringResource(id = R.string.camera_permission_loading_description),
+                actionLabel = null,
+                onActionClick = null
+            )
+        }
+        CameraPermissionUiState.Denied -> {
+            ScannPermissionContent(
+                onBackClick = onBackClick,
+                title = stringResource(id = R.string.camera_permission_denied_title),
+                description = stringResource(id = R.string.camera_permission_denied_description),
+                actionLabel = stringResource(id = R.string.camera_permission_retry),
+                onActionClick = { permissionState = CameraPermissionUiState.Requesting }
+            )
+        }
+    }
 }
 
 @Composable
@@ -123,6 +187,13 @@ fun ScannContent(
             )
         }
     }
+}
+
+private fun Context.hasCameraPermission(): Boolean {
+    return ContextCompat.checkSelfPermission(
+        this,
+        Manifest.permission.CAMERA
+    ) == PackageManager.PERMISSION_GRANTED
 }
 
 @Preview(showBackground = true)
