@@ -53,6 +53,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.br444n.unitwise.R
+import com.br444n.unitwise.app.domain.model.MeasurementUnit
 import com.br444n.unitwise.app.domain.model.MeasurementUnit.SUPPORTED_UNITS
 import com.br444n.unitwise.app.feature.home.isValid
 import com.br444n.unitwise.app.ui.theme.Badge
@@ -77,6 +78,7 @@ data class ProductInputActions(
     val onProductNameChange: (String) -> Unit = {},
     val onContentAmountChange: (String) -> Unit = {},
     val onUnitChange: (String) -> Unit = {},
+    val onIncompatibleUnitSelected: () -> Unit = {},
     val onPriceChange: (String) -> Unit = {},
     val onQuantityChange: (String) -> Unit = {},
     val onScanClick: () -> Unit = {}
@@ -97,6 +99,18 @@ private data class ProductContentFocusConfig(
     val price: FocusRequester?
 )
 
+private data class ProductUnitConfig(
+    val selectedUnit: String,
+    val otherSelectedUnit: String?
+)
+
+private data class ProductContentCallbacks(
+    val onContentAmountChange: (String) -> Unit,
+    val onUnitChange: (String) -> Unit,
+    val onIncompatibleUnitSelected: () -> Unit,
+    val onFocusChange: (Boolean) -> Unit
+)
+
 private data class ProductPriceQuantityFocusConfig(
     val price: FocusRequester?,
     val quantity: FocusRequester?,
@@ -109,6 +123,7 @@ fun ProductInputCard(
     title: String,
     state: ProductInputState,
     actions: ProductInputActions,
+    otherSelectedUnit: String? = null,
     focusConfig: ProductInputFocusConfig? = null,
     isReadOnly: Boolean = false,
 ) {
@@ -142,10 +157,16 @@ fun ProductInputCard(
             
             ProductContentRow(
                 contentAmount = state.contentAmount,
-                onContentAmountChange = actions.onContentAmountChange,
-                selectedUnit = state.selectedUnit,
-                onUnitChange = actions.onUnitChange,
-                onFocusChange = onFocusChange,
+                unitConfig = ProductUnitConfig(
+                    selectedUnit = state.selectedUnit,
+                    otherSelectedUnit = otherSelectedUnit
+                ),
+                callbacks = ProductContentCallbacks(
+                    onContentAmountChange = actions.onContentAmountChange,
+                    onUnitChange = actions.onUnitChange,
+                    onIncompatibleUnitSelected = actions.onIncompatibleUnitSelected,
+                    onFocusChange = onFocusChange
+                ),
                 focusConfig = ProductContentFocusConfig(
                     contentAmount = focusConfig?.contentAmount,
                     unit = focusConfig?.unit,
@@ -265,10 +286,8 @@ private fun ScanIconTooltip(onScanClick: () -> Unit) {
 @Composable
 private fun ProductContentRow(
     contentAmount: String,
-    onContentAmountChange: (String) -> Unit,
-    selectedUnit: String,
-    onUnitChange: (String) -> Unit,
-    onFocusChange: (Boolean) -> Unit,
+    unitConfig: ProductUnitConfig,
+    callbacks: ProductContentCallbacks,
     focusConfig: ProductContentFocusConfig,
     isReadOnly: Boolean
 ) {
@@ -277,11 +296,11 @@ private fun ProductContentRow(
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
         OutlinedTextField(
             value = contentAmount,
-            onValueChange = { onContentAmountChange(sanitizeDecimalInput(it, CONTENT_AMOUNT_MAX_LENGTH)) },
+            onValueChange = { callbacks.onContentAmountChange(sanitizeDecimalInput(it, CONTENT_AMOUNT_MAX_LENGTH)) },
             modifier = Modifier
                 .weight(1f)
                 .thenFocusRequester(focusConfig.contentAmount)
-                .onFocusChanged { onFocusChange(it.isFocused) },
+                .onFocusChanged { callbacks.onFocusChange(it.isFocused) },
             readOnly = isReadOnly,
             enabled = !isReadOnly,
             keyboardOptions = KeyboardOptions(
@@ -299,8 +318,10 @@ private fun ProductContentRow(
             shape = RoundedCornerShape(12.dp)
         )
         UnitSelectorField(
-            selectedUnit = selectedUnit,
-            onUnitChange = onUnitChange,
+            selectedUnit = unitConfig.selectedUnit,
+            otherSelectedUnit = unitConfig.otherSelectedUnit,
+            onUnitChange = callbacks.onUnitChange,
+            onIncompatibleUnitSelected = callbacks.onIncompatibleUnitSelected,
             focusRequester = focusConfig.unit,
             nextFocusRequester = focusConfig.price,
             isReadOnly = isReadOnly
@@ -312,12 +333,17 @@ private fun ProductContentRow(
 @Composable
 private fun RowScope.UnitSelectorField(
     selectedUnit: String,
+    otherSelectedUnit: String?,
     onUnitChange: (String) -> Unit,
+    onIncompatibleUnitSelected: () -> Unit,
     focusRequester: FocusRequester?,
     nextFocusRequester: FocusRequester?,
     isReadOnly: Boolean
 ) {
     val expanded = remember { mutableStateOf(false) }
+    val compatibleUnits = remember(otherSelectedUnit) {
+        MeasurementUnit.compatibleUnitsFor(otherSelectedUnit)
+    }
 
     ExposedDropdownMenuBox(
         expanded = expanded.value && !isReadOnly,
@@ -353,6 +379,8 @@ private fun RowScope.UnitSelectorField(
         ) {
             UnitMenuItems(
                 selectedUnit = selectedUnit,
+                compatibleUnits = compatibleUnits,
+                onIncompatibleUnitSelected = onIncompatibleUnitSelected,
                 onUnitChange = {
                     onUnitChange(it)
                     expanded.value = false
@@ -366,20 +394,34 @@ private fun RowScope.UnitSelectorField(
 @Composable
 private fun UnitMenuItems(
     selectedUnit: String,
+    compatibleUnits: List<String>,
+    onIncompatibleUnitSelected: () -> Unit,
     onUnitChange: (String) -> Unit
 ) {
     SUPPORTED_UNITS.forEachIndexed { index, selectionOption ->
         val isSelected = selectedUnit == selectionOption
+        val isEnabled = isSelected || compatibleUnits.contains(selectionOption)
         
         DropdownMenuItem(
             text = { 
                 Text(
                     text = selectionOption,
-                    color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
+                    color = when {
+                        isSelected -> MaterialTheme.colorScheme.primary
+                        isEnabled -> MaterialTheme.colorScheme.onSurface
+                        else -> MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.45f)
+                    },
                     fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
                 ) 
             },
-            onClick = { onUnitChange(selectionOption) }
+            onClick = {
+                if (isEnabled) {
+                    onUnitChange(selectionOption)
+                } else {
+                    onIncompatibleUnitSelected()
+                }
+            },
+            enabled = true
         )
         
         if (index < SUPPORTED_UNITS.size - 1) {
