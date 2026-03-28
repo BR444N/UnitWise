@@ -24,6 +24,7 @@ import com.br444n.unitwise.R
 import com.br444n.unitwise.app.permission.rememberCameraPermissionHandler
 import com.br444n.unitwise.app.feature.home.components.CalculateButton
 import com.br444n.unitwise.app.feature.home.components.HomeHeaderText
+import com.br444n.unitwise.app.feature.home.components.HomeToastMessage
 import com.br444n.unitwise.app.feature.home.components.ProductInputActions
 import com.br444n.unitwise.app.feature.home.components.ProductInputCard
 import com.br444n.unitwise.app.feature.home.components.ProductInputFocusConfig
@@ -43,6 +44,7 @@ private data class HomeContentCallbacks(
     val handleScanClick: (String) -> Unit,
     val onUpdateProductA: (ProductInputState) -> Unit,
     val onUpdateProductB: (ProductInputState) -> Unit,
+    val onShowIncompatibleUnitsMessage: () -> Unit,
     val onCalculate: ((Int) -> Unit) -> Unit
 )
 
@@ -50,6 +52,19 @@ private data class HomeFocusConfigs(
     val productA: ProductInputFocusConfig,
     val productB: ProductInputFocusConfig
 )
+
+private data class ProductCardContentConfig(
+    val titleResId: Int,
+    val state: ProductInputState,
+    val otherSelectedUnit: String?,
+    val onUpdateProduct: (ProductInputState) -> Unit,
+    val scanTarget: String,
+    val focusConfig: ProductInputFocusConfig
+)
+
+private fun HomeUiState.otherSelectedUnitFor(driver: UnitSelectionDriver, otherUnit: String): String? {
+    return if (unitSelectionDriver == driver) otherUnit else null
+}
 
 @Composable
 fun HomeScreen(
@@ -86,6 +101,7 @@ fun HomeScreen(
             handleScanClick = handleScanClick,
             onUpdateProductA = viewModel::updateProductA,
             onUpdateProductB = viewModel::updateProductB,
+            onShowIncompatibleUnitsMessage = viewModel::showIncompatibleUnitsMessage,
             onCalculate = viewModel::calculate
         ),
         focusConfigs = HomeFocusConfigs(
@@ -138,56 +154,36 @@ private fun HomeContent(
             ) {
                 HomeHeaderText(modifier = Modifier.padding(top = 16.dp))
 
-                ProductInputCard(
-                    title = stringResource(id = R.string.product_a_title),
-                    state = uiState.productA,
-                    actions = ProductInputActions(
-                        onProductNameChange = {
-                            callbacks.onUpdateProductA(
-                                uiState.productA.copy(
-                                    productName = it
-                                )
-                            )
-                        },
-                        onContentAmountChange = {
-                            callbacks.onUpdateProductA(
-                                uiState.productA.copy(
-                                    contentAmount = it
-                                )
-                            )
-                        },
-                        onUnitChange = { callbacks.onUpdateProductA(uiState.productA.copy(selectedUnit = it)) },
-                        onPriceChange = { callbacks.onUpdateProductA(uiState.productA.copy(price = it)) },
-                        onQuantityChange = { callbacks.onUpdateProductA(uiState.productA.copy(quantity = it)) },
-                        onScanClick = { callbacks.handleScanClick("A") }
+                HomeProductInputCard(
+                    config = ProductCardContentConfig(
+                        titleResId = R.string.product_a_title,
+                        state = uiState.productA,
+                        otherSelectedUnit = uiState.otherSelectedUnitFor(
+                            driver = UnitSelectionDriver.PRODUCT_B,
+                            otherUnit = uiState.productB.selectedUnit
+                        ),
+                        onUpdateProduct = callbacks.onUpdateProductA,
+                        scanTarget = "A",
+                        focusConfig = focusConfigs.productA
                     ),
-                    focusConfig = focusConfigs.productA
+                    onShowIncompatibleUnitsMessage = callbacks.onShowIncompatibleUnitsMessage,
+                    onScanClick = callbacks.handleScanClick
                 )
 
-                ProductInputCard(
-                    title = stringResource(id = R.string.product_b_title),
-                    state = uiState.productB,
-                    actions = ProductInputActions(
-                        onProductNameChange = {
-                            callbacks.onUpdateProductB(
-                                uiState.productB.copy(
-                                    productName = it
-                                )
-                            )
-                        },
-                        onContentAmountChange = {
-                            callbacks.onUpdateProductB(
-                                uiState.productB.copy(
-                                    contentAmount = it
-                                )
-                            )
-                        },
-                        onUnitChange = { callbacks.onUpdateProductB(uiState.productB.copy(selectedUnit = it)) },
-                        onPriceChange = { callbacks.onUpdateProductB(uiState.productB.copy(price = it)) },
-                        onQuantityChange = { callbacks.onUpdateProductB(uiState.productB.copy(quantity = it)) },
-                        onScanClick = { callbacks.handleScanClick("B") }
+                HomeProductInputCard(
+                    config = ProductCardContentConfig(
+                        titleResId = R.string.product_b_title,
+                        state = uiState.productB,
+                        otherSelectedUnit = uiState.otherSelectedUnitFor(
+                            driver = UnitSelectionDriver.PRODUCT_A,
+                            otherUnit = uiState.productA.selectedUnit
+                        ),
+                        onUpdateProduct = callbacks.onUpdateProductB,
+                        scanTarget = "B",
+                        focusConfig = focusConfigs.productB
                     ),
-                    focusConfig = focusConfigs.productB
+                    onShowIncompatibleUnitsMessage = callbacks.onShowIncompatibleUnitsMessage,
+                    onScanClick = callbacks.handleScanClick
                 )
 
                 CalculateButton(
@@ -198,17 +194,20 @@ private fun HomeContent(
             }
         } // End Scaffold
 
-        UnitWiseBottomNavigation(
+        HomeBottomNavigation(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .fillMaxWidth(),
             visible = isBottomNavVisible,
-            onNavigate = { index ->
-                when (index) {
-                    1 -> callbacks.onNavigateToHistory()
-                    else -> { /* already on Home */ }
-                }
-            }
+            onNavigateToHistory = callbacks.onNavigateToHistory
+        )
+
+        HomeToastMessage(
+            eventKey = uiState.incompatibleUnitsToastEvent,
+            messageResId = R.string.units_cannot_be_compared,
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = BottomNavOverlayPadding + 16.dp)
         )
 
         if (uiState.isLoading) {
@@ -216,6 +215,55 @@ private fun HomeContent(
         }
     } // End Box
 } // End HomeScreen
+
+@Composable
+private fun HomeBottomNavigation(
+    modifier: Modifier = Modifier,
+    visible: Boolean,
+    onNavigateToHistory: () -> Unit
+) {
+    UnitWiseBottomNavigation(
+        modifier = modifier,
+        visible = visible,
+        onNavigate = { index ->
+            when (index) {
+                1 -> onNavigateToHistory()
+                else -> { /* already on Home */ }
+            }
+        }
+    )
+}
+
+@Composable
+private fun HomeProductInputCard(
+    config: ProductCardContentConfig,
+    onShowIncompatibleUnitsMessage: () -> Unit,
+    onScanClick: (String) -> Unit
+) {
+    ProductInputCard(
+        title = stringResource(id = config.titleResId),
+        state = config.state,
+        otherSelectedUnit = config.otherSelectedUnit,
+        actions = ProductInputActions(
+            onProductNameChange = {
+                config.onUpdateProduct(
+                    config.state.copy(productName = it)
+                )
+            },
+            onContentAmountChange = {
+                config.onUpdateProduct(
+                    config.state.copy(contentAmount = it)
+                )
+            },
+            onUnitChange = { config.onUpdateProduct(config.state.copy(selectedUnit = it)) },
+            onIncompatibleUnitSelected = onShowIncompatibleUnitsMessage,
+            onPriceChange = { config.onUpdateProduct(config.state.copy(price = it)) },
+            onQuantityChange = { config.onUpdateProduct(config.state.copy(quantity = it)) },
+            onScanClick = { onScanClick(config.scanTarget) }
+        ),
+        focusConfig = config.focusConfig
+    )
+}
 
 @Preview(showBackground = true)
 @Composable
@@ -245,6 +293,7 @@ fun HomeScreenPreview() {
                 handleScanClick = {},
                 onUpdateProductA = {},
                 onUpdateProductB = {},
+                onShowIncompatibleUnitsMessage = {},
                 onCalculate = {}
             ),
             focusConfigs = HomeFocusConfigs(

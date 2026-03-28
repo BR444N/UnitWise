@@ -2,10 +2,17 @@ package com.br444n.unitwise.app.feature.home
 
 import com.br444n.unitwise.app.feature.home.components.ProductInputState
 
+enum class UnitSelectionDriver {
+    PRODUCT_A,
+    PRODUCT_B
+}
+
 data class HomeUiState(
     val productA: ProductInputState = ProductInputState(),
     val productB: ProductInputState = ProductInputState(),
-    val isLoading: Boolean = false
+    val isLoading: Boolean = false,
+    val incompatibleUnitsToastEvent: Int = 0,
+    val unitSelectionDriver: UnitSelectionDriver? = null
 ) {
     val isCalculateEnabled: Boolean
         get() = productA.isValid() && productB.isValid()

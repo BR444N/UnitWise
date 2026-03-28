@@ -11,6 +11,7 @@
     <string name="price_label">Preço</string>
     <string name="quantity_label">Quantidade</string>
     <string name="quantity_min_error">Mín. 1</string>
+    <string name="units_cannot_be_compared">As unidades não podem ser comparadas.</string>
     <string name="home_tab">Início</string>
     <string name="home_header_title">Comparar produtos</string>
     <string name="home_header_subtitle">Encontre os melhores valores para o seu dinheiro</string>
