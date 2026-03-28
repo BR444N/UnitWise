@@ -1,5 +1,6 @@
 package com.br444n.unitwise.app.domain.usecase
 
+import com.br444n.unitwise.app.domain.model.MeasurementUnit
 import com.br444n.unitwise.app.feature.home.components.ProductInputState
 import java.util.Locale
 import kotlin.math.abs
@@ -14,9 +15,15 @@ data class ComparisonResult(
     val standardUnitPrice: String
 )
 
+class IncompatibleMeasurementUnitsException : IllegalArgumentException()
+
 class CompareProductsUseCase {
 
     operator fun invoke(productA: ProductInputState, productB: ProductInputState): ComparisonResult {
+        if (!MeasurementUnit.areCompatible(productA.selectedUnit, productB.selectedUnit)) {
+            throw IncompatibleMeasurementUnitsException()
+        }
+
         // 1. Normalize Inputs
         val priceA = productA.price.toDoubleOrNull() ?: 0.0
         val contentA = productA.contentAmount.toDoubleOrNull() ?: 1.0
