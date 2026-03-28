@@ -7,6 +7,8 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.br444n.unitwise.app.UnitWiseApplication
+import com.br444n.unitwise.app.domain.model.MeasurementUnit
+import com.br444n.unitwise.app.domain.usecase.IncompatibleMeasurementUnitsException
 import com.br444n.unitwise.app.domain.usecase.SaveComparisonUseCase
 import com.br444n.unitwise.app.feature.home.components.ProductInputState
 import kotlinx.coroutines.delay
@@ -24,37 +26,99 @@ class HomeViewModel(
 
     fun updateProductA(newState: ProductInputState) {
         _uiState.update { currentState ->
-            currentState.copy(productA = newState)
+            val unitChanged = currentState.productA.selectedUnit != newState.selectedUnit
+            val updatedDriver = when {
+                !unitChanged -> currentState.unitSelectionDriver
+                currentState.unitSelectionDriver == null -> UnitSelectionDriver.PRODUCT_A
+                else -> currentState.unitSelectionDriver
+            }
+
+            currentState.copy(
+                productA = newState,
+                productB = if (unitChanged && updatedDriver == UnitSelectionDriver.PRODUCT_A) {
+                    ensureCompatibleUnitSelection(
+                        driverUnit = newState.selectedUnit,
+                        otherState = currentState.productB
+                    )
+                } else {
+                    currentState.productB
+                },
+                unitSelectionDriver = updatedDriver
+            )
         }
     }
 
     fun updateProductB(newState: ProductInputState) {
         _uiState.update { currentState ->
-            currentState.copy(productB = newState)
+            val unitChanged = currentState.productB.selectedUnit != newState.selectedUnit
+            val updatedDriver = when {
+                !unitChanged -> currentState.unitSelectionDriver
+                currentState.unitSelectionDriver == null -> UnitSelectionDriver.PRODUCT_B
+                else -> currentState.unitSelectionDriver
+            }
+
+            currentState.copy(
+                productB = newState,
+                productA = if (unitChanged && updatedDriver == UnitSelectionDriver.PRODUCT_B) {
+                    ensureCompatibleUnitSelection(
+                        driverUnit = newState.selectedUnit,
+                        otherState = currentState.productA
+                    )
+                } else {
+                    currentState.productA
+                },
+                unitSelectionDriver = updatedDriver
+            )
+        }
+    }
+
+    fun showIncompatibleUnitsMessage() {
+        _uiState.update { currentState ->
+            currentState.copy(incompatibleUnitsToastEvent = currentState.incompatibleUnitsToastEvent + 1)
         }
     }
 
     fun calculate(onNavigate: (Int) -> Unit) {
         _uiState.update { it.copy(isLoading = true) }
         viewModelScope.launch {
-            // Save to database
-            val id = saveComparisonUseCase(
-                productA = _uiState.value.productA,
-                productB = _uiState.value.productB
-            ).toInt()
+            try {
+                val id = saveComparisonUseCase(
+                    productA = _uiState.value.productA,
+                    productB = _uiState.value.productB
+                ).toInt()
 
-            delay(CALCULATION_DELAY) // Simulate calculation delay
-            
-            // Clear the inputs returning to initial defaults but empty strings!
-            _uiState.update { 
-                it.copy(
-                    isLoading = false,
-                    productA = ProductInputState(),
-                    productB = ProductInputState()
-                )
+                delay(CALCULATION_DELAY)
+
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        productA = ProductInputState(),
+                        productB = ProductInputState(),
+                        unitSelectionDriver = null
+                    )
+                }
+                onNavigate(id)
+            } catch (_: IncompatibleMeasurementUnitsException) {
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        incompatibleUnitsToastEvent = it.incompatibleUnitsToastEvent + 1
+                    )
+                }
             }
-            onNavigate(id)
         }
+    }
+
+    private fun ensureCompatibleUnitSelection(
+        driverUnit: String,
+        otherState: ProductInputState
+    ): ProductInputState {
+        if (MeasurementUnit.areCompatible(driverUnit, otherState.selectedUnit)) {
+            return otherState
+        }
+
+        val fallbackUnit = MeasurementUnit.compatibleUnitsFor(driverUnit).firstOrNull() ?: driverUnit
+        return otherState.copy(selectedUnit = fallbackUnit)
     }
 
     companion object {
