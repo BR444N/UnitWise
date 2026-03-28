@@ -16,7 +16,7 @@
         Normal app theme applied after the splash is dismissed.
         Keep this theme without ActionBar so older devices do not show an unexpected toolbar.
     -->
-    <style name="Theme.UnitWise.App" parent="android:Theme.Material.Light.NoActionBar">
+    <style name="Theme.UnitWise.App" parent="Theme.AppCompat.DayNight.NoActionBar">
         <item name="android:windowBackground">@color/white</item>
         <item name="android:windowNoTitle">true</item>
     </style>
