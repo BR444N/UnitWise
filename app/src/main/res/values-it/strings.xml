@@ -60,7 +60,7 @@
 
     <!-- SCAN STRINGS -->
     <string name="toggle_flash">Attiva/disattiva flash</string>
-    <string name="navigate_up">Naviga su</string>
+    <string name="navigate_up">Esci</string>
     <string name="scan_instruction">Allinea il testo nella cornice</string>
     <string name="detected_text_title">Testo rilevato</string>
     <string name="detected_text_subtitle">Seleziona le informazioni che desideri aggiungere</string>

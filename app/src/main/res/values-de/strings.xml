@@ -60,7 +60,7 @@
 
     <!-- SCAN STRINGS -->
     <string name="toggle_flash">Blitz umschalten</string>
-    <string name="navigate_up">Nach oben navigieren</string>
+    <string name="navigate_up">Beenden</string>
     <string name="scan_instruction">Text im Rahmen ausrichten</string>
     <string name="detected_text_title">Erkannter Text</string>
     <string name="detected_text_subtitle">Wählen Sie die Informationen aus, die Sie hinzufügen möchten</string>

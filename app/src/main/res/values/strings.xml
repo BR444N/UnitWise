@@ -60,7 +60,7 @@
 
     <!-- SCAN STRINGS -->
     <string name="toggle_flash">Toggle flash</string>
-    <string name="navigate_up">Navigate up</string>
+    <string name="navigate_up">Go Back</string>
     <string name="scan_instruction">Align text within the frame</string>
     <string name="detected_text_title">Detected Text</string>
     <string name="detected_text_subtitle">Select the information you wanted to add</string>

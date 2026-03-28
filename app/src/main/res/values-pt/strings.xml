@@ -60,7 +60,7 @@
 
     <!-- SCAN STRINGS -->
     <string name="toggle_flash">Alternar flash</string>
-    <string name="navigate_up">Navegar para cima</string>
+    <string name="navigate_up">Sair</string>
     <string name="scan_instruction">Alinhe o texto dentro da moldura</string>
     <string name="detected_text_title">Texto detectado</string>
     <string name="detected_text_subtitle">Selecione as informações que deseja adicionar</string>
