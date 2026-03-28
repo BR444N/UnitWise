@@ -66,6 +66,11 @@
     <string name="detected_text_subtitle">Wählen Sie die Informationen aus, die Sie hinzufügen möchten</string>
     <string name="use_selected_text">Ausgewählten Text verwenden</string>
     <string name="scan_again">Erneut scannen</string>
+    <string name="camera_permission_loading_title">Kamera wird geöffnet</string>
+    <string name="camera_permission_loading_description">Warte auf Kameraberechtigung, um mit dem Scannen zu beginnen.</string>
+    <string name="camera_permission_denied_title">Kamerazugriff erforderlich</string>
+    <string name="camera_permission_denied_description">Erlaube Kamerazugriff, um Produktnamen zu scannen.</string>
+    <string name="camera_permission_retry">Kamera erlauben</string>
 
     <!-- SETTINGS STRINGS -->
     <string name="settings_dark_theme_title">Dunkles Design</string>

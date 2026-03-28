@@ -21,7 +21,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.br444n.unitwise.R
-import com.br444n.unitwise.app.permission.rememberCameraPermissionHandler
 import com.br444n.unitwise.app.feature.home.components.CalculateButton
 import com.br444n.unitwise.app.feature.home.components.HomeHeaderText
 import com.br444n.unitwise.app.feature.home.components.HomeToastMessage
@@ -86,11 +85,6 @@ fun HomeScreen(
     val productBUnitFocus = remember { FocusRequester() }
     val productBPriceFocus = remember { FocusRequester() }
     val productBQuantityFocus = remember { FocusRequester() }
-    @Suppress("UNUSED_VARIABLE")
-    val handleScanClick: (String) -> Unit = rememberCameraPermissionHandler(
-        onPermissionGranted = { target -> onNavigateToScann(target) }
-    )
-
     HomeContent(
         modifier = modifier,
         uiState = uiState,
@@ -98,7 +92,7 @@ fun HomeScreen(
             onNavigateToComparison = onNavigateToComparison,
             onNavigateToHistory = onNavigateToHistory,
             onNavigateToSettings = onNavigateToSettings,
-            handleScanClick = handleScanClick,
+            handleScanClick = onNavigateToScann,
             onUpdateProductA = viewModel::updateProductA,
             onUpdateProductB = viewModel::updateProductB,
             onShowIncompatibleUnitsMessage = viewModel::showIncompatibleUnitsMessage,
