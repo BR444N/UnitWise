@@ -66,6 +66,11 @@
     <string name="detected_text_subtitle">Sélectionnez les informations que vous souhaitez ajouter</string>
     <string name="use_selected_text">Utiliser le texte sélectionné</string>
     <string name="scan_again">Scanner à nouveau</string>
+    <string name="camera_permission_loading_title">Ouverture de l\'appareil photo</string>
+    <string name="camera_permission_loading_description">En attente de l\'autorisation de l\'appareil photo pour commencer à scanner.</string>
+    <string name="camera_permission_denied_title">Accès à l\'appareil photo requis</string>
+    <string name="camera_permission_denied_description">Autorisez l\'accès à l\'appareil photo pour scanner les noms de produits.</string>
+    <string name="camera_permission_retry">Autoriser l\'appareil photo</string>
 
     <!-- SETTINGS STRINGS -->
     <string name="settings_dark_theme_title">Thème sombre</string>
