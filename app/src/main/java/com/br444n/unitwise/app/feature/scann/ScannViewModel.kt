@@ -43,26 +43,34 @@ class ScannViewModel : ViewModel() {
             return
         }
 
-        isProcessing = true
-        val rotation = imageProxy.imageInfo.rotationDegrees
-        val image = InputImage.fromMediaImage(mediaImage, rotation)
-        
-        getTextRecognizer().process(image)
-            .addOnSuccessListener { visionText ->
-                handleVisionTextResult(
-                    visionText = visionText,
-                    mediaWidth = mediaImage.width,
-                    mediaHeight = mediaImage.height,
-                    rotation = rotation,
-                    previewWidth = previewWidth,
-                    previewHeight = previewHeight,
-                    overlayHeight = overlayHeight
-                )
-            }
-            .addOnCompleteListener {
-                isProcessing = false
-                imageProxy.close()
-            }
+        try {
+            isProcessing = true
+            val rotation = imageProxy.imageInfo.rotationDegrees
+            val image = InputImage.fromMediaImage(mediaImage, rotation)
+
+            getTextRecognizer().process(image)
+                .addOnSuccessListener { visionText ->
+                    handleVisionTextResult(
+                        visionText = visionText,
+                        mediaWidth = mediaImage.width,
+                        mediaHeight = mediaImage.height,
+                        rotation = rotation,
+                        previewWidth = previewWidth,
+                        previewHeight = previewHeight,
+                        overlayHeight = overlayHeight
+                    )
+                }
+                .addOnFailureListener {
+                    isProcessing = false
+                }
+                .addOnCompleteListener {
+                    isProcessing = false
+                    imageProxy.close()
+                }
+        } catch (_: Exception) {
+            isProcessing = false
+            imageProxy.close()
+        }
     }
 
     private fun shouldProcessFrame(previewWidth: Int, previewHeight: Int, overlayHeight: Int): Boolean {
