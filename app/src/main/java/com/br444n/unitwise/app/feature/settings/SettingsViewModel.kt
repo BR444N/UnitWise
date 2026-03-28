@@ -8,6 +8,7 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.br444n.unitwise.app.UnitWiseApplication
 import com.br444n.unitwise.app.domain.repository.UserPreferencesRepository
+import com.br444n.unitwise.app.ui.util.LocaleHelper
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -37,7 +38,9 @@ class SettingsViewModel(
 
     fun updateLanguage(language: String) {
         viewModelScope.launch {
-            userPreferencesRepository.saveLanguagePreference(language)
+            userPreferencesRepository.saveLanguagePreference(
+                LocaleHelper.normalizeLanguageCode(language)
+            )
         }
     }
 
