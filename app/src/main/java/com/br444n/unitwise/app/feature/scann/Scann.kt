@@ -13,19 +13,19 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.core.content.ContextCompat
 import com.br444n.unitwise.app.feature.scann.components.CameraPreviewView
 import com.br444n.unitwise.app.feature.scann.components.ScannPermissionContent
 import com.br444n.unitwise.app.feature.scann.components.ScannBottomSheet
@@ -36,7 +36,9 @@ import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.core.content.ContextCompat
 import com.br444n.unitwise.R
+import java.util.concurrent.Executors
 
 private const val PREVIEW_SELECTED_TEXT = "$24.50"
 private val PREVIEW_DETECTED_TEXTS = listOf("500g", PREVIEW_SELECTED_TEXT, "1kg", "Brand Name")
@@ -136,20 +138,28 @@ fun ScannContent(
     onScanAgainClick: () -> Unit,
     onProcessImage: (ImageProxy, Int, Int, Int) -> Unit
 ) {
-    var previewWidth by remember { mutableIntStateOf(0) }
-    var previewHeight by remember { mutableIntStateOf(0) }
-    var overlayHeight by remember { mutableIntStateOf(0) }
-
-    val context = LocalContext.current
-    val imageAnalyzer = remember(previewWidth, previewHeight, overlayHeight) {
-        if (previewWidth == 0 || overlayHeight == 0) return@remember null
+    var previewSize by remember { mutableStateOf(IntSize.Zero) }
+    var overlaySize by remember { mutableStateOf(IntSize.Zero) }
+    val analyzerExecutor = remember { Executors.newSingleThreadExecutor() }
+    DisposableEffect(analyzerExecutor) {
+        onDispose { analyzerExecutor.shutdown() }
+    }
+    val imageAnalyzer = remember(previewSize, overlaySize) {
+        if (previewSize.width == 0 || overlaySize.height == 0) return@remember null
         ImageAnalysis.Builder()
             .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
             .build()
             .also { analyzer ->
                 analyzer.setAnalyzer(
-                    ContextCompat.getMainExecutor(context)
-                ) { imageProxy -> onProcessImage(imageProxy, previewWidth, previewHeight, overlayHeight) }
+                    analyzerExecutor
+                ) { imageProxy ->
+                    onProcessImage(
+                        imageProxy,
+                        previewSize.width,
+                        previewSize.height,
+                        overlaySize.height
+                    )
+                }
             }
     }
 
@@ -160,10 +170,9 @@ fun ScannContent(
     ) {
         // Camera fills the whole screen behind the UI
         CameraPreviewView(
-            modifier = Modifier.fillMaxSize().onSizeChanged {
-                previewWidth = it.width
-                previewHeight = it.height
-            },
+            modifier = Modifier
+                .fillMaxSize()
+                .onSizeChanged { previewSize = it },
             isFlashOn = state.isFlashOn,
             imageAnalyzer = imageAnalyzer
         )
@@ -172,9 +181,11 @@ fun ScannContent(
         Column(
             modifier = Modifier.fillMaxSize()
         ) {
-            Box(modifier = Modifier.weight(1f).onSizeChanged {
-                overlayHeight = it.height
-            }) {
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .onSizeChanged { overlaySize = it }
+            ) {
                 // Scanner mask perfectly centered in the remaining available upper space
                 ScannerOverlay(
                     modifier = Modifier.fillMaxSize()
