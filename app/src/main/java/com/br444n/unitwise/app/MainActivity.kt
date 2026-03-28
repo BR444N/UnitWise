@@ -1,31 +1,32 @@
 package com.br444n.unitwise.app
 
-import android.content.Context
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.LaunchedEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.ViewModelProvider
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.os.LocaleListCompat
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.br444n.unitwise.app.navigation.AppNavigation
 import com.br444n.unitwise.app.ui.MainViewModel
 import com.br444n.unitwise.app.ui.theme.UnitWiseTheme
 import com.br444n.unitwise.app.ui.util.LocaleHelper
 
-class MainActivity : ComponentActivity() {
-
-    override fun attachBaseContext(newBase: Context) {
-        val prefs = newBase.getSharedPreferences("user_prefs", MODE_PRIVATE)
-        val lang = LocaleHelper.normalizeLanguageCode(
-            prefs.getString("selected_language", "en") ?: "en"
-        )
-        super.attachBaseContext(LocaleHelper.wrap(newBase, lang))
-    }
+class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        val prefs = getSharedPreferences("user_prefs", MODE_PRIVATE)
+        val initialLanguage = LocaleHelper.normalizeLanguageCode(
+            prefs.getString("selected_language", "en") ?: "en"
+        )
+        AppCompatDelegate.setApplicationLocales(
+            LocaleListCompat.forLanguageTags(initialLanguage)
+        )
+
         val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
         
@@ -41,13 +42,16 @@ class MainActivity : ComponentActivity() {
             val selectedLanguage by viewModel.selectedLanguage.collectAsStateWithLifecycle()
 
             if (isDarkTheme != null && selectedLanguage != null) {
-                // If the language changed at runtime, recreate the activity to apply it globally
                 LaunchedEffect(selectedLanguage) {
-                    val currentLanguageCode = LocaleHelper.currentLanguageCode(resources.configuration)
                     val targetLanguageCode = LocaleHelper.normalizeLanguageCode(selectedLanguage!!)
+                    val currentLanguageCode = LocaleHelper.normalizeLanguageCode(
+                        AppCompatDelegate.getApplicationLocales().toLanguageTags()
+                    )
 
                     if (targetLanguageCode != currentLanguageCode) {
-                        recreate()
+                        AppCompatDelegate.setApplicationLocales(
+                            LocaleListCompat.forLanguageTags(targetLanguageCode)
+                        )
                     }
                 }
 
