@@ -21,3 +21,4 @@ local.properties
 .idea/deviceManager.xml
 .idea/androidTestResultsUserPreferences.xml
 compile_log.txt
+app/release/app-release.aab
