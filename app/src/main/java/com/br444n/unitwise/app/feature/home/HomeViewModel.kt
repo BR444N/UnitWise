@@ -8,6 +8,7 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.br444n.unitwise.app.UnitWiseApplication
 import com.br444n.unitwise.app.domain.model.MeasurementUnit
+import com.br444n.unitwise.app.domain.usecase.GetComparisonUseCase
 import com.br444n.unitwise.app.domain.usecase.IncompatibleMeasurementUnitsException
 import com.br444n.unitwise.app.domain.usecase.SaveComparisonUseCase
 import com.br444n.unitwise.app.feature.home.components.ProductInputState
@@ -19,7 +20,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class HomeViewModel(
-    private val saveComparisonUseCase: SaveComparisonUseCase
+    private val saveComparisonUseCase: SaveComparisonUseCase,
+    private val getComparisonUseCase: GetComparisonUseCase
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(HomeUiState())
     val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
@@ -78,13 +80,41 @@ class HomeViewModel(
         }
     }
 
+    fun loadComparisonForEdit(id: Int) {
+        viewModelScope.launch {
+            val comparison = getComparisonUseCase(id) ?: return@launch
+            _uiState.update {
+                it.copy(
+                    productA = ProductInputState(
+                        productName = comparison.productAName,
+                        contentAmount = comparison.productAContent,
+                        selectedUnit = comparison.productAUnit,
+                        price = comparison.productAPrice,
+                        quantity = comparison.productAQuantity
+                    ),
+                    productB = ProductInputState(
+                        productName = comparison.productBName,
+                        contentAmount = comparison.productBContent,
+                        selectedUnit = comparison.productBUnit,
+                        price = comparison.productBPrice,
+                        quantity = comparison.productBQuantity
+                    ),
+                    unitSelectionDriver = null,
+                    editingComparisonId = comparison.id
+                )
+            }
+        }
+    }
+
     fun calculate(onNavigate: (Int) -> Unit) {
         _uiState.update { it.copy(isLoading = true) }
         viewModelScope.launch {
             try {
+                val editingComparisonId = _uiState.value.editingComparisonId
                 val id = saveComparisonUseCase(
                     productA = _uiState.value.productA,
-                    productB = _uiState.value.productB
+                    productB = _uiState.value.productB,
+                    comparisonId = editingComparisonId
                 ).toInt()
 
                 delay(CALCULATION_DELAY)
@@ -94,7 +124,8 @@ class HomeViewModel(
                         isLoading = false,
                         productA = ProductInputState(),
                         productB = ProductInputState(),
-                        unitSelectionDriver = null
+                        unitSelectionDriver = null,
+                        editingComparisonId = null
                     )
                 }
                 onNavigate(id)
@@ -128,7 +159,10 @@ class HomeViewModel(
             initializer {
                 val application = (this[APPLICATION_KEY] as UnitWiseApplication)
                 val repository = application.container.comparisonRepository
-                HomeViewModel(SaveComparisonUseCase(repository))
+                HomeViewModel(
+                    saveComparisonUseCase = SaveComparisonUseCase(repository),
+                    getComparisonUseCase = GetComparisonUseCase(repository)
+                )
             }
         }
     }
