@@ -108,12 +108,23 @@ class ScannViewModel : ViewModel() {
             val mappedCenterY = b.centerY().toFloat() * scale - offsetY
             mappedCenterX in targetLeft..targetRight && mappedCenterY in targetTop..targetBottom
         }.map { it.text.replace("\n", " ").trim() }
+            .filter { it.isNotBlank() }
 
-        if (validBlocks.isEmpty()) return
+        val detectedOptions = validBlocks.takeIf { it.isNotEmpty() }
+            ?: visionText.textBlocks
+                .map { it.text.replace("\n", " ").trim() }
+                .filter { it.isNotBlank() }
+                .takeIf { it.isNotEmpty() }
+            ?: visionText.text
+                .split('\n')
+                .map { it.trim() }
+                .filter { it.isNotBlank() }
 
-        val options = validBlocks.toMutableList()
-        if (validBlocks.size > 1) {
-            options.add(0, validBlocks.joinToString(" "))
+        if (detectedOptions.isEmpty()) return
+
+        val options = detectedOptions.toMutableList()
+        if (detectedOptions.size > 1) {
+            options.add(0, detectedOptions.joinToString(" "))
         }
         
         _uiState.update { it.copy(detectedTexts = options.distinct()) }
