@@ -1,5 +1,6 @@
 package com.br444n.unitwise.app.feature.home
 
+import com.br444n.unitwise.app.domain.usecase.GetComparisonUseCase
 import com.br444n.unitwise.app.domain.usecase.SaveComparisonUseCase
 import com.br444n.unitwise.util.MainDispatcherRule
 import com.google.common.truth.Truth.assertThat
@@ -20,13 +21,14 @@ class HomeViewModelTest {
     val mainDispatcherRule = MainDispatcherRule()
 
     private val saveComparisonUseCase = mockk<SaveComparisonUseCase>()
+    private val getComparisonUseCase = mockk<GetComparisonUseCase>()
 
     @Test
     fun `calculate should save and navigate after delay`() = runTest {
         // Given
         val expectedId = 42L
-        coEvery { saveComparisonUseCase(any(), any()) } returns expectedId
-        val viewModel = HomeViewModel(saveComparisonUseCase)
+        coEvery { saveComparisonUseCase(any(), any(), any()) } returns expectedId
+        val viewModel = HomeViewModel(saveComparisonUseCase, getComparisonUseCase)
         var navigatedId: Int? = null
 
         // When
