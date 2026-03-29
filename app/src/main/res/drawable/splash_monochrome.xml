@@ -22,8 +22,8 @@
         android:pivotY="106"
         android:scaleX="0.26"
         android:scaleY="0.26"
-        android:translateX="-4"
-        android:translateY="-4">
+        android:translateX="-13"
+        android:translateY="-13">
         <path
             android:fillAlpha="0"
             android:strokeColor="#FF000000"
