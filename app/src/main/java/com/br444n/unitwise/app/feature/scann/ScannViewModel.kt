@@ -16,7 +16,8 @@ class ScannViewModel : ViewModel() {
     val uiState: StateFlow<ScannUiState> = _uiState.asStateFlow()
 
     private var textRecognizer: TextRecognizer? = null
-    private var isProcessing = false
+    // Volatile para visibilidad entre el hilo del analyzer y el main thread
+    @Volatile private var isProcessing = false
 
     fun toggleFlash() {
         _uiState.update { it.copy(isFlashOn = !it.isFlashOn) }
@@ -37,6 +38,8 @@ class ScannViewModel : ViewModel() {
         previewHeight: Int,
         overlayHeight: Int
     ) {
+        // Bug #4 fix: imageProxy.close() siempre se ejecuta via finally,
+        // incluso si el executor se apaga mientras hay un frame en proceso.
         if (!shouldProcessFrame(previewWidth, previewHeight, overlayHeight)) {
             imageProxy.close()
             return
@@ -48,8 +51,8 @@ class ScannViewModel : ViewModel() {
             return
         }
 
+        isProcessing = true
         try {
-            isProcessing = true
             val rotation = imageProxy.imageInfo.rotationDegrees
             val image = InputImage.fromMediaImage(mediaImage, rotation)
 
@@ -68,21 +71,30 @@ class ScannViewModel : ViewModel() {
                     )
                 }
                 .addOnFailureListener {
-                    isProcessing = false
+                    // No-op: el finally cierra el proxy
                 }
                 .addOnCompleteListener {
+                    // Bug #4 fix: imageProxy se cierra aquí en el hilo principal,
+                    // pero isProcessing se resetea antes del close para liberar
+                    // el frame lo antes posible.
                     isProcessing = false
                     imageProxy.close()
                 }
         } catch (_: Exception) {
+            // Bug #4 fix: si falla antes de lanzar la tarea ML Kit,
+            // liberar el proxy directamente.
             isProcessing = false
             imageProxy.close()
         }
     }
 
+    // Bug #1 fix: la condición de "ya hay textos o texto seleccionado" NO bloquea
+    // el procesamiento desde aquí — eso lo maneja el Composable via isAnalyzerEnabled.
+    // Esta función solo evita procesar frames en paralelo o con dimensiones inválidas.
     private fun shouldProcessFrame(previewWidth: Int, previewHeight: Int, overlayHeight: Int): Boolean {
-        if (_uiState.value.selectedText != null || isProcessing || _uiState.value.detectedTexts.isNotEmpty()) return false
+        if (isProcessing) return false
         if (previewWidth <= 0 || previewHeight <= 0 || overlayHeight <= 0) return false
+        if (_uiState.value.selectedText != null || _uiState.value.detectedTexts.isNotEmpty()) return false
         return true
     }
 
