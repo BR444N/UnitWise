@@ -31,7 +31,12 @@ class ScannViewModel : ViewModel() {
     }
 
     @androidx.annotation.OptIn(androidx.camera.core.ExperimentalGetImage::class)
-    fun processImageProxy(imageProxy: ImageProxy, previewWidth: Int, previewHeight: Int, overlayHeight: Int) {
+    fun processImageProxy(
+        imageProxy: ImageProxy,
+        previewWidth: Int,
+        previewHeight: Int,
+        overlayHeight: Int
+    ) {
         if (!shouldProcessFrame(previewWidth, previewHeight, overlayHeight)) {
             imageProxy.close()
             return
@@ -52,12 +57,14 @@ class ScannViewModel : ViewModel() {
                 .addOnSuccessListener { visionText ->
                     handleVisionTextResult(
                         visionText = visionText,
-                        mediaWidth = mediaImage.width,
-                        mediaHeight = mediaImage.height,
-                        rotation = rotation,
-                        previewWidth = previewWidth,
-                        previewHeight = previewHeight,
-                        overlayHeight = overlayHeight
+                        config = OverlayFrameConfig(
+                            mediaWidth = mediaImage.width,
+                            mediaHeight = mediaImage.height,
+                            rotation = rotation,
+                            previewWidth = previewWidth,
+                            previewHeight = previewHeight,
+                            overlayHeight = overlayHeight
+                        )
                     )
                 }
                 .addOnFailureListener {
@@ -75,42 +82,31 @@ class ScannViewModel : ViewModel() {
 
     private fun shouldProcessFrame(previewWidth: Int, previewHeight: Int, overlayHeight: Int): Boolean {
         if (_uiState.value.selectedText != null || isProcessing || _uiState.value.detectedTexts.isNotEmpty()) return false
-        if (previewWidth == 0 || previewHeight == 0 || overlayHeight == 0) return false
+        if (previewWidth <= 0 || previewHeight <= 0 || overlayHeight <= 0) return false
         return true
     }
 
     private fun handleVisionTextResult(
         visionText: com.google.mlkit.vision.text.Text,
-        mediaWidth: Int,
-        mediaHeight: Int,
-        rotation: Int,
-        previewWidth: Int,
-        previewHeight: Int,
-        overlayHeight: Int
+        config: OverlayFrameConfig
     ) {
-        val imageWidth = if (rotation == 90 || rotation == 270) mediaHeight else mediaWidth
-        val imageHeight = if (rotation == 90 || rotation == 270) mediaWidth else mediaHeight
+        val overlayOptions = ScannOverlayTextFilter.filterToOverlay(
+            blocks = visionText.textBlocks.mapNotNull { block ->
+                val bounds = block.boundingBox ?: return@mapNotNull null
+                OverlayTextBlock(
+                    text = block.text.replace("\n", " ").trim(),
+                    centerX = bounds.centerX().toFloat(),
+                    centerY = bounds.centerY().toFloat()
+                )
+            },
+            config = config
+        )
 
-        val scale = maxOf(previewWidth.toFloat() / imageWidth, previewHeight.toFloat() / imageHeight)
-        val offsetX = (imageWidth * scale - previewWidth) / 2f
-        val offsetY = (imageHeight * scale - previewHeight) / 2f
-
-        val targetWidth = previewWidth * 0.85f
-        val targetHeight = targetWidth * 0.40f
-        val targetLeft = (previewWidth - targetWidth) / 2f
-        val targetTop = (overlayHeight - targetHeight) / 2f
-        val targetRight = targetLeft + targetWidth
-        val targetBottom = targetTop + targetHeight
-
-        val validBlocks = visionText.textBlocks.filter { block ->
-            val b = block.boundingBox ?: return@filter false
-            val mappedCenterX = b.centerX().toFloat() * scale - offsetX
-            val mappedCenterY = b.centerY().toFloat() * scale - offsetY
-            mappedCenterX in targetLeft..targetRight && mappedCenterY in targetTop..targetBottom
-        }.map { it.text.replace("\n", " ").trim() }
+        val detectedOptions = overlayOptions.takeIf { it.isNotEmpty() }
+            ?: visionText.textBlocks
+            .flatMap { block -> block.lines.map { it.text.replace("\n", " ").trim() } }
             .filter { it.isNotBlank() }
-
-        val detectedOptions = validBlocks.takeIf { it.isNotEmpty() }
+            .takeIf { it.isNotEmpty() }
             ?: visionText.textBlocks
                 .map { it.text.replace("\n", " ").trim() }
                 .filter { it.isNotBlank() }
