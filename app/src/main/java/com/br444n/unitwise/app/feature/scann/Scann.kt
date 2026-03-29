@@ -153,7 +153,7 @@ fun ScannContent(
             isAnalyzerEnabled = true
         }
     }
-    val imageAnalyzer = remember(previewSize, overlaySize) {
+    val imageAnalyzer: ImageAnalysis? = remember(previewSize, overlaySize) {
         if (previewSize.width == 0 || overlaySize.height == 0) return@remember null
         ImageAnalysis.Builder()
             .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
