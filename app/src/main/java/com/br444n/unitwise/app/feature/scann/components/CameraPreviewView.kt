@@ -3,8 +3,8 @@ package com.br444n.unitwise.app.feature.scann.components
 import android.view.ViewGroup
 import androidx.camera.core.Camera
 import androidx.camera.core.CameraSelector
-import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.Preview
+import androidx.camera.core.UseCase
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.background
@@ -32,7 +32,7 @@ fun CameraPreviewView(
     modifier: Modifier = Modifier,
     isFlashOn: Boolean = false,
     cameraSelector: CameraSelector = CameraSelector.DEFAULT_BACK_CAMERA,
-    imageAnalyzer: ImageAnalysis? = null
+    imageAnalyzer: UseCase? = null
 ) {
     if (LocalInspectionMode.current) {
         PreviewPlaceholder(modifier)
@@ -44,12 +44,6 @@ fun CameraPreviewView(
     val cameraProviderFuture = remember { ProcessCameraProvider.getInstance(context.applicationContext) }
     var previewView by remember { mutableStateOf<PreviewView?>(null) }
     var boundCamera by remember { mutableStateOf<Camera?>(null) }
-
-    // Guardamos una referencia mutable al analyzer actual.
-    // Esto permite que el DisposableEffect capture siempre el valor más reciente
-    // sin tener que reiniciarse (y hacer unbindAll) cada vez que cambia.
-    val analyzerRef = remember { mutableStateOf<ImageAnalysis?>(null) }
-    analyzerRef.value = imageAnalyzer
 
     Box(modifier = modifier) {
         AndroidView(
@@ -70,10 +64,13 @@ fun CameraPreviewView(
         )
     }
 
-    // El DisposableEffect NO tiene imageAnalyzer como key.
-    // Cuando el analyzer cambia, solo se actualiza analyzerRef.value — no se
-    // dispara un nuevo ciclo de dispose+bind que destruiría el Preview.
-    DisposableEffect(context, lifecycleOwner, cameraSelector, previewView) {
+    DisposableEffect(
+        context,
+        lifecycleOwner,
+        cameraSelector,
+        imageAnalyzer,
+        previewView
+    ) {
         val currentPreviewView = previewView
         if (currentPreviewView == null) {
             onDispose { }
@@ -85,10 +82,11 @@ fun CameraPreviewView(
                     lifecycleOwner = lifecycleOwner,
                     cameraSelector = cameraSelector,
                     previewView = currentPreviewView,
-                    imageAnalyzer = analyzerRef.value,
+                    imageAnalyzer = imageAnalyzer,
                     isFlashOn = isFlashOn
                 )
             }
+
             cameraProviderFuture.addListener(listener, executor)
 
             onDispose {
@@ -122,7 +120,7 @@ private fun bindCameraUseCases(
     lifecycleOwner: LifecycleOwner,
     cameraSelector: CameraSelector,
     previewView: PreviewView,
-    imageAnalyzer: ImageAnalysis?,
+    imageAnalyzer: UseCase?,
     isFlashOn: Boolean
 ): Camera? {
     return try {
@@ -151,7 +149,8 @@ private fun bindCameraUseCases(
             camera.cameraControl.enableTorch(isFlashOn)
         }
     } catch (exc: Exception) {
-        exc.printStackTrace()
+        exc.printStackTrace(
+        )
         null
     }
 }

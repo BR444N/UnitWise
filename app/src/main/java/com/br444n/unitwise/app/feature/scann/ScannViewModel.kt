@@ -15,7 +15,9 @@ class ScannViewModel : ViewModel() {
     private val _uiState = MutableStateFlow(ScannUiState())
     val uiState: StateFlow<ScannUiState> = _uiState.asStateFlow()
 
-    private var textRecognizer: TextRecognizer? = null
+    private val textRecognizer: TextRecognizer = TextRecognition.getClient(
+        TextRecognizerOptions.DEFAULT_OPTIONS
+    )
     // Volatile para visibilidad entre el hilo del analyzer y el main thread
     @Volatile private var isProcessing = false
 
@@ -56,7 +58,7 @@ class ScannViewModel : ViewModel() {
             val rotation = imageProxy.imageInfo.rotationDegrees
             val image = InputImage.fromMediaImage(mediaImage, rotation)
 
-            getTextRecognizer().process(image)
+            textRecognizer.process(image)
                 .addOnSuccessListener { visionText ->
                     handleVisionTextResult(
                         visionText = visionText,
@@ -138,15 +140,8 @@ class ScannViewModel : ViewModel() {
         _uiState.update { it.copy(detectedTexts = options.distinct()) }
     }
 
-    private fun getTextRecognizer(): TextRecognizer {
-        return textRecognizer ?: TextRecognition.getClient(
-            TextRecognizerOptions.DEFAULT_OPTIONS
-        ).also { textRecognizer = it }
-    }
-
     override fun onCleared() {
         super.onCleared()
-        textRecognizer?.close()
-        textRecognizer = null
+        textRecognizer.close()
     }
 }

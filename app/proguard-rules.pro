@@ -28,3 +28,5 @@
 -dontwarn com.google.mlkit.**
 # GMS internal — clases internas generadas para JNI/modelo nativo; debe quedar amplia
 -keep class com.google.android.gms.internal.mlkit_vision_text_bundled.** { *; }
+# GMS Tasks API — usado por ML Kit para retornar resultados asincrónicos (Task<T>)
+-keep class com.google.android.gms.tasks.** { *; }
