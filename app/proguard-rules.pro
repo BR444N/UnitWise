@@ -22,6 +22,9 @@
 # Lottie animations - Narrow to model classes
 -keepclassmembers class com.airbnb.lottie.model.** { *; }
 
-# ML Kit Text Recognition - Specific to the recognizer API
--keep class com.google.mlkit.vision.text.TextRecognizer { *; }
--keep class com.google.mlkit.vision.text.Text { *; }
+# ML Kit Text Recognition — API pública de text recognition y common (InputImage, etc.)
+-keep class com.google.mlkit.vision.text.** { *; }
+-keep class com.google.mlkit.vision.common.** { *; }
+-dontwarn com.google.mlkit.**
+# GMS internal — clases internas generadas para JNI/modelo nativo; debe quedar amplia
+-keep class com.google.android.gms.internal.mlkit_vision_text_bundled.** { *; }
