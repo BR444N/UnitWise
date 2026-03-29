@@ -39,7 +39,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.core.content.ContextCompat
 import com.br444n.unitwise.R
 import java.util.concurrent.Executors
-import kotlinx.coroutines.delay
 
 private const val PREVIEW_SELECTED_TEXT = "$24.50"
 private val PREVIEW_DETECTED_TEXTS = listOf("500g", PREVIEW_SELECTED_TEXT, "1kg", "Brand Name")
@@ -141,17 +140,9 @@ fun ScannContent(
 ) {
     var previewSize by remember { mutableStateOf(IntSize.Zero) }
     var overlaySize by remember { mutableStateOf(IntSize.Zero) }
-    var isAnalyzerEnabled by rememberSaveable { mutableStateOf(false) }
     val analyzerExecutor = remember { Executors.newSingleThreadExecutor() }
     DisposableEffect(analyzerExecutor) {
         onDispose { analyzerExecutor.shutdown() }
-    }
-    LaunchedEffect(previewSize, overlaySize) {
-        isAnalyzerEnabled = false
-        if (previewSize.width > 0 && previewSize.height > 0 && overlaySize.height > 0) {
-            delay(350)
-            isAnalyzerEnabled = true
-        }
     }
     val imageAnalyzer: ImageAnalysis? = remember(previewSize, overlaySize) {
         if (previewSize.width == 0 || overlaySize.height == 0) return@remember null
@@ -183,7 +174,7 @@ fun ScannContent(
                 .fillMaxSize()
                 .onSizeChanged { previewSize = it },
             isFlashOn = state.isFlashOn,
-            imageAnalyzer = imageAnalyzer.takeIf { isAnalyzerEnabled }
+            imageAnalyzer = imageAnalyzer
         )
         
         // UI Layer
