@@ -19,14 +19,29 @@
 -keep class com.br444n.unitwise.app.data.local.entity.** { *; }
 -keep interface com.br444n.unitwise.app.data.local.dao.** { *; }
 
-# Lottie animations - Narrow to model classes
--keepclassmembers class com.airbnb.lottie.model.** { *; }
+# Lottie animations — clase completa protegida para evitar problemas de reflexión en JSON parser
+-keep class com.airbnb.lottie.model.** { *; }
 
-# ML Kit Text Recognition — API pública de text recognition y common (InputImage, etc.)
+# ML Kit Common — MlKitInitProvider se registra como ContentProvider en el manifest
+# y corre ANTES de Application.onCreate(). Si sus clases son eliminadas, la app crashea al startup.
+-keep class com.google.mlkit.common.** { *; }
+
+# ML Kit Text Recognition — API pública
 -keep class com.google.mlkit.vision.text.** { *; }
 -keep class com.google.mlkit.vision.common.** { *; }
--dontwarn com.google.mlkit.**
-# GMS internal — clases internas generadas para JNI/modelo nativo; debe quedar amplia
+
+# Firebase Component Framework — ML Kit usa Firebase DI internamente aunque no uses Firebase.
+# ComponentRegistrar se registra por NOMBRE en el manifest (meta-data), R8 no detecta que son necesarios.
+-keep class com.google.firebase.components.** { *; }
+-keep class com.google.firebase.provider.** { *; }
+-keep class * implements com.google.firebase.components.ComponentRegistrar
+
+# GMS internal — clases nativas JNI del modelo bundled
 -keep class com.google.android.gms.internal.mlkit_vision_text_bundled.** { *; }
-# GMS Tasks API — usado por ML Kit para retornar resultados asincrónicos (Task<T>)
+
+# GMS Tasks API — usado por ML Kit para resultados asincrónicos (Task<T>)
 -keep class com.google.android.gms.tasks.** { *; }
+
+# Suprimir warnings de ML Kit y Firebase internals
+-dontwarn com.google.mlkit.**
+-dontwarn com.google.firebase.**
