@@ -50,6 +50,7 @@ The app focuses on simplicity, clarity, and real-world usefulness during everyda
 - [Tech Stack](#tech-stack)
 - [Platform](#platform)
 - [Project Status](#project-status)
+- [Known Issues](#known-issues)
 - [Privacy](#privacy)
 - [Contribution](#contribution)
 - [Author](#author)
@@ -148,6 +149,15 @@ Current stage:
 * ✅ MVP completed
 * ✅ Closed testing on Google Play
 * 🔄 Continuous improvements and UX refinements
+
+---
+
+# Known Issues
+
+- Camera scanning behavior can vary across Android versions and OEM implementations.
+- OCR accuracy depends on device camera quality, lighting conditions, and text positioning.
+- In-app language delivery may differ depending on Play App Bundle configuration and installed locale resources.
+- Splash screen and startup behavior may vary slightly between Android 12+ and older supported versions.
 
 ---
 
