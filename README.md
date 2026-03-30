@@ -48,6 +48,7 @@ The app focuses on simplicity, clarity, and real-world usefulness during everyda
 - [Problem It Solves](#problem-it-solves)
 - [Visual Evolution: Stitch AI Inspiration vs. Human-Centered Design](#visual-evolution-stitch-ai-inspiration-vs-human-centered-design)
 - [Tech Stack](#tech-stack)
+- [Getting Started](#getting-started)
 - [Architecture](#architecture)
 - [Platform](#platform)
 - [Project Status](#project-status)
@@ -132,6 +133,29 @@ In today's industry, AI-driven prototyping is becoming a key standard for rapid 
 * **Unit Testing:** [JUnit](https://junit.org/), [MockK](https://mockk.io/) for mocking, [Turbine](https://github.com/cashapp/turbine) for Flow testing, and [Google Truth](https://truth.dev/) for fluent assertions.
 * **UI & Instrumentation Testing:** [Espresso](https://developer.android.com/training/testing/espresso) and Compose UI Test to ensure interface integrity.
 * **KSP (Kotlin Symbol Processing):** High-performance code generation for Room database.
+
+---
+
+# Getting Started
+
+To run UnitWise locally:
+
+1. Clone the repository:
+
+   ```bash
+   git clone https://github.com/BR444N/UnitWise.git
+   ```
+
+2. Open the project in Android Studio.
+3. Let Gradle sync and download all required dependencies.
+4. Use a device or emulator running Android 7.0 (API 24) or higher.
+5. Run the `app` configuration in debug mode.
+
+Recommended setup notes:
+
+- Use a device with camera support if you want to test the scanning flow.
+- Google Play services should be available for the smoothest ML Kit behavior on physical devices.
+- For release-like validation, test both debug installs and Google Play closed testing builds.
 
 ---
 
