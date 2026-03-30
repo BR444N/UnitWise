@@ -24,7 +24,7 @@
 
 <p align="center">
   <img alt="API" src="https://img.shields.io/badge/Android_API-36-102214.svg?style=for-the-badge&logo=android&logoColor=white"/>
-  <img alt="Version" src="https://img.shields.io/badge/Version-v1.0-102214.svg?style=for-the-badge&logo=git&logoColor=white"/>
+  <img alt="Version" src="https://img.shields.io/badge/Version-v1.0.9-102214.svg?style=for-the-badge&logo=git&logoColor=white"/>
   <a href="https://github.com/BR444N/UnitWise/blob/main/LICENSE">
     <img alt="License" src="https://img.shields.io/badge/License-MIT-102214.svg?style=for-the-badge&logo=open-source-initiative&logoColor=white"/>
   </a>
@@ -36,7 +36,7 @@
 
 Instead of guessing which product is cheaper, UnitWise calculates and compares prices automatically, allowing users to make faster and smarter shopping decisions.
 
-The app focuses on simplicity, clarity, and real-world usefulness during everyday grocery supermarket shopping.
+The app focuses on simplicity, clarity, and real-world usefulness during everyday grocery shopping.
 
 ---
 
@@ -48,6 +48,7 @@ The app focuses on simplicity, clarity, and real-world usefulness during everyda
 - [Problem It Solves](#problem-it-solves)
 - [Visual Evolution: Stitch AI Inspiration vs. Human-Centered Design](#visual-evolution-stitch-ai-inspiration-vs-human-centered-design)
 - [Tech Stack](#tech-stack)
+- [Architecture](#architecture)
 - [Platform](#platform)
 - [Project Status](#project-status)
 - [Known Issues](#known-issues)
@@ -60,7 +61,7 @@ The app focuses on simplicity, clarity, and real-world usefulness during everyda
 # Features
 
 - **📊 Product Comparison:**
-Compare multiple grocery products by price and quantity.
+Compare grocery products by price, content, and quantity.
 Automatic unit price calculation.
 
 - **📷 Camera Product Scanning:**
@@ -104,7 +105,7 @@ In today's industry, AI-driven prototyping is becoming a key standard for rapid 
 |                  Stitch AI Exploration (Inspiration)                   |                   Human-Centered Refinement (Final Design)                    | Key Iteration Detail                                                                                                                                                                                                                            |
 |:----------------------------------------------------------------------:|:-----------------------------------------------------------------------------:|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | <img src="assets/UI_UnitWise.png" width="180" alt="Stitch AI Concept"> |   <img src="assets/App_UnitWise.png" width="180" alt="UnitWise Final Home">   | **UX Simplification:** The AI layout included redundant features like 'Lists' and 'Trends'. My design strips away this noise, simplifying navigation to just **Home** and **History** to focus on fast, on-the-spot price comparisons.          |
-|    <img src="assets/UI_Scann.png" width="180" alt="Stitch AI Scan">    |    <img src="assets/App_Scann.png" width="180" alt="UnitWise Final Scan">     | **Focused Precision:** Unlike the AI concept which processes the entire screen, my design uses a **constrained green framing grid**. ML Kit is programmed to analyze text *only* within this frame, avoiding visual noise from nearby products. |
+|    <img src="assets/UI_Scann.png" width="180" alt="Stitch AI Scan">    |    <img src="assets/App_Scann.png" width="180" alt="UnitWise Final Scan">     | **Focused Precision:** Unlike the AI concept which processes the entire screen, my design uses a **constrained green framing grid** to guide users toward the most relevant text area and reduce visual noise from nearby products. |
 | <img src="assets/UI_Results.png" width="180" alt="Stitch AI Results">  | <img src="assets/App_Comparison.png" width="180" alt="UnitWise Final Result"> | **Scope Reality:** AI envisioned an e-commerce platform with images and "Add to Cart" buttons. **UnitWise** is a pure math utility; it intentionally lacks product databases or images to remain a lightweight and focused tool.                |
 
 ---
@@ -131,6 +132,22 @@ In today's industry, AI-driven prototyping is becoming a key standard for rapid 
 * **Unit Testing:** [JUnit](https://junit.org/), [MockK](https://mockk.io/) for mocking, [Turbine](https://github.com/cashapp/turbine) for Flow testing, and [Google Truth](https://truth.dev/) for fluent assertions.
 * **UI & Instrumentation Testing:** [Espresso](https://developer.android.com/training/testing/espresso) and Compose UI Test to ensure interface integrity.
 * **KSP (Kotlin Symbol Processing):** High-performance code generation for Room database.
+
+---
+
+# Architecture
+
+UnitWise is organized around a feature-first Android structure with clear separation between UI, domain logic, and local data.
+
+- `feature/`: Screen-level features such as `home`, `history`, `comparison`, `scann`, and `settings`.
+- `domain/`: Core business logic, models, repositories, and use cases.
+- `data/`: Local persistence, repository implementations, and Room integration.
+- `ui/`: Shared theming, reusable UI components, and app-level presentation helpers.
+- `navigation/`: Route definitions and Navigation Compose setup.
+- `permission/`: Runtime permission helpers used by hardware-driven flows.
+- `di/`: Application container and dependency wiring.
+
+This structure helps keep business rules independent from Compose UI while making feature modules easier to evolve over time.
 
 ---
 
@@ -177,6 +194,8 @@ AI designs were used as inspiration, while final interfaces were adapted to bett
 
 - UnitWise does not require unnecessary personal data.
 - All comparisons are stored locally.
+- Camera access is used only for on-device text scanning during product capture.
+- Scanned images and recognized text are not uploaded to external servers.
 
 ---
 
