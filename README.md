@@ -30,7 +30,7 @@
   </a>
 </p>
 
-# 🛒 UnitWise — Smart Grocery Comparison App
+# UnitWise — Smart Grocery Comparison App
 
 **UnitWise** is an Android application designed to help users **compare supermarket products and save money** by identifying the best value based on unit pricing.
 
@@ -40,23 +40,23 @@ The app focuses on simplicity, clarity, and real-world usefulness during everyda
 
 ---
 
-## Table of Content
+## Table of Contents
 
-- [# 🛒 UnitWise — Smart Grocery Comparison App](#-unitwise--smart-grocery-comparison-app)
-- [# ✨ Features](#-features)
-- [# 🔜 Coming Soon](#-coming-soon)
-- [# 🧠 Problem It Solves](#-problem-it-solves)
-- [# 🖼️ Visual Evolution: Stitch AI Inspiration vs. Human-Centered Design](#-visual-evolution-stitch-ai-inspiration-vs-human-centered-design)
-- [# 🛠️ Tech Stack](#-tech-stack)
-- [# 📱 Platform](#-platform)
-- [# 🚀 Project Status](#-project-status)
-- [# 🔒 Privacy](#-privacy)
-- [# 🤝 Contribution](#-contribution)
-- [# 👨‍💻 Author](#-author)
+- [UnitWise — Smart Grocery Comparison App](#unitwise--smart-grocery-comparison-app)
+- [Features](#features)
+- [Coming Soon](#coming-soon)
+- [Problem It Solves](#problem-it-solves)
+- [Visual Evolution: Stitch AI Inspiration vs. Human-Centered Design](#visual-evolution-stitch-ai-inspiration-vs-human-centered-design)
+- [Tech Stack](#tech-stack)
+- [Platform](#platform)
+- [Project Status](#project-status)
+- [Privacy](#privacy)
+- [Contribution](#contribution)
+- [Author](#author)
 
 ---
 
-# ✨ Features
+# Features
 
 - **📊 Product Comparison:**
 Compare multiple grocery products by price and quantity.
@@ -76,7 +76,7 @@ Minimal and accessibility-focused design system.
 
 ---
 
-# 🔜 Coming Soon
+# Coming Soon
 
 - **🔗 Share Comparisons:**
   Share results with friends or family.
@@ -84,7 +84,7 @@ Minimal and accessibility-focused design system.
 
 ---
 
-# 🧠 Problem It Solves
+# Problem It Solves
 
 Many supermarket products use different sizes and prices, making it difficult to know which option is actually cheaper.
 
@@ -96,7 +96,7 @@ UnitWise solves this by:
 
 ---
 
-### 🖼️ Visual Evolution: Stitch AI Inspiration vs. Human-Centered Design
+### Visual Evolution: Stitch AI Inspiration vs. Human-Centered Design
 
 In today's industry, AI-driven prototyping is becoming a key standard for rapid ideation. This project utilizes **Stitch AI** for initial concept mapping, followed by a rigorous human-led refinement process to ensure the interface meets real-world Android production standards.
 
@@ -108,7 +108,7 @@ In today's industry, AI-driven prototyping is becoming a key standard for rapid 
 
 ---
 
-# 🛠️ Tech Stack
+# Tech Stack
 
 ## 📱 Core & UI
 * **[Kotlin](https://kotlinlang.org/):** Main language utilizing Coroutines and Flow for asynchronous programming.
@@ -133,7 +133,7 @@ In today's industry, AI-driven prototyping is becoming a key standard for rapid 
 
 ---
 
-# 📱 Platform
+# Platform
 
 * Android Native Application
 * Minimum SDK: **24+**
@@ -141,7 +141,7 @@ In today's industry, AI-driven prototyping is becoming a key standard for rapid 
 
 ---
 
-# 🚀 Project Status
+# Project Status
 
 Current stage:
 
@@ -163,21 +163,21 @@ AI designs were used as inspiration, while final interfaces were adapted to bett
 
 ---
 
-# 🔒 Privacy
+# Privacy
 
 - UnitWise does not require unnecessary personal data.
 - All comparisons are stored locally.
 
 ---
 
-# 🤝 Contribution
+# Contribution
 
 This project is currently maintained as a personal production app.
 **Suggestions and feedback are welcome through issues.**
 
 ---
 
-# 👨‍💻 Author
+# Author
 **[BR444N](https://github.com/BR444N)**
 
 Developed as a native Android project focused on learning, product design, and real-world usability.
