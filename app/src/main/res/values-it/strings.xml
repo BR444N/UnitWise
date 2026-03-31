@@ -71,6 +71,8 @@
     <string name="camera_permission_denied_title">Accesso alla fotocamera richiesto</string>
     <string name="camera_permission_denied_description">Consenti l\'accesso alla fotocamera per scandire i nomi dei prodotti.</string>
     <string name="camera_permission_retry">Consenti fotocamera</string>
+    <string name="camera_permission_permanently_denied_description">L\'accesso alla fotocamera è stato negato definitivamente. Apri Impostazioni per abilitarlo manualmente.</string>
+    <string name="camera_permission_open_settings">Apri Impostazioni</string>
 
     <!-- SETTINGS STRINGS -->
     <string name="settings_dark_theme_title">Tema scuro</string>

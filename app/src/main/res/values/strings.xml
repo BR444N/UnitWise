@@ -71,6 +71,8 @@
     <string name="camera_permission_denied_title">Camera access required</string>
     <string name="camera_permission_denied_description">Allow camera access to scan product names.</string>
     <string name="camera_permission_retry">Allow camera</string>
+    <string name="camera_permission_permanently_denied_description">Camera access was permanently denied. Open Settings to enable it manually.</string>
+    <string name="camera_permission_open_settings">Open Settings</string>
 
     <!-- SETTINGS STRINGS -->
     <string name="settings_dark_theme_title">Dark theme</string>
