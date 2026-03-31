@@ -1,8 +1,13 @@
 package com.br444n.unitwise.app.feature.scann
 
 import android.Manifest
+import android.app.Activity
 import android.content.Context
+import android.content.ContextWrapper
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
+import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -10,6 +15,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.core.app.ActivityCompat
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -25,6 +31,9 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.br444n.unitwise.app.feature.scann.components.CameraPreviewView
 import com.br444n.unitwise.app.feature.scann.components.ScannPermissionContent
@@ -46,7 +55,8 @@ private val PREVIEW_DETECTED_TEXTS = listOf("500g", PREVIEW_SELECTED_TEXT, "1kg"
 private enum class CameraPermissionUiState {
     Requesting,
     Granted,
-    Denied
+    Denied,
+    PermanentlyDenied
 }
 
 @Suppress("unused")
@@ -68,10 +78,13 @@ fun ScannScreen(
     val permissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
     ) { isGranted ->
-        permissionState = if (isGranted) {
-            CameraPermissionUiState.Granted
-        } else {
-            CameraPermissionUiState.Denied
+        permissionState = when {
+            isGranted -> CameraPermissionUiState.Granted
+            ActivityCompat.shouldShowRequestPermissionRationale(
+                context.findActivity(),
+                Manifest.permission.CAMERA
+            ) -> CameraPermissionUiState.Denied
+            else -> CameraPermissionUiState.PermanentlyDenied
         }
     }
 
@@ -79,6 +92,22 @@ fun ScannScreen(
         if (permissionState == CameraPermissionUiState.Requesting && !context.hasCameraPermission()) {
             permissionLauncher.launch(Manifest.permission.CAMERA)
         }
+    }
+
+    // When the user returns from Settings after granting the permission,
+    // ON_RESUME fires and we check immediately — no manual retry needed.
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME &&
+                permissionState == CameraPermissionUiState.PermanentlyDenied &&
+                context.hasCameraPermission()
+            ) {
+                permissionState = CameraPermissionUiState.Granted
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
     }
 
     when (permissionState) {
@@ -104,6 +133,15 @@ fun ScannScreen(
                 description = stringResource(id = R.string.camera_permission_denied_description),
                 actionLabel = stringResource(id = R.string.camera_permission_retry),
                 onActionClick = { permissionState = CameraPermissionUiState.Requesting }
+            )
+        }
+        CameraPermissionUiState.PermanentlyDenied -> {
+            ScannPermissionContent(
+                onBackClick = onBackClick,
+                title = stringResource(id = R.string.camera_permission_denied_title),
+                description = stringResource(id = R.string.camera_permission_permanently_denied_description),
+                actionLabel = stringResource(id = R.string.camera_permission_open_settings),
+                onActionClick = { context.openAppSettings() }
             )
         }
     }
@@ -217,6 +255,23 @@ private fun Context.hasCameraPermission(): Boolean {
         this,
         Manifest.permission.CAMERA
     ) == PackageManager.PERMISSION_GRANTED
+}
+
+private fun Context.findActivity(): Activity {
+    var ctx = this
+    while (ctx is ContextWrapper) {
+        if (ctx is Activity) return ctx
+        ctx = ctx.baseContext
+    }
+    error("No Activity found in context hierarchy")
+}
+
+private fun Context.openAppSettings() {
+    val intent = Intent(
+        Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+        Uri.fromParts("package", packageName, null)
+    ).apply { addFlags(Intent.FLAG_ACTIVITY_NEW_TASK) }
+    startActivity(intent)
 }
 
 @Preview(showBackground = true)
