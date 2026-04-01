@@ -71,6 +71,8 @@
     <string name="camera_permission_denied_title">Acesso à câmera necessário</string>
     <string name="camera_permission_denied_description">Permita o acesso à câmera para escanear nomes de produtos.</string>
     <string name="camera_permission_retry">Permitir câmera</string>
+    <string name="camera_permission_permanently_denied_description">O acesso à câmera foi negado permanentemente. Abra as Configurações para ativá-lo manualmente.</string>
+    <string name="camera_permission_open_settings">Abrir Configurações</string>
 
     <!-- SETTINGS STRINGS -->
     <string name="settings_dark_theme_title">Tema escuro</string>

@@ -71,6 +71,8 @@
     <string name="camera_permission_denied_title">Accès à l\'appareil photo requis</string>
     <string name="camera_permission_denied_description">Autorisez l\'accès à l\'appareil photo pour scanner les noms de produits.</string>
     <string name="camera_permission_retry">Autoriser l\'appareil photo</string>
+    <string name="camera_permission_permanently_denied_description">L\'accès à l\'appareil photo a été refusé définitivement. Ouvrez les Paramètres pour l\'activer manuellement.</string>
+    <string name="camera_permission_open_settings">Ouvrir les Paramètres</string>
 
     <!-- SETTINGS STRINGS -->
     <string name="settings_dark_theme_title">Thème sombre</string>
