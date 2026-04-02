@@ -97,6 +97,7 @@ dependencies {
     implementation(libs.mlkit.text.recognition)
     implementation(libs.lottie.compose)
     implementation(libs.androidx.compose.runtime.saveable)
+    implementation(libs.qrose)
 
     // --- Testing Dependencies ---
     // Unit Testing
