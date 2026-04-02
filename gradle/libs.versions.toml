@@ -37,6 +37,7 @@ androidxTestCore = "1.7.0"
 androidxTestRules = "1.7.0"
 runtimeSaveable = "1.10.6"
 qrose = "1.1.2"
+uiGeometry = "1.10.6"
 
 [libraries]
 # Core AndroidX & Architecture
@@ -89,6 +90,7 @@ androidx-test-core-ktx = { group = "androidx.test", name = "core-ktx", version.r
 androidx-test-rules = { group = "androidx.test", name = "rules", version.ref = "androidxTestRules" }
 androidx-compose-runtime-saveable = { group = "androidx.compose.runtime", name = "runtime-saveable", version.ref = "runtimeSaveable" }
 qrose = { group = "io.github.alexzhirkevich", name = "qrose", version.ref = "qrose" }
+androidx-compose-ui-geometry = { group = "androidx.compose.ui", name = "ui-geometry", version.ref = "uiGeometry" }
 
 [plugins]
 # Android & Kotlin Plugins

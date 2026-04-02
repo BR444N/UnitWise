@@ -98,6 +98,7 @@ dependencies {
     implementation(libs.lottie.compose)
     implementation(libs.androidx.compose.runtime.saveable)
     implementation(libs.qrose)
+    implementation(libs.androidx.compose.ui.geometry)
 
     // --- Testing Dependencies ---
     // Unit Testing
