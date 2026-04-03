@@ -27,6 +27,7 @@ import com.br444n.unitwise.app.feature.comparison.components.TieDetailsSection
 import com.br444n.unitwise.app.feature.comparison.components.WhyBetterSection
 import com.br444n.unitwise.app.feature.home.components.ProductInputActions
 import com.br444n.unitwise.app.feature.home.components.ProductInputCard
+import com.br444n.unitwise.app.feature.share.SharedComparisonData
 import com.br444n.unitwise.app.ui.components.UnitWiseBottomNavigation
 import com.br444n.unitwise.app.ui.components.UnitWiseDefaultTopAppBar
 import com.br444n.unitwise.app.ui.theme.UnitWiseTheme
@@ -34,18 +35,25 @@ import com.br444n.unitwise.app.ui.theme.UnitWiseTheme
 @Composable
 fun ComparisonScreen(
     modifier: Modifier = Modifier,
-    comparisonId: Int,
+    comparisonId: Int? = null,
+    sharedComparisonData: SharedComparisonData? = null,
+    sharedComparisonLink: SharedComparisonRoute? = null,
     onBackClick: () -> Unit,
     onNavigate: (Int) -> Unit = {},
     viewModel: ComparisonViewModel = viewModel(factory = ComparisonViewModel.Factory)
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    LaunchedEffect(comparisonId) {
-        viewModel.loadComparison(comparisonId)
+    LaunchedEffect(comparisonId, sharedComparisonData, sharedComparisonLink) {
+        when {
+            sharedComparisonData != null -> viewModel.loadSharedComparison(sharedComparisonData)
+            comparisonId != null -> viewModel.loadComparison(comparisonId)
+            sharedComparisonLink != null -> viewModel.loadComparisonByShareId(
+                shareId = sharedComparisonLink.shareId,
+                encryptionKey = sharedComparisonLink.encryptionKey
+            )
+        }
     }
-
-    val winningProductName = uiState.winningProduct.productName.ifBlank { "Product" }
     
     Scaffold(
         topBar = {
@@ -63,67 +71,83 @@ fun ComparisonScreen(
         },
         modifier = modifier.fillMaxSize()
     ) { innerPadding ->
-        Column(
+        ComparisonContent(
+            uiState = uiState,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
                 .padding(horizontal = 16.dp)
-                .verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            Spacer(modifier = Modifier.height(8.dp))
-            
-            if (uiState.isTie) {
-                TieBadge()
+                .verticalScroll(rememberScrollState())
+        )
+    }
+}
 
+data class SharedComparisonRoute(
+    val shareId: String,
+    val encryptionKey: String?
+)
+
+@Composable
+private fun ComparisonContent(
+    uiState: ComparisonUiState,
+    modifier: Modifier = Modifier
+) {
+    val winningProductName = uiState.winningProduct.productName.ifBlank { "Product" }
+
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        Spacer(modifier = Modifier.height(8.dp))
+
+        if (uiState.isTie) {
+            TieBadge()
+
+            ProductInputCard(
+                title = stringResource(R.string.product_a_title),
+                state = uiState.productA,
+                actions = ProductInputActions(),
+                isReadOnly = true
+            )
+
+            TieDetailsSection(
+                standardUnitPrice = uiState.standardUnitPrice,
+                standardUnitDesc = uiState.standardUnitDesc
+            )
+
+            ProductInputCard(
+                title = stringResource(R.string.product_b_title),
+                state = uiState.productB,
+                actions = ProductInputActions(),
+                isReadOnly = true
+            )
+        } else {
+            SmartChoiceBadge(productName = winningProductName)
+
+            BestValueWrapper {
                 ProductInputCard(
-                    title = stringResource(R.string.product_a_title),
-                    state = uiState.productA,
-                    actions = ProductInputActions(),
-                    isReadOnly = true
-                )
-
-                TieDetailsSection(
-                    standardUnitPrice = uiState.standardUnitPrice,
-                    standardUnitDesc = uiState.standardUnitDesc
-                )
-
-                ProductInputCard(
-                    title = stringResource(R.string.product_b_title),
-                    state = uiState.productB,
-                    actions = ProductInputActions(),
-                    isReadOnly = true
-                )
-            } else {
-                SmartChoiceBadge(productName = winningProductName)
-
-                BestValueWrapper {
-                    ProductInputCard(
-                        title = if (uiState.isProductAWinner) stringResource(R.string.product_a_title) else stringResource(R.string.product_b_title),
-                        state = uiState.winningProduct,
-                        // Pass empty actions for read-only view
-                        actions = ProductInputActions(),
-                        isReadOnly = true
-                    )
-                }
-
-                WhyBetterSection(
-                    savingsPerStandardUnit = uiState.savingsPerStandardUnit,
-                    standardUnitDesc = uiState.standardUnitDesc,
-                    estimatedMonthlySavings = uiState.monthlySavings
-                )
-
-                ProductInputCard(
-                    title = if (!uiState.isProductAWinner) stringResource(R.string.product_a_title) else stringResource(R.string.product_b_title),
-                    state = uiState.losingProduct,
-                    // Pass empty actions for read-only view
+                    title = if (uiState.isProductAWinner) stringResource(R.string.product_a_title) else stringResource(R.string.product_b_title),
+                    state = uiState.winningProduct,
                     actions = ProductInputActions(),
                     isReadOnly = true
                 )
             }
-            
-            Spacer(modifier = Modifier.height(16.dp))
+
+            WhyBetterSection(
+                savingsPerStandardUnit = uiState.savingsPerStandardUnit,
+                standardUnitDesc = uiState.standardUnitDesc,
+                estimatedMonthlySavings = uiState.monthlySavings
+            )
+
+            ProductInputCard(
+                title = if (!uiState.isProductAWinner) stringResource(R.string.product_a_title) else stringResource(R.string.product_b_title),
+                state = uiState.losingProduct,
+                actions = ProductInputActions(),
+                isReadOnly = true
+            )
         }
+
+        Spacer(modifier = Modifier.height(16.dp))
     }
 }
 
