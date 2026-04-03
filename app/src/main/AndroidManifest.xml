@@ -35,7 +35,7 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:host="unitwise.app"
+                    android:host="unitwise-app.vercel.app"
                     android:pathPrefix="/c/"
                     android:scheme="https" />
             </intent-filter>
