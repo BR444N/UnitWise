@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ksp)
 }
 
@@ -36,6 +37,7 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
+        isCoreLibraryDesugaringEnabled = true
     }
     buildFeatures {
         compose = true
@@ -99,6 +101,10 @@ dependencies {
     implementation(libs.androidx.compose.runtime.saveable)
     implementation(libs.qrose)
     implementation(libs.androidx.compose.ui.geometry)
+    implementation(platform(libs.supabase.bom))
+    implementation(libs.supabase.postgrest)
+    implementation(libs.ktor.client.android)
+    implementation(libs.kotlinx.serialization.json)
 
     // --- Testing Dependencies ---
     // Unit Testing
@@ -125,4 +131,5 @@ dependencies {
 
     // Annotation Processors
     ksp(libs.room.compiler)
+    coreLibraryDesugaring(libs.desugar.jdk.libs)
 }

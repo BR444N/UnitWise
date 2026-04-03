@@ -38,6 +38,10 @@ androidxTestRules = "1.7.0"
 runtimeSaveable = "1.10.6"
 qrose = "1.1.2"
 uiGeometry = "1.10.6"
+supabase = "3.4.1"
+ktor = "3.4.0"
+serializationJson = "1.9.0"
+desugarJdkLibs = "2.1.5"
 
 [libraries]
 # Core AndroidX & Architecture
@@ -91,9 +95,15 @@ androidx-test-rules = { group = "androidx.test", name = "rules", version.ref = "
 androidx-compose-runtime-saveable = { group = "androidx.compose.runtime", name = "runtime-saveable", version.ref = "runtimeSaveable" }
 qrose = { group = "io.github.alexzhirkevich", name = "qrose", version.ref = "qrose" }
 androidx-compose-ui-geometry = { group = "androidx.compose.ui", name = "ui-geometry", version.ref = "uiGeometry" }
+supabase-bom = { group = "io.github.jan-tennert.supabase", name = "bom", version.ref = "supabase" }
+supabase-postgrest = { group = "io.github.jan-tennert.supabase", name = "postgrest-kt" }
+ktor-client-android = { group = "io.ktor", name = "ktor-client-android", version.ref = "ktor" }
+kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "serializationJson" }
+desugar-jdk-libs = { group = "com.android.tools", name = "desugar_jdk_libs", version.ref = "desugarJdkLibs" }
 
 [plugins]
 # Android & Kotlin Plugins
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
