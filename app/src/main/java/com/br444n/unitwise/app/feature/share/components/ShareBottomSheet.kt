@@ -210,7 +210,7 @@ private fun ShareBottomSheetContent(
                 text = stringResource(id = R.string.share_qr_expiration_message),
                 style = MaterialTheme.typography.labelSmall,
                 fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.primary,
+                color = MaterialTheme.colorScheme.onPrimary,
                 textAlign = TextAlign.Center
             )
         }
