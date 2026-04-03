@@ -1,12 +1,19 @@
 package com.br444n.unitwise.app.data.local.entity
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "comparisons")
+@Entity(
+    tableName = "comparisons",
+    indices = [Index(value = ["shareId"], unique = true)]
+)
 data class ComparisonEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
+    @ColumnInfo(defaultValue = "''")
+    val shareId: String,
     val timestamp: Long = System.currentTimeMillis(),
     
     // Product A

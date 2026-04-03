@@ -25,3 +25,5 @@ compile_log.txt
 app/release/app-release.aab
 /app/src/main/java/com/br444n/unitwise/app/feature/scann/logcat
 /app/src/main/java/com/br444n/unitwise/app/feature/scann/Xiaomi-2207117BPG-Android-13_2026-03-28_224707.logcat
+/app/src/main/java/com/br444n/unitwise/app/feature/share/Pixel-4_logcat
+/app/src/main/java/com/br444n/unitwise/app/feature/share/PIxel-9

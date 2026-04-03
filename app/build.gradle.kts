@@ -1,7 +1,14 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ksp)
+}
+
+val localProperties = Properties().apply {
+    rootProject.file("local.properties").takeIf { it.exists() }?.inputStream()?.use(::load)
 }
 
 android {
@@ -16,6 +23,16 @@ android {
         targetSdk = 36
         versionCode = 17
         versionName = "1.0.91"
+        buildConfigField(
+            "String",
+            "SUPABASE_URL",
+            "\"${localProperties.getProperty("SUPABASE_URL", "")}\""
+        )
+        buildConfigField(
+            "String",
+            "SUPABASE_ANON_KEY",
+            "\"${localProperties.getProperty("SUPABASE_ANON_KEY", "")}\""
+        )
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -36,9 +53,11 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
+        isCoreLibraryDesugaringEnabled = true
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     bundle {
         language {
@@ -97,6 +116,13 @@ dependencies {
     implementation(libs.mlkit.text.recognition)
     implementation(libs.lottie.compose)
     implementation(libs.androidx.compose.runtime.saveable)
+    implementation(libs.qrose)
+    implementation(libs.androidx.compose.ui.geometry)
+    implementation(platform(libs.supabase.bom))
+    implementation(libs.supabase.postgrest)
+    implementation(libs.ktor.client.android)
+    implementation(libs.kotlinx.serialization.json)
+    implementation(libs.androidx.compose.remote.creation.core)
 
     // --- Testing Dependencies ---
     // Unit Testing
@@ -123,4 +149,5 @@ dependencies {
 
     // Annotation Processors
     ksp(libs.room.compiler)
+    coreLibraryDesugaring(libs.desugar.jdk.libs)
 }

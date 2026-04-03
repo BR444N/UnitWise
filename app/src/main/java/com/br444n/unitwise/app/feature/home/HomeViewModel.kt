@@ -100,7 +100,8 @@ class HomeViewModel(
                         quantity = comparison.productBQuantity
                     ),
                     unitSelectionDriver = null,
-                    editingComparisonId = comparison.id
+                    editingComparisonId = comparison.id,
+                    editingShareId = comparison.shareId
                 )
             }
         }
@@ -114,7 +115,8 @@ class HomeViewModel(
                 val id = saveComparisonUseCase(
                     productA = _uiState.value.productA,
                     productB = _uiState.value.productB,
-                    comparisonId = editingComparisonId
+                    comparisonId = editingComparisonId,
+                    shareId = _uiState.value.editingShareId
                 ).toInt()
 
                 delay(CALCULATION_DELAY)
@@ -125,7 +127,8 @@ class HomeViewModel(
                         productA = ProductInputState(),
                         productB = ProductInputState(),
                         unitSelectionDriver = null,
-                        editingComparisonId = null
+                        editingComparisonId = null,
+                        editingShareId = null
                     )
                 }
                 onNavigate(id)
