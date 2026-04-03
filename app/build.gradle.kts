@@ -122,6 +122,7 @@ dependencies {
     implementation(libs.supabase.postgrest)
     implementation(libs.ktor.client.android)
     implementation(libs.kotlinx.serialization.json)
+    implementation(libs.androidx.compose.remote.creation.core)
 
     // --- Testing Dependencies ---
     // Unit Testing

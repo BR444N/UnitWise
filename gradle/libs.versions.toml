@@ -42,6 +42,7 @@ supabase = "3.4.1"
 ktor = "3.4.0"
 serializationJson = "1.9.0"
 desugarJdkLibs = "2.1.5"
+remoteCreationCore = "1.0.0-alpha07"
 
 [libraries]
 # Core AndroidX & Architecture
@@ -100,6 +101,7 @@ supabase-postgrest = { group = "io.github.jan-tennert.supabase", name = "postgre
 ktor-client-android = { group = "io.ktor", name = "ktor-client-android", version.ref = "ktor" }
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "serializationJson" }
 desugar-jdk-libs = { group = "com.android.tools", name = "desugar_jdk_libs", version.ref = "desugarJdkLibs" }
+androidx-compose-remote-creation-core = { group = "androidx.compose.remote", name = "remote-creation-core", version.ref = "remoteCreationCore" }
 
 [plugins]
 # Android & Kotlin Plugins
