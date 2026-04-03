@@ -94,4 +94,13 @@
     <string name="settings_developer_subtitle">Erstellt von Brandon Martínez</string>
     <string name="settings_header_tagline">Smartes Einkaufen mit Unitwise</string>
 
+    <!-- SHARE STRINGS -->
+    <string name="share_sheet_title">Diesen Vergleich teilen</string>
+    <string name="share_sheet_subtitle">Wir bereiten einen QR-Code und einen Link vor, damit du dieses Ergebnis überall hin senden kannst.</string>
+    <string name="share_sheet_error">Das Teilen-Bild konnte nicht generiert werden. Bitte versuche es erneut.</string>
+    <string name="share_sheet_chooser_title">Vergleich teilen</string>
+    <string name="share_preview_title">Scannen, um diesen Vergleich in UnitWise zu öffnen</string>
+    <string name="share_qr_content_description">QR-Code für einen geteilten Vergleich</string>
+    <string name="share_qr_expiration_message">Dieser QR-Code läuft in 30 Tagen ab.</string>
+    <string name="share_again">Erneut teilen</string>
 </resources>

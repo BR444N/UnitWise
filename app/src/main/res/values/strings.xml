@@ -94,4 +94,13 @@
     <string name="settings_developer_subtitle">Created by Brandon Martínez</string>
     <string name="settings_header_tagline">Smart shopping by Unitwise</string>
 
+    <!-- SHARE STRINGS -->
+    <string name="share_sheet_title">Share this comparison</string>
+    <string name="share_sheet_subtitle">We are preparing a QR and link so you can send this result anywhere.</string>
+    <string name="share_sheet_error">We could not generate the share image. Please try again.</string>
+    <string name="share_sheet_chooser_title">Share comparison</string>
+    <string name="share_preview_title">Scan to open this comparison in UnitWise</string>
+    <string name="share_qr_content_description">QR code for a shared comparison</string>
+    <string name="share_qr_expiration_message">This QR expires in 30 days.</string>
+    <string name="share_again">Share again</string>
 </resources>
