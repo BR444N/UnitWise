@@ -1,8 +1,10 @@
 package com.br444n.unitwise.app.feature.share.components
 
 import android.net.Uri
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -43,6 +45,7 @@ import com.br444n.unitwise.app.feature.share.ShareQrCard
 import com.br444n.unitwise.app.feature.share.ShareImageExporter
 import com.br444n.unitwise.app.feature.share.SharedComparisonLink
 import com.br444n.unitwise.app.feature.share.launchNativeShareSheet
+import com.br444n.unitwise.app.ui.theme.Badge
 import com.br444n.unitwise.app.ui.components.UnitWiseLoading
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -196,12 +199,21 @@ private fun ShareBottomSheetContent(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        Text(
-            text = stringResource(id = R.string.share_qr_expiration_message),
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            textAlign = TextAlign.Center
-        )
+        Row(
+            modifier = Modifier
+                .clip(RoundedCornerShape(8.dp))
+                .background(Badge)
+                .padding(horizontal = 8.dp, vertical = 4.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = stringResource(id = R.string.share_qr_expiration_message),
+                style = MaterialTheme.typography.labelSmall,
+                fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.colorScheme.primary,
+                textAlign = TextAlign.Center
+            )
+        }
 
         Spacer(modifier = Modifier.height(20.dp))
 
