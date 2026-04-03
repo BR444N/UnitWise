@@ -65,7 +65,8 @@ fun ShareQrCardDesign(
             Text(
                 text = stringResource(id = R.string.app_name),
                 style = MaterialTheme.typography.headlineSmall,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
+                color = BrandPrimary,
             )
 
             Text(
