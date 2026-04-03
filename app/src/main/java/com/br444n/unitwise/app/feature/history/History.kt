@@ -16,7 +16,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -29,6 +28,7 @@ import com.br444n.unitwise.app.feature.history.components.HistoryEmptyState
 import com.br444n.unitwise.app.feature.history.components.HistorySearchBar
 import com.br444n.unitwise.app.feature.history.components.HistorySectionHeader
 import com.br444n.unitwise.app.feature.history.components.HistoryTopAppBar
+import com.br444n.unitwise.app.feature.share.components.ComparisonShareBottomSheet
 import com.br444n.unitwise.app.ui.components.rememberBottomNavVisibility
 import com.br444n.unitwise.app.ui.components.UnitWiseBottomNavigation
 import com.br444n.unitwise.app.ui.theme.UnitWiseTheme
@@ -42,8 +42,7 @@ fun HistoryScreen(
     viewModel: HistoryViewModel = viewModel(factory = HistoryViewModel.Factory),
     onNavigate: (Int) -> Unit = {},
     onViewDetails: (Int) -> Unit = {},
-    onEditComparison: (Int) -> Unit = {},
-    onShareClick: (ComparisonEntity) -> Unit = {}
+    onEditComparison: (Int) -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
     HistoryContent(
@@ -51,7 +50,6 @@ fun HistoryScreen(
         onNavigate = onNavigate,
         onViewDetails = onViewDetails,
         onEditComparison = onEditComparison,
-        onShareClick = onShareClick,
         onClearAllClick = { viewModel.clearAll() },
         modifier = modifier
     )
@@ -63,11 +61,11 @@ fun HistoryContent(
     onNavigate: (Int) -> Unit,
     onViewDetails: (Int) -> Unit,
     onEditComparison: (Int) -> Unit,
-    onShareClick: (ComparisonEntity) -> Unit,
     onClearAllClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var searchQuery by remember { mutableStateOf("") }
+    val searchQueryState = remember { mutableStateOf("") }
+    val selectedComparisonToShareState = remember { mutableStateOf<ComparisonEntity?>(null) }
     val showClearDialog = remember { mutableStateOf(false) }
     val listState = rememberLazyListState()
     val isBottomNavVisible = rememberBottomNavVisibility {
@@ -84,12 +82,19 @@ fun HistoryContent(
         )
     }
 
-    val filteredComparisons = remember(uiState.comparisons, searchQuery) {
-        if (searchQuery.isBlank()) uiState.comparisons
+    val filteredComparisons = remember(uiState.comparisons, searchQueryState.value) {
+        if (searchQueryState.value.isBlank()) uiState.comparisons
         else uiState.comparisons.filter { item ->
-            item.entity.productAName.contains(searchQuery, ignoreCase = true) ||
-            item.entity.productBName.contains(searchQuery, ignoreCase = true)
+            item.entity.productAName.contains(searchQueryState.value, ignoreCase = true) ||
+            item.entity.productBName.contains(searchQueryState.value, ignoreCase = true)
         }
+    }
+
+    selectedComparisonToShareState.value?.let { comparison ->
+        ComparisonShareBottomSheet(
+            comparison = comparison,
+            onDismissRequest = { selectedComparisonToShareState.value = null }
+        )
     }
 
     Box(
@@ -127,8 +132,8 @@ fun HistoryContent(
                     ) {
                         item {
                             HistorySearchBar(
-                                query = searchQuery,
-                                onQueryChange = { searchQuery = it },
+                                query = searchQueryState.value,
+                                onQueryChange = { searchQueryState.value = it },
                                 modifier = Modifier.padding(horizontal = 0.dp)
                             )
                         }
@@ -151,7 +156,7 @@ fun HistoryContent(
                             actions = HistoryComparisonCardActions(
                                 onEditClick = { onEditComparison(item.entity.id) },
                                 onViewDetailsClick = { onViewDetails(item.entity.id) },
-                                onShareClick = { onShareClick(item.entity) }
+                                onShareClick = { selectedComparisonToShareState.value = item.entity }
                             )
                         )
                         }
@@ -180,7 +185,6 @@ fun HistoryScreenPreview() {
             onNavigate = {},
             onViewDetails = {},
             onEditComparison = {},
-            onShareClick = {},
             onClearAllClick = {}
         )
     }
