@@ -1,26 +1,32 @@
 package com.br444n.unitwise.app.navigation
 
+import android.content.Intent
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
-import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import androidx.compose.runtime.LaunchedEffect
 import androidx.navigation.navArgument
 import androidx.navigation.NavBackStackEntry
+import androidx.navigation.navDeepLink
 import com.br444n.unitwise.app.feature.comparison.ComparisonScreen
+import com.br444n.unitwise.app.feature.comparison.SharedComparisonRoute
 import com.br444n.unitwise.app.feature.history.HistoryScreen
 import com.br444n.unitwise.app.feature.home.HomeScreen
 import com.br444n.unitwise.app.feature.home.HomeViewModel
 import com.br444n.unitwise.app.feature.scann.ScannScreen
 import com.br444n.unitwise.app.feature.settings.SettingsScreen
+import com.br444n.unitwise.app.feature.share.extractSharedComparisonKey
 
 object Screen {
     const val HOME = "home"
     const val COMPARISON = "comparison/{id}"
     fun createComparisonRoute(id: Int) = "comparison/$id"
+    const val SHARED_COMPARISON = "comparison/shared/{shareId}"
     const val HISTORY = "history" // Placeholder for future
     const val SCANN = "scann/{targetProduct}"
     fun createScannRoute(targetProduct: String) = "scann/$targetProduct"
@@ -53,6 +59,30 @@ fun AppNavigation(
             val id = backStackEntry.arguments?.getInt("id") ?: return@composable
             ComparisonScreen(
                 comparisonId = id,
+                onBackClick = { navController.popBackStack() },
+                onNavigate = { index -> handleBottomTabNav(index, -1, navController) }
+            )
+        }
+        composable(
+            route = Screen.SHARED_COMPARISON,
+            arguments = listOf(navArgument("shareId") { type = NavType.StringType }),
+            deepLinks = listOf(
+                navDeepLink {
+                    uriPattern = "https://unitwise-app.vercel.app/c/{shareId}"
+                }
+            )
+        ) { backStackEntry ->
+            val shareId = backStackEntry.arguments?.getString("shareId") ?: return@composable
+            @Suppress("DEPRECATION")
+            val deepLinkIntent = backStackEntry.arguments
+                ?.getParcelable<Intent>(NavController.KEY_DEEP_LINK_INTENT)
+            val encryptionKey = extractSharedComparisonKey(deepLinkIntent?.data)
+
+            ComparisonScreen(
+                sharedComparisonLink = SharedComparisonRoute(
+                    shareId = shareId,
+                    encryptionKey = encryptionKey
+                ),
                 onBackClick = { navController.popBackStack() },
                 onNavigate = { index -> handleBottomTabNav(index, -1, navController) }
             )
