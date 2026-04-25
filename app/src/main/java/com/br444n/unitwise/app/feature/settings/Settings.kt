@@ -108,6 +108,16 @@ fun SettingsContent(
 
             item { SettingsDivider() }
 
+            // PRIVACY SECTION
+            item {
+                SettingsSectionTitle(text = stringResource(id = R.string.settings_privacy_policy))
+            }
+            item {
+                PrivacyPolicyCard()
+            }
+
+            item { SettingsDivider() }
+
             // ABOUT SECTION
             item {
                 SettingsSectionTitle(text = stringResource(id = R.string.settings_about))
@@ -117,16 +127,6 @@ fun SettingsContent(
             }
             item {
                 DeveloperInfoCard()
-            }
-
-            item { SettingsDivider() }
-
-            // PRIVACY SECTION
-            item {
-                SettingsSectionTitle(text = stringResource(id = R.string.settings_privacy_policy))
-            }
-            item {
-                PrivacyPolicyCard()
             }
             
             // Branding Footer
