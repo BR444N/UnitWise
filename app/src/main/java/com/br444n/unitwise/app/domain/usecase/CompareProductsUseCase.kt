@@ -12,7 +12,8 @@ data class ComparisonResult(
     val monthlySavings: String,
     val savingsPerStandardUnit: String,
     val standardUnitDesc: String,
-    val standardUnitPrice: String
+    val unitPriceA: String,
+    val unitPriceB: String
 )
 
 class IncompatibleMeasurementUnitsException : IllegalArgumentException()
@@ -40,8 +41,6 @@ class CompareProductsUseCase {
         require(priceA >= 0)
         require(priceB >= 0)
         
-        // Let's assume for now units match or are directly comparable.
-        // A full implementation would apply multiplier converting kg to g, L to ml here based on selectedUnit.
         val multiplierA = getUnitMultiplier(productA.selectedUnit)
         val multiplierB = getUnitMultiplier(productB.selectedUnit)
         
@@ -59,7 +58,8 @@ class CompareProductsUseCase {
         val ppuB = totalPriceB / totalContentB
 
         // 3. Determine Winner
-        val isTie = abs(ppuA - ppuB) < 0.01
+        // Improved precision: 0.0001 instead of 0.01 to handle price per ml/g
+        val isTie = abs(ppuA - ppuB) < 0.0001
         val isProductAWinner = when {
             isTie -> false
             else -> ppuA < ppuB
@@ -78,31 +78,36 @@ class CompareProductsUseCase {
         // 5. Monthly Savings
         val monthlySavings = savingsTotal * 4
 
-        // 6. Savings per Standard Unit
+        // 6. Standardized Comparisons
+        // We use the winner's unit scale for the "Why better" section
         val baseUnitRaw = if (isProductAWinner) productA.selectedUnit else productB.selectedUnit
         val baseUnitLower = baseUnitRaw.lowercase(Locale.US)
         val ppuDiff = maxOf(0.0, loserPPU - winnerPPU)
 
         val standardUnitDesc: String
         val savingsPerStandard: Double
-        val standardUnitPriceValue: Double
+        val unitPriceAValue: Double
+        val unitPriceBValue: Double
 
         when (baseUnitLower) {
             "g", "ml" -> {
-                savingsPerStandard = ppuDiff * 100.0
-                standardUnitPriceValue = winnerPPU * 100.0
                 standardUnitDesc = "100 $baseUnitLower"
+                savingsPerStandard = ppuDiff * 100.0
+                unitPriceAValue = ppuA * 100.0
+                unitPriceBValue = ppuB * 100.0
             }
             "kg", "l", "lts" -> {
-                savingsPerStandard = ppuDiff * 1000.0
-                standardUnitPriceValue = winnerPPU * 1000.0
                 val displayUnit = if (baseUnitLower == "kg") "kg" else "l"
                 standardUnitDesc = "1 $displayUnit"
+                savingsPerStandard = ppuDiff * 1000.0
+                unitPriceAValue = ppuA * 1000.0
+                unitPriceBValue = ppuB * 1000.0
             }
             else -> {
-                savingsPerStandard = ppuDiff * 1.0 // pcs
-                standardUnitPriceValue = winnerPPU * 1.0
                 standardUnitDesc = "1 $baseUnitRaw"
+                savingsPerStandard = ppuDiff * 1.0
+                unitPriceAValue = ppuA * 1.0
+                unitPriceBValue = ppuB * 1.0
             }
         }
 
@@ -113,7 +118,8 @@ class CompareProductsUseCase {
             monthlySavings = String.format(Locale.US, "%.2f", maxOf(0.0, monthlySavings)),
             savingsPerStandardUnit = String.format(Locale.US, "%.2f", savingsPerStandard),
             standardUnitDesc = standardUnitDesc,
-            standardUnitPrice = String.format(Locale.US, "%.2f", standardUnitPriceValue)
+            unitPriceA = String.format(Locale.US, "%.2f", unitPriceAValue),
+            unitPriceB = String.format(Locale.US, "%.2f", unitPriceBValue)
         )
     }
 

@@ -23,7 +23,8 @@ import com.br444n.unitwise.app.ui.theme.UnitWiseTheme
 @Composable
 fun TieDetailsSection(
     modifier: Modifier = Modifier,
-    standardUnitPrice: String,
+    unitPriceA: String,
+    unitPriceB: String,
     standardUnitDesc: String
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
@@ -37,29 +38,21 @@ fun TieDetailsSection(
         Spacer(modifier = Modifier.height(12.dp))
         
         TieDetailRow(
-            label = stringResource(id = R.string.tie_label_unit_price),
-            value = stringResource(id = R.string.tie_value_unit_price, standardUnitPrice, standardUnitDesc)
+            label = stringResource(id = R.string.product_a_title),
+            value = stringResource(id = R.string.tie_value_unit_price, unitPriceA, standardUnitDesc)
+        )
+        
+        Spacer(modifier = Modifier.height(8.dp))
+        
+        TieDetailRow(
+            label = stringResource(id = R.string.product_b_title),
+            value = stringResource(id = R.string.tie_value_unit_price, unitPriceB, standardUnitDesc)
         )
         
         Spacer(modifier = Modifier.height(12.dp))
         HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
         Spacer(modifier = Modifier.height(12.dp))
         
-        TieDetailRow(
-            label = stringResource(id = R.string.tie_label_content),
-            value = standardUnitDesc
-        )
-        
-        Spacer(modifier = Modifier.height(12.dp))
-        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
-        Spacer(modifier = Modifier.height(12.dp))
-        
-        TieDetailRow(
-            label = stringResource(id = R.string.tie_label_quantity),
-            value = "1" // Standardized as 1 base metric unit
-        )
-        
-        Spacer(modifier = Modifier.height(16.dp))
         Text(
             text = stringResource(id = R.string.tie_explanation),
             style = MaterialTheme.typography.bodyMedium,
@@ -95,8 +88,9 @@ private fun TieDetailRow(label: String, value: String) {
 fun TieDetailsSectionPreview() {
     UnitWiseTheme {
         TieDetailsSection(
-            standardUnitPrice = "0.25",
-            standardUnitDesc = "100 ml",
+            unitPriceA = "25.00",
+            unitPriceB = "25.00",
+            standardUnitDesc = "1 l",
             modifier = Modifier.padding(16.dp)
         )
     }
