@@ -93,6 +93,9 @@
     <string name="settings_developer_title">Entwicklerinformationen</string>
     <string name="settings_developer_subtitle">Erstellt von Brandon Martínez</string>
     <string name="settings_header_tagline">Smartes Einkaufen mit Unitwise</string>
+    <string name="settings_privacy_policy">DATENSCHUTZRICHTLINIE</string>
+    <string name="settings_privacy_policy_2">Datenschutzrichtlinie</string>
+    <string name="settings_privacy_policy_description">Erfahre, wie wir deine Gesundheitsdaten schützen.</string>
 
     <!-- SHARE STRINGS -->
     <string name="share_sheet_title">Diesen Vergleich teilen</string>

@@ -92,6 +92,9 @@
     <string name="settings_version_subtitle">Version %1$s</string>
     <string name="settings_developer_title">Developer information</string>
     <string name="settings_developer_subtitle">Created by Brandon Martínez</string>
+    <string name="settings_privacy_policy">PRIVACY POLICY</string>
+    <string name="settings_privacy_policy_2">Privacy Policy</string>
+    <string name="settings_privacy_policy_description">Read how we protect your health data.</string>
     <string name="settings_header_tagline">Smart shopping by Unitwise</string>
 
     <!-- SHARE STRINGS -->

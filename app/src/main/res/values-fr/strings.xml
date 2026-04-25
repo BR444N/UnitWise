@@ -93,6 +93,9 @@
     <string name="settings_developer_title">Informations sur le développeur</string>
     <string name="settings_developer_subtitle">Créé par Brandon Martínez</string>
     <string name="settings_header_tagline">Achats intelligents par Unitwise</string>
+    <string name="settings_privacy_policy">POLITIQUE DE CONFIDENTIALITÉ</string>
+    <string name="settings_privacy_policy_2">Politique de confidentialité</string>
+    <string name="settings_privacy_policy_description">Découvrez comment nous protégeons vos données de santé.</string>
 
     <!-- SHARE STRINGS -->
     <string name="share_sheet_title">Partager cette comparaison</string>
