@@ -47,6 +47,7 @@
     <string name="best_value_badge">MELHOR VALOR</string>
     <string name="why_better_title">Por que isso é melhor?</string>
     <string name="why_better_saving_per_unit">Você economiza $%1$s por %2$s.</string>
+    <string name="why_better_unit_price_comparison">Preços unitários: $%1$s vs $%2$s por %3$s</string>
     <string name="why_better_monthly_saving">Economia mensal estimada para sua casa: $%1$s</string>
     <string name="comparison_result">Resultado da comparação</string>
     <string name="tie_title">É um empate!</string>

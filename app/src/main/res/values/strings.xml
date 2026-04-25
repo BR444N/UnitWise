@@ -47,6 +47,7 @@
     <string name="best_value_badge">BEST VALUE</string>
     <string name="why_better_title">Why this is better?</string>
     <string name="why_better_saving_per_unit">You save $%1$s per %2$s.</string>
+    <string name="why_better_unit_price_comparison">Unit prices: $%1$s vs $%2$s per %3$s</string>
     <string name="why_better_monthly_saving">Estimated monthly savings for your household: $%1$s</string>
     <string name="comparison_result">Comparison Result</string>
     <string name="tie_title">It\'s a tie!</string>

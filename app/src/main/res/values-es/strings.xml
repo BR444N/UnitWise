@@ -46,7 +46,8 @@
     <string name="smart_choice_subtitle">El %1$s ofrece el mejor valor por su dinero hoy.</string>
     <string name="best_value_badge">MEJOR VALOR</string>
     <string name="why_better_title">¿Por qué es mejor?</string>
-    <string name="why_better_saving_per_unit">Ahorras $%1$s por %2$s.</string>
+    <string name="why_better_saving_per_unit">Ahorras $%1$s por cada %2$s.</string>
+    <string name="why_better_unit_price_comparison">Precios unitarios: $%1$s vs $%2$s por %3$s</string>
     <string name="why_better_monthly_saving">Ahorro mensual estimado para tu hogar: $%1$s</string>
     <string name="comparison_result">Resultado de la comparación</string>
     <string name="tie_title">¡Es un empate!</string>
