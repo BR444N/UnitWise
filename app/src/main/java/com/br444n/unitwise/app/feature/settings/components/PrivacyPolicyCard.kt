@@ -73,7 +73,7 @@ fun PrivacyPolicyCard(
             modifier = Modifier.weight(1f)
         ) {
             Text(
-                text = stringResource(id = R.string.settings_privacy_policy),
+                text = stringResource(id = R.string.settings_privacy_policy_2),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold,
                 color = MaterialTheme.colorScheme.onSurface
