@@ -21,7 +21,7 @@ android {
         applicationId = "com.br444n.unitwise"
         minSdk = 24
         targetSdk = 36
-        versionCode = 18
+        versionCode = 19
         versionName = "1.1.0"
         buildConfigField(
             "String",
