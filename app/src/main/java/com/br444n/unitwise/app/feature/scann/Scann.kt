@@ -95,7 +95,7 @@ fun ScannScreen(
     }
 
     // When the user returns from Settings after granting the permission,
-    // ON_RESUME fires and we check immediately — no manual retry needed.
+    // ON_RESUME fires, we check immediately — no manual retry needed.
     val lifecycleOwner = LocalLifecycleOwner.current
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
@@ -182,21 +182,22 @@ fun ScannContent(
     DisposableEffect(analyzerExecutor) {
         onDispose { analyzerExecutor.shutdown() }
     }
-    val imageAnalyzer: ImageAnalysis? = remember(previewSize, overlaySize) {
-        if (previewSize.width == 0 || overlaySize.height == 0) return@remember null
+    val imageAnalyzer: ImageAnalysis = remember {
         ImageAnalysis.Builder()
             .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
             .build()
             .also { analyzer ->
-                analyzer.setAnalyzer(
-                    analyzerExecutor
-                ) { imageProxy ->
-                    onProcessImage(
-                        imageProxy,
-                        previewSize.width,
-                        previewSize.height,
-                        overlaySize.height
-                    )
+                analyzer.setAnalyzer(analyzerExecutor) { imageProxy ->
+                    if (previewSize.width > 0 && overlaySize.height > 0) {
+                        onProcessImage(
+                            imageProxy,
+                            previewSize.width,
+                            previewSize.height,
+                            overlaySize.height
+                        )
+                    } else {
+                        imageProxy.close()
+                    }
                 }
             }
     }
