@@ -21,8 +21,8 @@ android {
         applicationId = "com.br444n.unitwise"
         minSdk = 24
         targetSdk = 36
-        versionCode = 17
-        versionName = "1.0.91"
+        versionCode = 18
+        versionName = "1.1.0"
         buildConfigField(
             "String",
             "SUPABASE_URL",
