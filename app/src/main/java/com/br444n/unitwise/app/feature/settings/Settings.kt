@@ -15,6 +15,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.br444n.unitwise.BuildConfig
 import com.br444n.unitwise.R
 import com.br444n.unitwise.app.feature.settings.components.AppVersionCard
 import com.br444n.unitwise.app.feature.settings.components.DeveloperInfoCard
@@ -112,7 +113,7 @@ fun SettingsContent(
                 SettingsSectionTitle(text = stringResource(id = R.string.settings_about))
             }
             item {
-                AppVersionCard(versionName = "1.0")
+                AppVersionCard(versionName = BuildConfig.VERSION_NAME)
             }
             item {
                 DeveloperInfoCard()
