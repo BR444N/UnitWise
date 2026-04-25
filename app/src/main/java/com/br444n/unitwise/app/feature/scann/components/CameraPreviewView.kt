@@ -54,12 +54,11 @@ fun CameraPreviewView(
                         ViewGroup.LayoutParams.MATCH_PARENT,
                         ViewGroup.LayoutParams.MATCH_PARENT
                     )
-                    implementationMode = PreviewView.ImplementationMode.COMPATIBLE
+                    implementationMode = PreviewView.ImplementationMode.PERFORMANCE
                     scaleType = PreviewView.ScaleType.FILL_CENTER
-                }.also { previewView = it }
-            },
-            update = { createdPreviewView ->
-                previewView = createdPreviewView
+                }.also { 
+                    previewView = it 
+                }
             }
         )
     }
