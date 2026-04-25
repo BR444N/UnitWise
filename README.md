@@ -7,10 +7,12 @@
   <a href="https://developer.android.com/compose">
     <img src="https://img.shields.io/badge/Jetpack%20Compose-102214.svg?style=for-the-badge&logo=jetpack-compose&logoColor=white" alt="JETPACK COMPOSE"/>
   </a>
-  <a href="https://developer.android.com/studio?hl=es-419">
+  <a href="https://developer.android.com/studio">
     <img src="https://img.shields.io/badge/Android%20Studio-102214.svg?style=for-the-badge&logo=android-studio&logoColor=white" alt="ANDROID STUDIO" />
   </a>
-  <img src="https://img.shields.io/badge/Google%20Play-102214.svg?style=for-the-badge&logo=google-play&logoColor=white" alt="GOOGLE PLAY" />
+  <a href="https://play.google.com/store/apps/details?id=com.br444n.unitwise">
+    <img src="https://img.shields.io/badge/Google%20Play-102214.svg?style=for-the-badge&logo=google-play&logoColor=white" alt="GOOGLE PLAY" />
+  </a>
 </p>
 
 <p align="center">
