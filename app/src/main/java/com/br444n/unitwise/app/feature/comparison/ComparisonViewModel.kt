@@ -94,7 +94,8 @@ class ComparisonViewModel(
                 monthlySavings = result.monthlySavings,
                 savingsPerStandardUnit = result.savingsPerStandardUnit,
                 standardUnitDesc = result.standardUnitDesc,
-                standardUnitPrice = result.standardUnitPrice
+                unitPriceA = result.unitPriceA,
+                unitPriceB = result.unitPriceB
             )
         }
     }
