@@ -26,7 +26,7 @@
 
 <p align="center">
   <img alt="API" src="https://img.shields.io/badge/Android_API-36-102214.svg?style=for-the-badge&logo=android&logoColor=white"/>
-  <img alt="Version" src="https://img.shields.io/badge/Version-v1.0.9-102214.svg?style=for-the-badge&logo=git&logoColor=white"/>
+  <img alt="Version" src="https://img.shields.io/badge/Version-v1.1.0-102214.svg?style=for-the-badge&logo=git&logoColor=white"/>
   <a href="https://github.com/BR444N/UnitWise/blob/main/LICENSE">
     <img alt="License" src="https://img.shields.io/badge/License-MIT-102214.svg?style=for-the-badge&logo=open-source-initiative&logoColor=white"/>
   </a>
