@@ -18,6 +18,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.br444n.unitwise.R
 import com.br444n.unitwise.app.feature.settings.components.AppVersionCard
 import com.br444n.unitwise.app.feature.settings.components.DeveloperInfoCard
+import com.br444n.unitwise.app.feature.settings.components.PrivacyPolicyCard
 import com.br444n.unitwise.app.feature.settings.components.LanguageSelectorCard
 import com.br444n.unitwise.app.feature.settings.components.SettingsHeaderCard
 import com.br444n.unitwise.app.feature.settings.components.ToggleThemeCard
@@ -36,6 +37,25 @@ fun SettingsScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
+    SettingsContent(
+        modifier = modifier,
+        uiState = uiState,
+        onToggleTheme = viewModel::toggleTheme,
+        onLanguageSelected = viewModel::updateLanguage,
+        onBackClick = onBackClick,
+        onNavigate = onNavigate
+    )
+}
+
+@Composable
+fun SettingsContent(
+    uiState: SettingsUiState,
+    onToggleTheme: (Boolean) -> Unit,
+    onLanguageSelected: (String) -> Unit,
+    onBackClick: () -> Unit,
+    onNavigate: (Int) -> Unit,
+    modifier: Modifier = Modifier,
+) {
     Scaffold(
         modifier = modifier.fillMaxSize(),
         topBar = {
@@ -68,7 +88,7 @@ fun SettingsScreen(
             item {
                 ToggleThemeCard(
                     isDarkTheme = uiState.isDarkTheme,
-                    onToggleTheme = { viewModel.toggleTheme(it) }
+                    onToggleTheme = onToggleTheme
                 )
             }
 
@@ -81,7 +101,7 @@ fun SettingsScreen(
             item {
                 LanguageSelectorCard(
                     selectedLanguageCode = uiState.selectedLanguage,
-                    onLanguageSelected = { viewModel.updateLanguage(it) }
+                    onLanguageSelected = onLanguageSelected
                 )
             }
 
@@ -97,6 +117,16 @@ fun SettingsScreen(
             item {
                 DeveloperInfoCard()
             }
+
+            item { SettingsDivider() }
+
+            // PRIVACY SECTION
+            item {
+                SettingsSectionTitle(text = stringResource(id = R.string.settings_privacy_policy))
+            }
+            item {
+                PrivacyPolicyCard()
+            }
             
             // Branding Footer
             item {
@@ -110,7 +140,13 @@ fun SettingsScreen(
 @Composable
 fun SettingsScreenPreview() {
     UnitWiseTheme {
-        SettingsScreen(
+        SettingsContent(
+            uiState = SettingsUiState(
+                isDarkTheme = false,
+                selectedLanguage = "en"
+            ),
+            onToggleTheme = {},
+            onLanguageSelected = {},
             onBackClick = {},
             onNavigate = {}
         )
