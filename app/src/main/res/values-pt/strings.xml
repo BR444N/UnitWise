@@ -4,17 +4,24 @@
     <string name="app_name">UnitWise</string>
     <string name="logo_desc">Logotipo do UnitWise</string>
     <string name="settings_desc">Configurações</string>
-    <string name="scan_hint">Digitalize ou digite o nome</string>
-    <string name="scan_desc">Escanear código de barras</string>
-    <string name="content_label">Conteúdo</string>
     <string name="unit_label">Unidade</string>
-    <string name="price_label">Preço</string>
     <string name="quantity_label">Quantidade</string>
     <string name="quantity_min_error">Mín. 1</string>
     <string name="units_cannot_be_compared">As unidades não podem ser comparadas.</string>
     <string name="home_tab">Início</string>
     <string name="home_header_title">Comparar produtos</string>
     <string name="home_header_subtitle">Encontre os melhores valores para o seu dinheiro</string>
+    <string name="scan_desc">Escanear produto</string>
+
+    <!-- Card to Compare PRODUCT A -->
+    <string name="scan_hint">Leite integral</string>
+    <string name="content_label">500ml</string>
+    <string name="price_label">$15.43</string>
+
+    <!-- Card to Compare PRODUCT B -->
+    <string name="scan_hint_b">Leite sem lactose</string>
+    <string name="content_label_b">1L</string>
+    <string name="price_label_b">$19.99</string>
 
     <!-- HISTORY STRINGS -->
     <string name="history_tab">Histórico</string>

@@ -4,17 +4,24 @@
     <string name="app_name">UnitWise</string>
     <string name="logo_desc">UnitWise-Logo</string>
     <string name="settings_desc">Einstellungen</string>
-    <string name="scan_hint">Scannen oder Namen eingeben</string>
-    <string name="scan_desc">Barcode scannen</string>
-    <string name="content_label">Inhalt</string>
     <string name="unit_label">Einheit</string>
-    <string name="price_label">Preis</string>
     <string name="quantity_label">Menge</string>
     <string name="quantity_min_error">Mind. 1</string>
     <string name="units_cannot_be_compared">Einheiten können nicht verglichen werden.</string>
     <string name="home_tab">Startseite</string>
     <string name="home_header_title">Produkte vergleichen</string>
     <string name="home_header_subtitle">Finden Sie den besten Wert für Ihr Geld</string>
+    <string name="scan_desc">Produkt scannen</string>
+
+    <!-- Card to Compare PRODUCT A -->
+    <string name="scan_hint">Vollmilch</string>
+    <string name="content_label">500g</string>
+    <string name="price_label">$15.43</string>
+
+    <!-- Card to Compare PRODUCT B -->
+    <string name="scan_hint_b">Laktosefreie Milch</string>
+    <string name="content_label_b">1L</string>
+    <string name="price_label_b">$19.99</string>
 
     <!-- HISTORY STRINGS -->
     <string name="history_tab">Verlauf</string>
