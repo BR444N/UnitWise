@@ -74,6 +74,19 @@ data class ProductInputState(
     val quantity: String = "1"
 )
 
+data class ProductInputHints(
+    val productNameHint: Int = R.string.scan_hint,
+    val contentAmountLabel: Int = R.string.content_label,
+    val priceLabel: Int = R.string.price_label
+)
+
+data class ProductInputOptions(
+    val focusConfig: ProductInputFocusConfig? = null,
+    val hints: ProductInputHints = ProductInputHints(),
+    val isReadOnly: Boolean = false,
+    val otherSelectedUnit: String? = null
+)
+
 data class ProductInputActions(
     val onProductNameChange: (String) -> Unit = {},
     val onContentAmountChange: (String) -> Unit = {},
@@ -123,9 +136,7 @@ fun ProductInputCard(
     title: String,
     state: ProductInputState,
     actions: ProductInputActions,
-    otherSelectedUnit: String? = null,
-    focusConfig: ProductInputFocusConfig? = null,
-    isReadOnly: Boolean = false,
+    options: ProductInputOptions = ProductInputOptions()
 ) {
     var isFocused by remember { mutableStateOf(false) }
     val onFocusChange: (Boolean) -> Unit = { focused -> if (focused) isFocused = true }
@@ -145,49 +156,26 @@ fun ProductInputCard(
             Spacer(modifier = Modifier.height(16.dp))
             
             ProductNameField(
-                productName = state.productName,
-                onProductNameChange = actions.onProductNameChange,
-                onScanClick = actions.onScanClick,
+                state = state,
+                actions = actions,
                 onFocusChange = { isFocused = it },
-                focusRequester = focusConfig?.productName,
-                nextFocusRequester = focusConfig?.contentAmount,
-                isReadOnly = isReadOnly
+                options = options
             )
             Spacer(modifier = Modifier.height(12.dp))
             
             ProductContentRow(
-                contentAmount = state.contentAmount,
-                unitConfig = ProductUnitConfig(
-                    selectedUnit = state.selectedUnit,
-                    otherSelectedUnit = otherSelectedUnit
-                ),
-                callbacks = ProductContentCallbacks(
-                    onContentAmountChange = actions.onContentAmountChange,
-                    onUnitChange = actions.onUnitChange,
-                    onIncompatibleUnitSelected = actions.onIncompatibleUnitSelected,
-                    onFocusChange = onFocusChange
-                ),
-                focusConfig = ProductContentFocusConfig(
-                    contentAmount = focusConfig?.contentAmount,
-                    unit = focusConfig?.unit,
-                    price = focusConfig?.price
-                ),
-                isReadOnly = isReadOnly
+                state = state,
+                actions = actions,
+                onFocusChange = onFocusChange,
+                options = options
             )
             Spacer(modifier = Modifier.height(12.dp))
             
             ProductPriceQuantityRow(
-                price = state.price,
-                onPriceChange = actions.onPriceChange,
-                quantity = state.quantity,
-                onQuantityChange = actions.onQuantityChange,
+                state = state,
+                actions = actions,
                 onFocusChange = onFocusChange,
-                focusConfig = ProductPriceQuantityFocusConfig(
-                    price = focusConfig?.price,
-                    quantity = focusConfig?.quantity,
-                    nextProductName = focusConfig?.nextProductName
-                ),
-                isReadOnly = isReadOnly
+                options = options
             )
         }
     }
@@ -222,28 +210,31 @@ private fun ProductCardHeader(title: String, isFocused: Boolean, isValid: Boolea
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ProductNameField(
-    productName: String,
-    onProductNameChange: (String) -> Unit,
-    onScanClick: () -> Unit,
+    state: ProductInputState,
+    actions: ProductInputActions,
     onFocusChange: (Boolean) -> Unit,
-    focusRequester: FocusRequester?,
-    nextFocusRequester: FocusRequester?,
-    isReadOnly: Boolean
+    options: ProductInputOptions
 ) {
+    val productName = state.productName
+    val onProductNameChange = actions.onProductNameChange
+    val onScanClick = actions.onScanClick
+    val focusConfig = options.focusConfig
+    val placeholderResId = options.hints.productNameHint
+    val isReadOnly = options.isReadOnly
     OutlinedTextField(
         value = productName,
         onValueChange = { onProductNameChange(sanitizeProductNameInput(it)) },
         modifier = Modifier
             .fillMaxWidth()
-            .thenFocusRequester(focusRequester)
+            .thenFocusRequester(focusConfig?.productName)
             .onFocusChanged { onFocusChange(it.isFocused) },
         readOnly = isReadOnly,
         enabled = !isReadOnly,
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
         keyboardActions = KeyboardActions(
-            onNext = { nextFocusRequester?.requestFocus() }
+            onNext = { focusConfig?.contentAmount?.requestFocus() }
         ),
-        placeholder = { Text(stringResource(id = R.string.scan_hint)) },
+        placeholder = { Text(stringResource(id = placeholderResId)) },
         trailingIcon = if (isReadOnly) null else {
             { ScanIconTooltip(onScanClick) }
         },
@@ -285,12 +276,32 @@ private fun ScanIconTooltip(onScanClick: () -> Unit) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ProductContentRow(
-    contentAmount: String,
-    unitConfig: ProductUnitConfig,
-    callbacks: ProductContentCallbacks,
-    focusConfig: ProductContentFocusConfig,
-    isReadOnly: Boolean
+    state: ProductInputState,
+    actions: ProductInputActions,
+    onFocusChange: (Boolean) -> Unit,
+    options: ProductInputOptions
 ) {
+    val contentAmount = state.contentAmount
+    val isReadOnly = options.isReadOnly
+    val labelResId = options.hints.contentAmountLabel
+    
+    val unitConfig = ProductUnitConfig(
+        selectedUnit = state.selectedUnit,
+        otherSelectedUnit = options.otherSelectedUnit
+    )
+    
+    val callbacks = ProductContentCallbacks(
+        onContentAmountChange = actions.onContentAmountChange,
+        onUnitChange = actions.onUnitChange,
+        onIncompatibleUnitSelected = actions.onIncompatibleUnitSelected,
+        onFocusChange = onFocusChange
+    )
+    
+    val focusConfig = ProductContentFocusConfig(
+        contentAmount = options.focusConfig?.contentAmount,
+        unit = options.focusConfig?.unit,
+        price = options.focusConfig?.price
+    )
     val keyboardController = LocalSoftwareKeyboardController.current
 
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -313,7 +324,7 @@ private fun ProductContentRow(
                     focusConfig.unit?.requestFocus()
                 }
             ),
-            label = { Text(stringResource(id = R.string.content_label)) },
+            label = { Text(stringResource(id = labelResId)) },
             singleLine = true,
             shape = RoundedCornerShape(12.dp)
         )
@@ -436,14 +447,22 @@ private fun UnitMenuItems(
 
 @Composable
 private fun ProductPriceQuantityRow(
-    price: String,
-    onPriceChange: (String) -> Unit,
-    quantity: String,
-    onQuantityChange: (String) -> Unit,
+    state: ProductInputState,
+    actions: ProductInputActions,
     onFocusChange: (Boolean) -> Unit,
-    focusConfig: ProductPriceQuantityFocusConfig,
-    isReadOnly: Boolean
+    options: ProductInputOptions
 ) {
+    val price = state.price
+    val onPriceChange = actions.onPriceChange
+    val quantity = state.quantity
+    val onQuantityChange = actions.onQuantityChange
+    val labelResId = options.hints.priceLabel
+    val isReadOnly = options.isReadOnly
+    val focusConfig = ProductPriceQuantityFocusConfig(
+        price = options.focusConfig?.price,
+        quantity = options.focusConfig?.quantity,
+        nextProductName = options.focusConfig?.nextProductName
+    )
     val isQuantityZero = quantity.toIntOrNull() == 0
     val focusManager = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -465,7 +484,7 @@ private fun ProductPriceQuantityRow(
             keyboardActions = KeyboardActions(
                 onNext = { focusConfig.quantity?.requestFocus() }
             ),
-            label = { Text(stringResource(id = R.string.price_label)) },
+            label = { Text(stringResource(id = labelResId)) },
             singleLine = true,
             shape = RoundedCornerShape(12.dp)
         )
