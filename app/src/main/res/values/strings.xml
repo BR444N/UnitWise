@@ -4,17 +4,24 @@
     <string name="app_name">UnitWise</string>
     <string name="logo_desc">UnitWise Logo</string>
     <string name="settings_desc">Settings</string>
-    <string name="scan_hint">Scan or type name</string>
-    <string name="scan_desc">Scan Barcode</string>
-    <string name="content_label">Content</string>
     <string name="unit_label">Unit</string>
-    <string name="price_label">Price</string>
     <string name="quantity_label">Quantity</string>
     <string name="quantity_min_error">Min. 1</string>
     <string name="units_cannot_be_compared">Units cannot be compared.</string>
     <string name="home_tab">Home</string>
     <string name="home_header_title">Compare products</string>
     <string name="home_header_subtitle">Find the best values for your money</string>
+    <string name="scan_desc">Scan Product</string>
+
+    <!-- Card to Compare PRODUCT A -->
+    <string name="scan_hint">Whole Milk</string>
+    <string name="content_label">500ml</string>
+    <string name="price_label">$15.43</string>
+
+    <!-- Card to Compare PRODUCT B -->
+    <string name="scan_hint_b">Lactose-free milk</string>
+    <string name="content_label_b">1L</string>
+    <string name="price_label_b">$19.99</string>
 
     <!-- HISTORY STRINGS -->
     <string name="history_tab">History</string>

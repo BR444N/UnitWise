@@ -27,6 +27,8 @@ import com.br444n.unitwise.app.feature.home.components.HomeToastMessage
 import com.br444n.unitwise.app.feature.home.components.ProductInputActions
 import com.br444n.unitwise.app.feature.home.components.ProductInputCard
 import com.br444n.unitwise.app.feature.home.components.ProductInputFocusConfig
+import com.br444n.unitwise.app.feature.home.components.ProductInputHints
+import com.br444n.unitwise.app.feature.home.components.ProductInputOptions
 import com.br444n.unitwise.app.feature.home.components.ProductInputState
 import com.br444n.unitwise.app.feature.home.components.UnitWiseTopAppBar
 import com.br444n.unitwise.app.ui.components.rememberBottomNavVisibility
@@ -58,7 +60,8 @@ private data class ProductCardContentConfig(
     val otherSelectedUnit: String?,
     val onUpdateProduct: (ProductInputState) -> Unit,
     val scanTarget: String,
-    val focusConfig: ProductInputFocusConfig
+    val focusConfig: ProductInputFocusConfig,
+    val hints: ProductInputHints = ProductInputHints()
 )
 
 private fun HomeUiState.otherSelectedUnitFor(driver: UnitSelectionDriver, otherUnit: String): String? {
@@ -158,7 +161,8 @@ private fun HomeContent(
                         ),
                         onUpdateProduct = callbacks.onUpdateProductA,
                         scanTarget = "A",
-                        focusConfig = focusConfigs.productA
+                        focusConfig = focusConfigs.productA,
+                        hints = ProductInputHints()
                     ),
                     onShowIncompatibleUnitsMessage = callbacks.onShowIncompatibleUnitsMessage,
                     onScanClick = callbacks.handleScanClick
@@ -174,7 +178,12 @@ private fun HomeContent(
                         ),
                         onUpdateProduct = callbacks.onUpdateProductB,
                         scanTarget = "B",
-                        focusConfig = focusConfigs.productB
+                        focusConfig = focusConfigs.productB,
+                        hints = ProductInputHints(
+                            productNameHint = R.string.scan_hint_b,
+                            contentAmountLabel = R.string.content_label_b,
+                            priceLabel = R.string.price_label_b
+                        )
                     ),
                     onShowIncompatibleUnitsMessage = callbacks.onShowIncompatibleUnitsMessage,
                     onScanClick = callbacks.handleScanClick
@@ -237,7 +246,6 @@ private fun HomeProductInputCard(
     ProductInputCard(
         title = stringResource(id = config.titleResId),
         state = config.state,
-        otherSelectedUnit = config.otherSelectedUnit,
         actions = ProductInputActions(
             onProductNameChange = {
                 config.onUpdateProduct(
@@ -255,7 +263,11 @@ private fun HomeProductInputCard(
             onQuantityChange = { config.onUpdateProduct(config.state.copy(quantity = it)) },
             onScanClick = { onScanClick(config.scanTarget) }
         ),
-        focusConfig = config.focusConfig
+        options = ProductInputOptions(
+            focusConfig = config.focusConfig,
+            hints = config.hints,
+            otherSelectedUnit = config.otherSelectedUnit
+        )
     )
 }
 

@@ -26,6 +26,7 @@ import com.br444n.unitwise.app.feature.comparison.components.TieDetailsSection
 import com.br444n.unitwise.app.feature.comparison.components.WhyBetterSection
 import com.br444n.unitwise.app.feature.home.components.ProductInputActions
 import com.br444n.unitwise.app.feature.home.components.ProductInputCard
+import com.br444n.unitwise.app.feature.home.components.ProductInputOptions
 import com.br444n.unitwise.app.feature.home.components.ProductInputState
 import com.br444n.unitwise.app.feature.share.SharedComparisonData
 import com.br444n.unitwise.app.ui.components.UnitWiseBottomNavigation
@@ -116,7 +117,7 @@ private fun TieResultContent(uiState: ComparisonUiState) {
         title = stringResource(R.string.product_a_title),
         state = uiState.productA,
         actions = ProductInputActions(),
-        isReadOnly = true
+        options = ProductInputOptions(isReadOnly = true)
     )
 
     TieDetailsSection(
@@ -129,7 +130,7 @@ private fun TieResultContent(uiState: ComparisonUiState) {
         title = stringResource(R.string.product_b_title),
         state = uiState.productB,
         actions = ProductInputActions(),
-        isReadOnly = true
+        options = ProductInputOptions(isReadOnly = true)
     )
 }
 
@@ -144,7 +145,7 @@ private fun WinnerResultContent(uiState: ComparisonUiState) {
             title = if (uiState.isProductAWinner) stringResource(R.string.product_a_title) else stringResource(R.string.product_b_title),
             state = uiState.winningProduct,
             actions = ProductInputActions(),
-            isReadOnly = true
+            options = ProductInputOptions(isReadOnly = true)
         )
     }
 
@@ -160,7 +161,7 @@ private fun WinnerResultContent(uiState: ComparisonUiState) {
         title = if (!uiState.isProductAWinner) stringResource(R.string.product_a_title) else stringResource(R.string.product_b_title),
         state = uiState.losingProduct,
         actions = ProductInputActions(),
-        isReadOnly = true
+        options = ProductInputOptions(isReadOnly = true)
     )
 }
 

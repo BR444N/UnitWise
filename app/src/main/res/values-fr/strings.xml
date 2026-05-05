@@ -4,17 +4,24 @@
     <string name="app_name">UnitWise</string>
     <string name="logo_desc">Logo UnitWise</string>
     <string name="settings_desc">Paramètres</string>
-    <string name="scan_hint">Scanner ou saisir le nom</string>
-    <string name="scan_desc">Scanner le code-barres</string>
-    <string name="content_label">Contenu</string>
     <string name="unit_label">Unité</string>
-    <string name="price_label">Prix</string>
     <string name="quantity_label">Quantité</string>
     <string name="quantity_min_error">Min. 1</string>
     <string name="units_cannot_be_compared">Les unités ne peuvent pas être comparées.</string>
     <string name="home_tab">Accueil</string>
     <string name="home_header_title">Comparer les produits</string>
     <string name="home_header_subtitle">Trouver le meilleur rapport qualité-prix</string>
+    <string name="scan_desc">Scanner le produit</string>
+
+    <!-- Card to Compare PRODUCT A -->
+    <string name="scan_hint">Lait entier</string>
+    <string name="content_label">500ml</string>
+    <string name="price_label">$15.43</string>
+
+    <!-- Card to Compare PRODUCT B -->
+    <string name="scan_hint_b">Lait sans lactose</string>
+    <string name="content_label_b">1L</string>
+    <string name="price_label_b">$19.99</string>
 
     <!-- HISTORY STRINGS -->
     <string name="history_tab">Historique</string>
