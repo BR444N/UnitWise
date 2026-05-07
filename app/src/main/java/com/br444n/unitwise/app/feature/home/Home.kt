@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -31,7 +32,6 @@ import com.br444n.unitwise.app.feature.home.components.ProductInputHints
 import com.br444n.unitwise.app.feature.home.components.ProductInputOptions
 import com.br444n.unitwise.app.feature.home.components.ProductInputState
 import com.br444n.unitwise.app.feature.home.components.UnitWiseTopAppBar
-import com.br444n.unitwise.app.ui.components.rememberBottomNavVisibility
 import com.br444n.unitwise.app.ui.components.UnitWiseBottomNavigation
 import com.br444n.unitwise.app.ui.components.UnitWiseLoading
 import com.br444n.unitwise.app.ui.theme.UnitWiseTheme
@@ -129,7 +129,6 @@ private fun HomeContent(
     focusConfigs: HomeFocusConfigs
 ) {
     val scrollState = rememberScrollState()
-    val isBottomNavVisible = rememberBottomNavVisibility { scrollState.value }
     
     Box(modifier = modifier.fillMaxSize()) {
         Scaffold(
@@ -138,6 +137,14 @@ private fun HomeContent(
                     onSettingsClick = callbacks.onNavigateToSettings
                 )
             },
+            floatingActionButton = {
+                CalculateButton(
+                    onClick = { callbacks.onCalculate(callbacks.onNavigateToComparison) },
+                    enabled = uiState.isCalculateEnabled && !uiState.isLoading,
+                    modifier = Modifier.padding(bottom = BottomNavOverlayPadding)
+                )
+            },
+            floatingActionButtonPosition = FabPosition.End,
             modifier = Modifier.fillMaxSize()
         ) { innerPadding ->
             Column(
@@ -189,11 +196,7 @@ private fun HomeContent(
                     onScanClick = callbacks.handleScanClick
                 )
 
-                CalculateButton(
-                    onClick = { callbacks.onCalculate(callbacks.onNavigateToComparison) },
-                    enabled = uiState.isCalculateEnabled && !uiState.isLoading,
-                    modifier = Modifier.padding(bottom = 24.dp)
-                )
+                /* CalculateButton moved to floatingActionButton slot */
             }
         } // End Scaffold
 
@@ -201,7 +204,6 @@ private fun HomeContent(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .fillMaxWidth(),
-            visible = isBottomNavVisible,
             onNavigateToHistory = callbacks.onNavigateToHistory
         )
 
@@ -222,12 +224,11 @@ private fun HomeContent(
 @Composable
 private fun HomeBottomNavigation(
     modifier: Modifier = Modifier,
-    visible: Boolean,
     onNavigateToHistory: () -> Unit
 ) {
     UnitWiseBottomNavigation(
         modifier = modifier,
-        visible = visible,
+        visible = true,
         onNavigate = { index ->
             when (index) {
                 1 -> onNavigateToHistory()
