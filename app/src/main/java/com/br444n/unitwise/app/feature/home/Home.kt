@@ -129,7 +129,7 @@ private fun HomeContent(
     focusConfigs: HomeFocusConfigs
 ) {
     val scrollState = rememberScrollState()
-    val isBottomNavVisible = rememberBottomNavVisibility { scrollState.value }
+    val isBottomNavVisible = true
     
     Box(modifier = modifier.fillMaxSize()) {
         Scaffold(
@@ -138,6 +138,14 @@ private fun HomeContent(
                     onSettingsClick = callbacks.onNavigateToSettings
                 )
             },
+            floatingActionButton = {
+                CalculateButton(
+                    onClick = { callbacks.onCalculate(callbacks.onNavigateToComparison) },
+                    enabled = uiState.isCalculateEnabled && !uiState.isLoading,
+                    modifier = Modifier.padding(bottom = BottomNavOverlayPadding)
+                )
+            },
+            floatingActionButtonPosition = androidx.compose.material3.FabPosition.End,
             modifier = Modifier.fillMaxSize()
         ) { innerPadding ->
             Column(
