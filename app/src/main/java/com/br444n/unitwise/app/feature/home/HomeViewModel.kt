@@ -8,6 +8,7 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.br444n.unitwise.app.UnitWiseApplication
 import com.br444n.unitwise.app.domain.model.MeasurementUnit
+import com.br444n.unitwise.app.domain.repository.UserPreferencesRepository
 import com.br444n.unitwise.app.domain.usecase.GetComparisonUseCase
 import com.br444n.unitwise.app.domain.usecase.IncompatibleMeasurementUnitsException
 import com.br444n.unitwise.app.domain.usecase.SaveComparisonUseCase
@@ -21,10 +22,19 @@ import kotlinx.coroutines.launch
 
 class HomeViewModel(
     private val saveComparisonUseCase: SaveComparisonUseCase,
-    private val getComparisonUseCase: GetComparisonUseCase
+    private val getComparisonUseCase: GetComparisonUseCase,
+    private val userPreferencesRepository: UserPreferencesRepository
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(HomeUiState())
     val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
+
+    init {
+        viewModelScope.launch {
+            userPreferencesRepository.isHomeShowcaseCompleted.collect { isCompleted ->
+                _uiState.update { it.copy(shouldShowOnboarding = !isCompleted) }
+            }
+        }
+    }
 
     fun updateProductA(newState: ProductInputState) {
         _uiState.update { currentState ->
@@ -143,6 +153,13 @@ class HomeViewModel(
         }
     }
 
+    fun completeHomeOnboarding() {
+        viewModelScope.launch {
+            userPreferencesRepository.saveHomeShowcaseCompleted(completed = true)
+            _uiState.update { it.copy(shouldShowOnboarding = false) }
+        }
+    }
+
     private fun ensureCompatibleUnitSelection(
         driverUnit: String,
         otherState: ProductInputState
@@ -162,9 +179,11 @@ class HomeViewModel(
             initializer {
                 val application = (this[APPLICATION_KEY] as UnitWiseApplication)
                 val repository = application.container.comparisonRepository
+                val userPreferencesRepository = application.container.userPreferencesRepository
                 HomeViewModel(
                     saveComparisonUseCase = SaveComparisonUseCase(repository),
-                    getComparisonUseCase = GetComparisonUseCase(repository)
+                    getComparisonUseCase = GetComparisonUseCase(repository),
+                    userPreferencesRepository = userPreferencesRepository
                 )
             }
         }
