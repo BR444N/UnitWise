@@ -12,6 +12,15 @@
     <string name="home_header_title">Comparer les produits</string>
     <string name="home_header_subtitle">Trouver le meilleur rapport qualité-prix</string>
     <string name="scan_desc">Scanner le produit</string>
+    <string name="home_showcase_scan_title">Scannez les produits plus rapidement</string>
+    <string name="home_showcase_scan_body">Appuyez sur ce bouton de scan pour capturer automatiquement le nom du produit avec votre appareil photo.</string>
+    <string name="home_showcase_product_a_title">Fiche Produit A</string>
+    <string name="home_showcase_product_a_body">Utilisez cette fiche pour le premier produit que vous souhaitez comparer.</string>
+    <string name="home_showcase_product_b_title">Fiche Produit B</string>
+    <string name="home_showcase_product_b_body">Utilisez cette fiche pour un produit différent à comparer au Produit A.</string>
+    <string name="home_showcase_skip">Ignorer</string>
+    <string name="home_showcase_next">Suivant</string>
+    <string name="home_showcase_finish">Terminer</string>
 
     <!-- Card to Compare PRODUCT A -->
     <string name="scan_hint">Lait entier</string>

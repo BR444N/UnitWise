@@ -12,6 +12,15 @@
     <string name="home_header_title">Produkte vergleichen</string>
     <string name="home_header_subtitle">Finden Sie den besten Wert für Ihr Geld</string>
     <string name="scan_desc">Produkt scannen</string>
+    <string name="home_showcase_scan_title">Produkte schneller scannen</string>
+    <string name="home_showcase_scan_body">Tippen Sie auf diese Scan-Schaltfläche, um den Produktnamen automatisch mit Ihrer Kamera zu erfassen.</string>
+    <string name="home_showcase_product_a_title">Karte Produkt A</string>
+    <string name="home_showcase_product_a_body">Verwenden Sie diese Karte für das erste Produkt, das Sie vergleichen möchten.</string>
+    <string name="home_showcase_product_b_title">Karte Produkt B</string>
+    <string name="home_showcase_product_b_body">Verwenden Sie diese Karte für ein anderes Produkt, um es mit Produkt A zu vergleichen.</string>
+    <string name="home_showcase_skip">Überspringen</string>
+    <string name="home_showcase_next">Weiter</string>
+    <string name="home_showcase_finish">Fertigstellen</string>
 
     <!-- Card to Compare PRODUCT A -->
     <string name="scan_hint">Vollmilch</string>

@@ -12,6 +12,15 @@
     <string name="home_header_title">Confronta prodotti</string>
     <string name="home_header_subtitle">Trova il miglior rapporto qualità-prezzo</string>
     <string name="scan_desc">Scansiona prodotto</string>
+    <string name="home_showcase_scan_title">Scansiona i prodotti più velocemente</string>
+    <string name="home_showcase_scan_body">Tocca questo pulsante di scansione per acquisire automaticamente il nome del prodotto con la tua fotocamera.</string>
+    <string name="home_showcase_product_a_title">Scheda Prodotto A</string>
+    <string name="home_showcase_product_a_body">Usa questa scheda per il primo prodotto che vuoi confrontare.</string>
+    <string name="home_showcase_product_b_title">Scheda Prodotto B</string>
+    <string name="home_showcase_product_b_body">Usa questa scheda per un prodotto diverso da confrontare con il Prodotto A.</string>
+    <string name="home_showcase_skip">Salta</string>
+    <string name="home_showcase_next">Avanti</string>
+    <string name="home_showcase_finish">Fine</string>
 
     <!-- Card to Compare PRODUCT A -->
     <string name="scan_hint">Latte intero</string>
