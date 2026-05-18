@@ -14,7 +14,8 @@ data class HomeUiState(
     val incompatibleUnitsToastEvent: Int = 0,
     val unitSelectionDriver: UnitSelectionDriver? = null,
     val editingComparisonId: Int? = null,
-    val editingShareId: String? = null
+    val editingShareId: String? = null,
+    val shouldShowOnboarding: Boolean = false
 ) {
     val isCalculateEnabled: Boolean
         get() = productA.isValid() && productB.isValid()
