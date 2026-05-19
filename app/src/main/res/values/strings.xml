@@ -12,6 +12,15 @@
     <string name="home_header_title">Compare products</string>
     <string name="home_header_subtitle">Find the best values for your money</string>
     <string name="scan_desc">Scan Product</string>
+    <string name="home_showcase_scan_title">Scan products faster</string>
+    <string name="home_showcase_scan_body">Tap this scan button to capture the product name automatically with your camera.</string>
+    <string name="home_showcase_product_a_title">Product A card</string>
+    <string name="home_showcase_product_a_body">Use this card for the first product you want to compare.</string>
+    <string name="home_showcase_product_b_title">Product B card</string>
+    <string name="home_showcase_product_b_body">Use this card for a different product to compare against Product A.</string>
+    <string name="home_showcase_skip">Skip</string>
+    <string name="home_showcase_next">Next</string>
+    <string name="home_showcase_finish">Finish</string>
 
     <!-- Card to Compare PRODUCT A -->
     <string name="scan_hint">Whole Milk</string>

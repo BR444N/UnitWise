@@ -12,6 +12,15 @@
     <string name="home_header_title">Comparar produtos</string>
     <string name="home_header_subtitle">Encontre os melhores valores para o seu dinheiro</string>
     <string name="scan_desc">Escanear produto</string>
+    <string name="home_showcase_scan_title">Digitalize produtos mais rápido</string>
+    <string name="home_showcase_scan_body">Toque neste botão de digitalização para capturar o nome do produto automaticamente com sua câmera.</string>
+    <string name="home_showcase_product_a_title">Cartão do Producto A</string>
+    <string name="home_showcase_product_a_body">Use este cartão para o primeiro produto que você deseja comparar.</string>
+    <string name="home_showcase_product_b_title">Cartão do Producto B</string>
+    <string name="home_showcase_product_b_body">Use este cartão para um produto diferente para comparar com o Produto A.</string>
+    <string name="home_showcase_skip">Pular</string>
+    <string name="home_showcase_next">Próximo</string>
+    <string name="home_showcase_finish">Concluir</string>
 
     <!-- Card to Compare PRODUCT A -->
     <string name="scan_hint">Leite integral</string>

@@ -37,6 +37,19 @@ class UserPreferencesRepositoryImpl(
         }
     }
 
+    override val isHomeShowcaseCompleted: Flow<Boolean> = callbackFlow {
+        val listener = SharedPreferences.OnSharedPreferenceChangeListener { prefs, key ->
+            if (key == HOME_SHOWCASE_COMPLETED) {
+                trySend(prefs.getBoolean(HOME_SHOWCASE_COMPLETED, false))
+            }
+        }
+        sharedPreferences.registerOnSharedPreferenceChangeListener(listener)
+        trySend(sharedPreferences.getBoolean(HOME_SHOWCASE_COMPLETED, false))
+        awaitClose {
+            sharedPreferences.unregisterOnSharedPreferenceChangeListener(listener)
+        }
+    }
+
     override suspend fun saveThemePreference(isDarkTheme: Boolean) {
         sharedPreferences.edit { putBoolean(IS_DARK_THEME, isDarkTheme) }
     }
@@ -45,8 +58,13 @@ class UserPreferencesRepositoryImpl(
         sharedPreferences.edit { putString(SELECTED_LANGUAGE, language) }
     }
 
+    override suspend fun saveHomeShowcaseCompleted(completed: Boolean) {
+        sharedPreferences.edit { putBoolean(HOME_SHOWCASE_COMPLETED, completed) }
+    }
+
     companion object {
         private const val IS_DARK_THEME = "is_dark_theme"
         private const val SELECTED_LANGUAGE = "selected_language"
+        private const val HOME_SHOWCASE_COMPLETED = "home_showcase_completed"
     }
 }

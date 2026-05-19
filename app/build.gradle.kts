@@ -115,6 +115,7 @@ dependencies {
     implementation(libs.camerax.view)
     implementation(libs.mlkit.text.recognition)
     implementation(libs.lottie.compose)
+    implementation(libs.compose.showcaseview)
     implementation(libs.androidx.compose.runtime.saveable)
     implementation(libs.qrose)
     implementation(libs.androidx.compose.ui.geometry)

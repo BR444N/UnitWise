@@ -81,6 +81,8 @@ data class ProductInputHints(
 )
 
 data class ProductInputOptions(
+    val cardModifier: Modifier = Modifier,
+    val scanButtonModifier: Modifier = Modifier,
     val focusConfig: ProductInputFocusConfig? = null,
     val hints: ProductInputHints = ProductInputHints(),
     val isReadOnly: Boolean = false,
@@ -142,7 +144,7 @@ fun ProductInputCard(
     val onFocusChange: (Boolean) -> Unit = { focused -> if (focused) isFocused = true }
 
     Card(
-        modifier = modifier.fillMaxWidth(),
+        modifier = options.cardModifier.then(modifier).fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
@@ -221,6 +223,7 @@ private fun ProductNameField(
     val focusConfig = options.focusConfig
     val placeholderResId = options.hints.productNameHint
     val isReadOnly = options.isReadOnly
+    val scanButtonModifier = options.scanButtonModifier
     OutlinedTextField(
         value = productName,
         onValueChange = { onProductNameChange(sanitizeProductNameInput(it)) },
@@ -236,7 +239,7 @@ private fun ProductNameField(
         ),
         placeholder = { Text(stringResource(id = placeholderResId)) },
         trailingIcon = if (isReadOnly) null else {
-            { ScanIconTooltip(onScanClick) }
+            { ScanIconTooltip(onScanClick, modifier = scanButtonModifier) }
         },
         singleLine = true,
         shape = RoundedCornerShape(12.dp)
@@ -245,7 +248,10 @@ private fun ProductNameField(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun ScanIconTooltip(onScanClick: () -> Unit) {
+private fun ScanIconTooltip(
+    onScanClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     TooltipBox(
         positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
             positioning = TooltipAnchorPosition.Below
@@ -263,7 +269,10 @@ private fun ScanIconTooltip(onScanClick: () -> Unit) {
         },
         state = rememberTooltipState()
     ) {
-        IconButton(onClick = onScanClick) {
+        IconButton(
+            onClick = onScanClick,
+            modifier = modifier
+        ) {
             Icon(
                 imageVector = Icons.Default.QrCodeScanner,
                 contentDescription = stringResource(id = R.string.scan_desc),
