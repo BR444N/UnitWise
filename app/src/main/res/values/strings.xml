@@ -90,6 +90,13 @@
     <string name="camera_permission_retry">Allow camera</string>
     <string name="camera_permission_permanently_denied_description">Camera access was permanently denied. Open Settings to enable it manually.</string>
     <string name="camera_permission_open_settings">Open Settings</string>
+    <string name="scann_step_title">Step %1$d of %2$d</string>
+    <string name="scann_step_name_guide">Focus your camera on the product name.</string>
+    <string name="scann_step_content_guide">Focus on the content label (e.g. 500g, 1 L).</string>
+    <string name="scann_step_price_guide">Enter the shelf price manually.</string>
+    <string name="scann_step_name_edit_hint">Tap the text if you need to fix letters.</string>
+    <string name="scann_confirm_continue">Confirm and Continue</string>
+    <string name="scann_inject_product">Confirm Product</string>
 
     <!-- SETTINGS STRINGS -->
     <string name="settings_dark_theme_title">Dark theme</string>

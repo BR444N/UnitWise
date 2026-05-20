@@ -90,6 +90,13 @@
     <string name="camera_permission_retry">Consenti fotocamera</string>
     <string name="camera_permission_permanently_denied_description">L\'accesso alla fotocamera è stato negato definitivamente. Apri Impostazioni per abilitarlo manualmente.</string>
     <string name="camera_permission_open_settings">Apri Impostazioni</string>
+    <string name="scann_step_title">Passaggio %1$d di %2$d</string>
+    <string name="scann_step_name_guide">Inquadra il nome del prodotto con la fotocamera.</string>
+    <string name="scann_step_content_guide">Inquadra l\'etichetta del contenuto (es. 500g, 1 L).</string>
+    <string name="scann_step_price_guide">Inserisci manualmente il prezzo a scaffale.</string>
+    <string name="scann_step_name_edit_hint">Tocca il testo se devi correggere le lettere.</string>
+    <string name="scann_confirm_continue">Conferma e continua</string>
+    <string name="scann_inject_product">Conferma prodotto</string>
 
     <!-- SETTINGS STRINGS -->
     <string name="settings_dark_theme_title">Tema scuro</string>
