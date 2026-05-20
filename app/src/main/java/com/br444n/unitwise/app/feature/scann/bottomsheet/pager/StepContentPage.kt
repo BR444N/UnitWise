@@ -7,12 +7,15 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -24,11 +27,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.br444n.unitwise.R
 import com.br444n.unitwise.app.domain.model.MeasurementUnit.SUPPORTED_UNITS
 import com.br444n.unitwise.app.feature.scann.CONTENT_AMOUNT_MAX_LENGTH
+import com.br444n.unitwise.app.ui.theme.Badge
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -84,7 +89,8 @@ private fun RowScope.ContentAmountField(
         modifier = Modifier.weight(1f),
         label = { Text(stringResource(id = R.string.content_label)) },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-        singleLine = true
+        singleLine = true,
+        shape = RoundedCornerShape(12.dp)
     )
 }
 
@@ -112,20 +118,30 @@ private fun RowScope.UnitDropdownField(
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
             modifier = Modifier
                 .onFocusChanged { if (it.isFocused) onFocus() }
-                .menuAnchor(type = ExposedDropdownMenuAnchorType.PrimaryNotEditable)
+                .menuAnchor(type = ExposedDropdownMenuAnchorType.PrimaryNotEditable),
+            shape = RoundedCornerShape(12.dp)
         )
 
         ExposedDropdownMenu(
             expanded = expanded,
-            onDismissRequest = onDismiss
+            onDismissRequest = onDismiss,
+            shape = RoundedCornerShape(16.dp),
+            containerColor = MaterialTheme.colorScheme.surface
         ) {
-            SUPPORTED_UNITS.forEach { unit ->
+            SUPPORTED_UNITS.forEachIndexed { index, unit ->
                 UnitDropdownItem(
                     unit = unit,
                     selectedUnit = selectedUnit,
                     compatibleUnits = compatibleUnits,
                     onUnitChanged = onUnitChanged
                 )
+                if (index < SUPPORTED_UNITS.size - 1) {
+                    HorizontalDivider(
+                        modifier = Modifier.padding(horizontal = 12.dp),
+                        color = Badge.copy(alpha = 0.5f),
+                        thickness = 0.5.dp
+                    )
+                }
             }
         }
     }
@@ -147,7 +163,8 @@ private fun UnitDropdownItem(
                     unit == selectedUnit -> MaterialTheme.colorScheme.primary
                     isEnabled -> MaterialTheme.colorScheme.onSurface
                     else -> MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.45f)
-                }
+                },
+                fontWeight = if (unit == selectedUnit) FontWeight.Bold else FontWeight.Normal
             )
         },
         onClick = {
