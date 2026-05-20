@@ -68,13 +68,17 @@ fun ScannBottomSheet(
 
     Surface(
         modifier = modifier
-            .fillMaxWidth()
-            .navigationBarsPadding(),
+            .fillMaxWidth(),
         shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
+        color = MaterialTheme.colorScheme.background,
         tonalElevation = 8.dp,
         shadowElevation = 8.dp
     ) {
-        Column(modifier = Modifier.padding(horizontal = 20.dp, vertical = 16.dp)) {
+        Column(
+            modifier = Modifier
+                .navigationBarsPadding()
+                .padding(horizontal = 20.dp, vertical = 16.dp)
+        ) {
             ScannBottomSheetHeader(state = state)
             ScannBottomSheetPager(
                 state = state,
