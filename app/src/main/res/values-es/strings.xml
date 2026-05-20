@@ -22,7 +22,6 @@
     <string name="home_showcase_next">Siguiente</string>
     <string name="home_showcase_finish">Finalizar</string>
 
-
     <!-- Card to Compare PRODUCT A -->
     <string name="scan_hint">Leche Entera</string>
     <string name="content_label">500ml</string>
@@ -91,6 +90,13 @@
     <string name="camera_permission_retry">Permitir cámara</string>
     <string name="camera_permission_permanently_denied_description">El acceso a la cámara fue denegado permanentemente. Abre Ajustes para habilitarlo manualmente.</string>
     <string name="camera_permission_open_settings">Abrir Ajustes</string>
+    <string name="scann_step_title">Paso %1$d de %2$d</string>
+    <string name="scann_step_name_guide">Enfoca la cámara en el nombre del producto.</string>
+    <string name="scann_step_content_guide">Enfoca la etiqueta de contenido (ej. 500g, 1 L).</string>
+    <string name="scann_step_price_guide">Introduce el precio del estante manualmente.</string>
+    <string name="scann_step_name_edit_hint">Toca el texto si necesitas corregir alguna letra.</string>
+    <string name="scann_confirm_continue">Confirmar y continuar</string>
+    <string name="scann_inject_product">Confirmar Producto</string>
 
     <!-- SETTINGS STRINGS -->
     <string name="settings_dark_theme_title">Tema oscuro</string>

@@ -90,6 +90,13 @@
     <string name="camera_permission_retry">Permitir câmera</string>
     <string name="camera_permission_permanently_denied_description">O acesso à câmera foi negado permanentemente. Abra as Configurações para ativá-lo manualmente.</string>
     <string name="camera_permission_open_settings">Abrir Configurações</string>
+    <string name="scann_step_title">Passo %1$d de %2$d</string>
+    <string name="scann_step_name_guide">Foque a câmara no nome do produto.</string>
+    <string name="scann_step_content_guide">Foque no rótulo de conteúdo (ex: 500g, 1 L).</string>
+    <string name="scann_step_price_guide">Insira o preço de prateleira manualmente.</string>
+    <string name="scann_step_name_edit_hint">Toque no texto se precisar de corrigir letras.</string>
+    <string name="scann_confirm_continue">Confirmar e continuar</string>
+    <string name="scann_inject_product">Confirmar produto</string>
 
     <!-- SETTINGS STRINGS -->
     <string name="settings_dark_theme_title">Tema escuro</string>

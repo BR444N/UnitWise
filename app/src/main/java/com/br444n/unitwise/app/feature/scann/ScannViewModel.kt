@@ -2,6 +2,7 @@ package com.br444n.unitwise.app.feature.scann
 
 import androidx.camera.core.ImageProxy
 import androidx.lifecycle.ViewModel
+import com.br444n.unitwise.app.domain.model.MeasurementUnit
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.TextRecognizer
@@ -20,7 +21,6 @@ class ScannViewModel : ViewModel() {
         TextRecognizerOptions.DEFAULT_OPTIONS
     )
     private val mlExecutor = Executors.newSingleThreadExecutor()
-    // Volatile para visibilidad entre el hilo del analyzer y el main thread
     @Volatile private var isProcessing = false
     private var lastProcessTime = 0L
 
@@ -28,12 +28,85 @@ class ScannViewModel : ViewModel() {
         _uiState.update { it.copy(isFlashOn = !it.isFlashOn) }
     }
 
+    fun setupInheritedUnit(unit: String?) {
+        if (unit.isNullOrBlank()) return
+        _uiState.update { state ->
+            if (state.inheritedUnit != null) return@update state
+            val normalized = if (unit.equals("l", ignoreCase = true)) "L" else unit.lowercase()
+            val compatible = MeasurementUnit.compatibleUnitsFor(normalized)
+            state.copy(
+                inheritedUnit = normalized,
+                selectedUnit = if (state.selectedUnit in compatible) state.selectedUnit else compatible.first()
+            )
+        }
+    }
+
+    fun onStepChanged(step: ScanStep) {
+        _uiState.update { state ->
+            if (state.currentStep == step) return@update state
+            state.copy(
+                currentStep = step,
+                selectedText = null,
+                detectedTexts = emptyList()
+            )
+        }
+    }
+
+    fun onNameChanged(value: String) {
+        _uiState.update { it.copy(productName = value) }
+    }
+
+    fun onContentChanged(value: String) {
+        _uiState.update { it.copy(content = value) }
+    }
+
+    fun onUnitChanged(value: String) {
+        _uiState.update { state ->
+            if (value !in state.compatibleUnits) return@update state
+            state.copy(selectedUnit = value)
+        }
+    }
+
+    fun onPriceChanged(value: String) {
+        _uiState.update { it.copy(price = value) }
+    }
+
     fun selectText(text: String) {
         _uiState.update { it.copy(selectedText = text) }
+        applyDetectedTextToCurrentStep(text)
     }
 
     fun scanAgain() {
-        _uiState.update { it.copy(selectedText = null, detectedTexts = emptyList()) }
+        _uiState.update { state ->
+            when (state.currentStep) {
+                ScanStep.NAME -> state.copy(
+                    productName = "",
+                    selectedText = null,
+                    detectedTexts = emptyList()
+                )
+                ScanStep.CONTENT -> state.copy(
+                    content = "",
+                    selectedUnit = defaultUnitForContentRescan(state),
+                    selectedText = null,
+                    detectedTexts = emptyList()
+                )
+                ScanStep.PRICE -> state.copy(
+                    selectedText = null,
+                    detectedTexts = emptyList()
+                )
+            }
+        }
+    }
+
+    fun buildResultOrNull(): ScannResult? {
+        val state = _uiState.value
+        if (!state.isDataReady) return null
+        return ScannResult(
+            productName = state.productName.trim(),
+            content = state.content.trim(),
+            selectedUnit = state.selectedUnit.trim(),
+            price = state.price.trim()
+        )
     }
 
     @androidx.annotation.OptIn(androidx.camera.core.ExperimentalGetImage::class)
@@ -43,8 +116,6 @@ class ScannViewModel : ViewModel() {
         previewHeight: Int,
         overlayHeight: Int
     ) {
-        // Bug #4 fix: imageProxy.close() siempre se ejecuta via finally,
-        // incluso si el executor se apaga mientras hay un frame en proceso.
         if (mlExecutor.isShutdown || !shouldProcessFrame(previewWidth, previewHeight, overlayHeight)) {
             imageProxy.close()
             return
@@ -60,19 +131,20 @@ class ScannViewModel : ViewModel() {
         lastProcessTime = System.currentTimeMillis()
         try {
             val rotation = imageProxy.imageInfo.rotationDegrees
+            val mediaWidth = mediaImage.width
+            val mediaHeight = mediaImage.height
             val image = InputImage.fromMediaImage(mediaImage, rotation)
 
             textRecognizer.process(image)
                 .addOnSuccessListener { visionText ->
-                    // Procesar el texto en el hilo secundario solo si sigue activo
                     if (!mlExecutor.isShutdown) {
                         try {
                             mlExecutor.execute {
                                 handleVisionTextResult(
                                     visionText = visionText,
                                     config = OverlayFrameConfig(
-                                        mediaWidth = mediaImage.width,
-                                        mediaHeight = mediaImage.height,
+                                        mediaWidth = mediaWidth,
+                                        mediaHeight = mediaHeight,
                                         rotation = rotation,
                                         previewWidth = previewWidth,
                                         previewHeight = previewHeight,
@@ -81,35 +153,28 @@ class ScannViewModel : ViewModel() {
                                 )
                             }
                         } catch (_: java.util.concurrent.RejectedExecutionException) {
-                            // Ignorar si el executor se cerró justo ahora
+                            // Executor was closed while ML callback arrived; frame lifecycle is
+                            // already handled in addOnCompleteListener(imageProxy.close()).
                         }
                     }
                 }
                 .addOnCompleteListener {
-                    // Importante: Liberar siempre el frame en el Main Thread
-                    // para evitar RejectedExecutionException si mlExecutor ya cerró.
                     isProcessing = false
                     imageProxy.close()
                 }
         } catch (_: Exception) {
-            // Bug #4 fix: si falla antes de lanzar la tarea ML Kit,
-            // liberar el proxy directamente.
             isProcessing = false
             imageProxy.close()
         }
     }
 
-    // Bug #1 fix: la condición de "ya hay textos o texto seleccionado" NO bloquea
-    // el procesamiento desde aquí — eso lo maneja el Composable via isAnalyzerEnabled.
-    // Esta función solo evita procesar frames en paralelo o con dimensiones inválidas.
     private fun shouldProcessFrame(previewWidth: Int, previewHeight: Int, overlayHeight: Int): Boolean {
+        val state = _uiState.value
         if (isProcessing) return false
-        
-        // Limitar a ~2 frames por segundo para reducir consumo de CPU/Memoria
+        if (state.currentStep == ScanStep.PRICE) return false
         if (System.currentTimeMillis() - lastProcessTime < 500) return false
-        
         if (previewWidth <= 0 || previewHeight <= 0 || overlayHeight <= 0) return false
-        if (_uiState.value.selectedText != null || _uiState.value.detectedTexts.isNotEmpty()) return false
+        if (state.selectedText != null || state.detectedTexts.isNotEmpty()) return false
         return true
     }
 
@@ -129,29 +194,77 @@ class ScannViewModel : ViewModel() {
             config = config
         )
 
-        val detectedOptions = overlayOptions.takeIf { it.isNotEmpty() }
-            ?: visionText.textBlocks
-            .flatMap { block -> block.lines.map { it.text.replace("\n", " ").trim() } }
-            .filter { it.isNotBlank() }
-            .takeIf { it.isNotEmpty() }
-            ?: visionText.textBlocks
-                .map { it.text.replace("\n", " ").trim() }
-                .filter { it.isNotBlank() }
-                .takeIf { it.isNotEmpty() }
-            ?: visionText.text
-                .split('\n')
-                .map { it.trim() }
-                .filter { it.isNotBlank() }
-
-        val options = detectedOptions.distinct()
+        val options = filterDetectedByCurrentStep(overlayOptions).distinct()
         if (options == _uiState.value.detectedTexts) return
-
         _uiState.update { it.copy(detectedTexts = options) }
+    }
+
+    private fun applyDetectedTextToCurrentStep(text: String) {
+        val state = _uiState.value
+        when (state.currentStep) {
+            ScanStep.NAME -> {
+                if (text.any(Char::isLetter)) {
+                    _uiState.update { it.copy(productName = text.trim()) }
+                }
+            }
+            ScanStep.CONTENT -> {
+                val match = CONTENT_PATTERN.find(text.lowercase()) ?: return
+                val number = match.groupValues[1].replace(',', '.')
+                val unitRaw = match.groupValues[2]
+                val normalizedUnit = normalizeUnit(unitRaw) ?: return
+                if (normalizedUnit !in state.compatibleUnits) return
+
+                _uiState.update {
+                    it.copy(
+                        content = number,
+                        selectedUnit = normalizedUnit
+                    )
+                }
+            }
+            ScanStep.PRICE -> Unit
+        }
+    }
+
+    private fun filterDetectedByCurrentStep(items: List<String>): List<String> {
+        return when (_uiState.value.currentStep) {
+            ScanStep.NAME -> items.filter { value -> value.any(Char::isLetter) }
+            ScanStep.CONTENT -> items.filter { CONTENT_PATTERN.containsMatchIn(it.lowercase()) }
+            ScanStep.PRICE -> emptyList()
+        }
+    }
+
+    private fun normalizeUnit(unit: String): String? {
+        val normalized = unit.lowercase().replace(".", "")
+        return when (normalized) {
+            "g", "gr", "gram", "grams" -> "g"
+            "kg", "kilo", "kilos" -> "kg"
+            "ml", "mi", "m1" -> "ml"
+            "l", "lt", "lts", "litro", "litros" -> "L"
+            "pz", "pza", "pzas", "pcs", "pc" -> "pcs"
+            else -> null
+        }
+    }
+
+    private fun defaultUnitForContentRescan(state: ScannUiState): String {
+        val inherited = state.inheritedUnit ?: return state.selectedUnit
+        val normalizedInherited = normalizeUnit(inherited) ?: inherited
+        val compatible = MeasurementUnit.compatibleUnitsFor(normalizedInherited)
+        if (normalizedInherited in compatible) return normalizedInherited
+        return compatible.firstOrNull() ?: state.selectedUnit
     }
 
     override fun onCleared() {
         super.onCleared()
         textRecognizer.close()
         mlExecutor.shutdown()
+    }
+
+    companion object {
+        // Uses app-supported units plus supermarket label aliases.
+        private val CONTENT_PATTERN = Regex(
+            // Keep this broad and let normalizeUnit(...) validate/standardize aliases.
+            pattern = """(\d+(?:[.,]\d+)?)\s*([a-z0-9.]{1,6})\b""",
+            option = RegexOption.IGNORE_CASE
+        )
     }
 }

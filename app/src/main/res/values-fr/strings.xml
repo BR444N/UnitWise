@@ -90,6 +90,13 @@
     <string name="camera_permission_retry">Autoriser l\'appareil photo</string>
     <string name="camera_permission_permanently_denied_description">L\'accès à l\'appareil photo a été refusé définitivement. Ouvrez les Paramètres pour l\'activer manuellement.</string>
     <string name="camera_permission_open_settings">Ouvrir les Paramètres</string>
+    <string name="scann_step_title">Étape %1$d sur %2$d</string>
+    <string name="scann_step_name_guide">Cadrez le nom du produit avec votre appareil photo.</string>
+    <string name="scann_step_content_guide">Cadrez l\'étiquette de contenu (ex: 500g, 1 L).</string>
+    <string name="scann_step_price_guide">Saisissez le prix manuellement.</string>
+    <string name="scann_step_name_edit_hint">Appuyez sur le texte si vous devez corriger des lettres.</string>
+    <string name="scann_confirm_continue">Confirmer et continuer</string>
+    <string name="scann_inject_product">Confirmer le produit</string>
 
     <!-- SETTINGS STRINGS -->
     <string name="settings_dark_theme_title">Thème sombre</string>

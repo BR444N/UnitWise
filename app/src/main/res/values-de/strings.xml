@@ -90,6 +90,13 @@
     <string name="camera_permission_retry">Kamera erlauben</string>
     <string name="camera_permission_permanently_denied_description">Der Kamerazugriff wurde dauerhaft verweigert. Öffne die Einstellungen, um ihn manuell zu aktivieren.</string>
     <string name="camera_permission_open_settings">Einstellungen öffnen</string>
+    <string name="scann_step_title">Schritt %1$d von %2$d</string>
+    <string name="scann_step_name_guide">Richten Sie die Kamera auf den Produktnamen.</string>
+    <string name="scann_step_content_guide">Richten Sie die Kamera auf die Inhaltsangabe (z. B. 500g, 1 L).</string>
+    <string name="scann_step_price_guide">Geben Sie den Regalpreis manuell ein.</string>
+    <string name="scann_step_name_edit_hint">Tippen Sie auf den Text, um Buchstaben zu korrigieren.</string>
+    <string name="scann_confirm_continue">Bestätigen und weiter</string>
+    <string name="scann_inject_product">Produkt bestätigen</string>
 
     <!-- SETTINGS STRINGS -->
     <string name="settings_dark_theme_title">Dunkles Design</string>
