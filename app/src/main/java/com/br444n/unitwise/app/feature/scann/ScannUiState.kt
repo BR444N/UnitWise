@@ -1,6 +1,7 @@
 package com.br444n.unitwise.app.feature.scann
 
 import com.br444n.unitwise.app.domain.model.MeasurementUnit
+import com.br444n.unitwise.app.domain.model.MeasurementUnit.SUPPORTED_UNITS
 import java.io.Serializable
 
 enum class ScanStep(val number: Int, val progress: Float) {
@@ -28,7 +29,7 @@ data class ScannUiState(
     val inheritedUnit: String? = null
 ) {
     val compatibleUnits: List<String>
-        get() = MeasurementUnit.compatibleUnitsFor(inheritedUnit ?: selectedUnit)
+        get() = inheritedUnit?.let(MeasurementUnit::compatibleUnitsFor) ?: SUPPORTED_UNITS
 
     val isNameValid: Boolean
         get() = productName.isNotBlank()
