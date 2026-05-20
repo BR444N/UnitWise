@@ -131,7 +131,7 @@ fun ScannerOverlay(
                 modifier = Modifier.padding(bottom = 12.dp)
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(32.dp))
 
             // Invisible placeholder mimicking the exact size of the crop window
             Spacer(
