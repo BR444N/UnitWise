@@ -18,9 +18,13 @@ import com.br444n.unitwise.app.feature.comparison.SharedComparisonRoute
 import com.br444n.unitwise.app.feature.history.HistoryScreen
 import com.br444n.unitwise.app.feature.home.HomeScreen
 import com.br444n.unitwise.app.feature.home.HomeViewModel
+import com.br444n.unitwise.app.feature.home.UnitSelectionDriver
+import com.br444n.unitwise.app.feature.home.components.ProductInputState
 import com.br444n.unitwise.app.feature.scann.ScannScreen
+import com.br444n.unitwise.app.feature.scann.ScannResult
 import com.br444n.unitwise.app.feature.settings.SettingsScreen
 import com.br444n.unitwise.app.feature.share.extractSharedComparisonKey
+import androidx.compose.runtime.collectAsState
 
 object Screen {
     const val HOME = "home"
@@ -102,10 +106,29 @@ fun AppNavigation(
             arguments = listOf(navArgument("targetProduct") { type = NavType.StringType })
         ) { backStackEntry ->
             val targetProduct = backStackEntry.arguments?.getString("targetProduct") ?: return@composable
+            val homeState = homeViewModel.uiState.collectAsState().value
+            val inheritedUnit = when (targetProduct) {
+                "A" -> homeState.productB.selectedUnit.takeIf {
+                    shouldInheritUnitForScan(
+                        product = homeState.productB,
+                        expectedDriver = UnitSelectionDriver.PRODUCT_B,
+                        currentDriver = homeState.unitSelectionDriver
+                    )
+                }
+                "B" -> homeState.productA.selectedUnit.takeIf {
+                    shouldInheritUnitForScan(
+                        product = homeState.productA,
+                        expectedDriver = UnitSelectionDriver.PRODUCT_A,
+                        currentDriver = homeState.unitSelectionDriver
+                    )
+                }
+                else -> null
+            }
             ScannScreen(
                 onBackClick = { navController.popBackStack() },
-                onUseSelectedClick = { selected ->
-                    navController.previousBackStackEntry?.savedStateHandle?.set("scann_result_$targetProduct", selected)
+                inheritedUnit = inheritedUnit,
+                onResultClick = { result ->
+                    navController.previousBackStackEntry?.savedStateHandle?.set("scann_result_$targetProduct", result)
                     navController.popBackStack()
                 }
             )
@@ -119,25 +142,50 @@ fun AppNavigation(
     }
 }
 
+private fun shouldInheritUnitForScan(
+    product: ProductInputState,
+    expectedDriver: UnitSelectionDriver,
+    currentDriver: UnitSelectionDriver?
+): Boolean {
+    val hasMeaningfulData = product.productName.isNotBlank() ||
+        product.contentAmount.isNotBlank() ||
+        product.price.isNotBlank()
+    return hasMeaningfulData || currentDriver == expectedDriver
+}
+
 @Composable
 private fun HomeResultHandler(backStackEntry: NavBackStackEntry, homeViewModel: HomeViewModel) {
-    val resultA: String? = backStackEntry.savedStateHandle["scann_result_A"]
-    val resultB: String? = backStackEntry.savedStateHandle["scann_result_B"]
+    val resultA: ScannResult? = backStackEntry.savedStateHandle["scann_result_A"]
+    val resultB: ScannResult? = backStackEntry.savedStateHandle["scann_result_B"]
     val editComparisonId: Int? = backStackEntry.savedStateHandle["edit_comparison_id"]
 
     LaunchedEffect(resultA) {
         if (resultA != null) {
             val current = homeViewModel.uiState.value.productA
-            homeViewModel.updateProductA(current.copy(productName = resultA))
-            backStackEntry.savedStateHandle.remove<String>("scann_result_A")
+            homeViewModel.updateProductA(
+                current.copy(
+                    productName = resultA.productName,
+                    contentAmount = resultA.content,
+                    selectedUnit = resultA.selectedUnit,
+                    price = resultA.price
+                )
+            )
+            backStackEntry.savedStateHandle.remove<ScannResult>("scann_result_A")
         }
     }
 
     LaunchedEffect(resultB) {
         if (resultB != null) {
             val current = homeViewModel.uiState.value.productB
-            homeViewModel.updateProductB(current.copy(productName = resultB))
-            backStackEntry.savedStateHandle.remove<String>("scann_result_B")
+            homeViewModel.updateProductB(
+                current.copy(
+                    productName = resultB.productName,
+                    contentAmount = resultB.content,
+                    selectedUnit = resultB.selectedUnit,
+                    price = resultB.price
+                )
+            )
+            backStackEntry.savedStateHandle.remove<ScannResult>("scann_result_B")
         }
     }
 
