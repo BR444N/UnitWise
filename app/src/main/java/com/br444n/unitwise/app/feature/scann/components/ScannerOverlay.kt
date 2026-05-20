@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,6 +30,7 @@ import com.br444n.unitwise.app.ui.theme.UnitWiseTheme
 
 @Composable
 fun ScannerOverlay(
+    guideText: String,
     modifier: Modifier = Modifier
 ) {
     val primaryColor = MaterialTheme.colorScheme.primary
@@ -121,20 +123,21 @@ fun ScannerOverlay(
         Column(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            Text(
+                text = guideText,
+                style = MaterialTheme.typography.bodyLarge,
+                fontWeight = FontWeight.Medium,
+                color = Color(0xFF34C759),
+                modifier = Modifier.padding(bottom = 12.dp)
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
             // Invisible placeholder mimicking the exact size of the crop window
             Spacer(
                 modifier = Modifier
                     .fillMaxWidth(0.85f)
                     .aspectRatio(1f / 0.40f) // width / height ratio
-            )
-            
-            Spacer(modifier = Modifier.height(24.dp))
-            
-            Text(
-                text = stringResource(id = R.string.scan_instruction),
-                style = MaterialTheme.typography.bodyLarge,
-                fontWeight = FontWeight.Medium,
-                color = Color.White.copy(alpha = 0.8f)
             )
         }
     }
@@ -144,6 +147,6 @@ fun ScannerOverlay(
 @Composable
 fun ScannerOverlayPreview() {
     UnitWiseTheme {
-        ScannerOverlay()
+        ScannerOverlay(guideText = stringResource(id = R.string.scann_step_name_guide))
     }
 }
