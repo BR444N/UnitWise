@@ -70,6 +70,7 @@ private enum class HomeShowcaseStep {
 private data class HomeContentCallbacks(
     val onNavigateToComparison: (Int) -> Unit,
     val onNavigateToHistory: () -> Unit,
+    val onNavigateToShoppingList: () -> Unit,
     val onNavigateToSettings: () -> Unit,
     val handleScanClick: (String) -> Unit,
     val onUpdateProductA: (ProductInputState) -> Unit,
@@ -108,6 +109,7 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
     onNavigateToComparison: (Int) -> Unit,
     onNavigateToHistory: () -> Unit = {},
+    onNavigateToShoppingList: () -> Unit = {},
     onNavigateToScann: (String) -> Unit = {},
     onNavigateToSettings: () -> Unit = {},
     viewModel: HomeViewModel = viewModel(factory = HomeViewModel.Factory)
@@ -129,6 +131,7 @@ fun HomeScreen(
         callbacks = HomeContentCallbacks(
             onNavigateToComparison = onNavigateToComparison,
             onNavigateToHistory = onNavigateToHistory,
+            onNavigateToShoppingList = onNavigateToShoppingList,
             onNavigateToSettings = onNavigateToSettings,
             handleScanClick = onNavigateToScann,
             onUpdateProductA = viewModel::updateProductA,
@@ -259,7 +262,8 @@ private fun HomeContent(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .fillMaxWidth(),
-            onNavigateToHistory = callbacks.onNavigateToHistory
+            onNavigateToHistory = callbacks.onNavigateToHistory,
+            onNavigateToShoppingList = callbacks.onNavigateToShoppingList
         )
 
         HomeToastMessage(
@@ -298,14 +302,16 @@ private fun HomeContent(
 @Composable
 private fun HomeBottomNavigation(
     modifier: Modifier = Modifier,
-    onNavigateToHistory: () -> Unit
+    onNavigateToHistory: () -> Unit,
+    onNavigateToShoppingList: () -> Unit
 ) {
     UnitWiseBottomNavigation(
         modifier = modifier,
         visible = true,
         onNavigate = { index ->
             when (index) {
-                1 -> onNavigateToHistory()
+                1 -> onNavigateToShoppingList()
+                2 -> onNavigateToHistory()
                 else -> { /* already on Home */
                 }
             }
@@ -477,6 +483,7 @@ fun HomeScreenPreview() {
             callbacks = HomeContentCallbacks(
                 onNavigateToComparison = {},
                 onNavigateToHistory = {},
+                onNavigateToShoppingList = {},
                 onNavigateToSettings = {},
                 handleScanClick = {},
                 onUpdateProductA = {},
