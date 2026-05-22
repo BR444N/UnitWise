@@ -24,10 +24,12 @@ import com.br444n.unitwise.app.feature.scann.ScannScreen
 import com.br444n.unitwise.app.feature.scann.ScannResult
 import com.br444n.unitwise.app.feature.settings.SettingsScreen
 import com.br444n.unitwise.app.feature.share.extractSharedComparisonKey
+import com.br444n.unitwise.app.feature.shoppingList.ShoppingListScreen
 import androidx.compose.runtime.collectAsState
 
 object Screen {
     const val HOME = "home"
+    const val SHOPPING_LIST = "shopping_list"
     const val COMPARISON = "comparison/{id}"
     fun createComparisonRoute(id: Int) = "comparison/$id"
     const val SHARED_COMPARISON = "comparison/shared/{shareId}"
@@ -51,6 +53,7 @@ fun AppNavigation(
                     navController.navigate(Screen.createComparisonRoute(id)) 
                 },
                 onNavigateToHistory = { navController.navigate(Screen.HISTORY) },
+                onNavigateToShoppingList = { navController.navigate(Screen.SHOPPING_LIST) },
                 onNavigateToScann = { target -> navController.navigate(Screen.createScannRoute(target)) },
                 onNavigateToSettings = { navController.navigate(Screen.SETTINGS) },
                 viewModel = homeViewModel
@@ -93,12 +96,17 @@ fun AppNavigation(
         }
         composable(Screen.HISTORY) {
             HistoryScreen(
-                onNavigate = { index -> handleBottomTabNav(index, 1, navController) },
+                onNavigate = { index -> handleBottomTabNav(index, 2, navController) },
                 onViewDetails = { id -> navController.navigate(Screen.createComparisonRoute(id)) },
                 onEditComparison = { id ->
                     navController.previousBackStackEntry?.savedStateHandle?.set("edit_comparison_id", id)
                     navController.popBackStack()
                 }
+            )
+        }
+        composable(Screen.SHOPPING_LIST) {
+            ShoppingListScreen(
+                onNavigate = { index -> handleBottomTabNav(index, 1, navController) }
             )
         }
         composable(
@@ -136,7 +144,7 @@ fun AppNavigation(
         composable(Screen.SETTINGS) {
             SettingsScreen(
                 onBackClick = { navController.popBackStack() },
-                onNavigate = { index -> handleBottomTabNav(index, 2, navController) }
+                onNavigate = { index -> handleBottomTabNav(index, 3, navController) }
             )
         }
     }
@@ -201,7 +209,8 @@ private fun handleBottomTabNav(index: Int, current: Int, navController: NavHostC
     if (index == current) return
     when (index) {
         0 -> navController.navigate(Screen.HOME) { popUpTo(Screen.HOME) { inclusive = true } }
-        1 -> navController.navigate(Screen.HISTORY) { popUpTo(Screen.HOME) }
-        2 -> navController.navigate(Screen.SETTINGS) { popUpTo(Screen.HOME) }
+        1 -> navController.navigate(Screen.SHOPPING_LIST) { popUpTo(Screen.HOME) }
+        2 -> navController.navigate(Screen.HISTORY) { popUpTo(Screen.HOME) }
+        3 -> navController.navigate(Screen.SETTINGS) { popUpTo(Screen.HOME) }
     }
 }
