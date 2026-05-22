@@ -24,7 +24,8 @@ import com.br444n.unitwise.app.ui.theme.UnitWiseTheme
 
 @Composable
 fun ShoppingListEmptyState(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onCreateListClick: () -> Unit
 ) {
     Column(
         modifier = modifier
@@ -57,13 +58,21 @@ fun ShoppingListEmptyState(
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
+
+        Spacer(modifier = Modifier.height(32.dp))
+
+        ShoppingListPrimaryButton(
+            onClick = onCreateListClick
+        )
     }
 }
 
 @Preview(showBackground = true)
 @Composable
-fun ShoppingListEmptyStatePreview() {
+fun PreviewShoppingListEmptyState() {
     UnitWiseTheme {
-        ShoppingListEmptyState()
+        ShoppingListEmptyState(
+            onCreateListClick = {}
+        )
     }
 }
