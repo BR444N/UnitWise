@@ -37,6 +37,7 @@ import com.br444n.unitwise.app.ui.theme.BlueColor
 fun ShoppingListSavingsCard(
     totalA: Double,
     totalB: Double,
+    smartTotal: Double,
     modifier: Modifier = Modifier
 ) {
     if (totalA == 0.0 && totalB == 0.0) return
@@ -45,11 +46,8 @@ fun ShoppingListSavingsCard(
     val loserTotal = if (totalA > totalB) totalA else totalB
     val winnerName = if (totalA < totalB) stringResource(id = R.string.list_a) else stringResource(id = R.string.list_b)
     
-    // The savings if you use the smart choice over the worst case, or over the single list?
-    // The user requested: "Total savings with list x: $3.65 (12.9%) if list A total is 24.50 and List B: 28.15"
-    // So it's simply comparing List A and List B.
-    // Saving = Loser - Winner
-    val savings = loserTotal - winnerTotal
+    // Calculate savings by using the smart choices vs the worst case list
+    val savings = if (smartTotal > 0 && smartTotal < loserTotal) loserTotal - smartTotal else loserTotal - winnerTotal
     val percentage = if (loserTotal > 0) (savings / loserTotal) * 100 else 0.0
 
     Card(
@@ -163,6 +161,7 @@ fun ShoppingListSavingsCardPreview() {
         ShoppingListSavingsCard(
             totalA = 24.50,
             totalB = 28.15,
+            smartTotal = 20.00,
             modifier = Modifier.padding(16.dp)
         )
     }
