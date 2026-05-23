@@ -1,4 +1,4 @@
-package com.br444n.unitwise.app.feature.shoppingList.shoppingListDetails.components
+package com.br444n.unitwise.app.feature.shoppingList.shoppingListDetails.dialog
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
