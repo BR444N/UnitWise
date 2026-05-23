@@ -32,6 +32,7 @@ import com.br444n.unitwise.R
 import com.br444n.unitwise.app.core.utils.PriceUtils
 import com.br444n.unitwise.app.ui.theme.Badge
 import com.br444n.unitwise.app.ui.theme.BlueColor
+import com.br444n.unitwise.app.ui.theme.UnitWiseTheme
 
 @Composable
 fun ShoppingListSavingsCard(
@@ -157,7 +158,7 @@ fun ShoppingListSavingsCard(
 @Preview(showBackground = true)
 @Composable
 fun ShoppingListSavingsCardPreview() {
-    com.br444n.unitwise.app.ui.theme.UnitWiseTheme {
+    UnitWiseTheme {
         ShoppingListSavingsCard(
             totalA = 24.50,
             totalB = 28.15,
