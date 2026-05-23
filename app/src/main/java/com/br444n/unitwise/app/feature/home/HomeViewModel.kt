@@ -178,17 +178,20 @@ class HomeViewModel(
                 // Fetch item, update it, and save back
                 val currentItem = shoppingListItemDao.getItemById(itemId).firstOrNull()
                 if (currentItem != null) {
+                    val finalA = if (isProductAValid) _uiState.value.productA else ProductInputState()
+                    val finalB = if (isProductBValid) _uiState.value.productB else ProductInputState()
+
                     val updated = currentItem.copy(
-                        productAName = _uiState.value.productA.productName.takeIf { isProductAValid } ?: "",
-                        productAPrice = _uiState.value.productA.price.takeIf { isProductAValid } ?: "",
-                        productAContent = _uiState.value.productA.contentAmount.takeIf { isProductAValid } ?: "",
-                        productAUnit = _uiState.value.productA.selectedUnit.takeIf { isProductAValid } ?: "",
-                        productAQuantity = _uiState.value.productA.quantity.takeIf { isProductAValid } ?: "",
-                        productBName = _uiState.value.productB.productName.takeIf { isProductBValid } ?: "",
-                        productBPrice = _uiState.value.productB.price.takeIf { isProductBValid } ?: "",
-                        productBContent = _uiState.value.productB.contentAmount.takeIf { isProductBValid } ?: "",
-                        productBUnit = _uiState.value.productB.selectedUnit.takeIf { isProductBValid } ?: "",
-                        productBQuantity = _uiState.value.productB.quantity.takeIf { isProductBValid } ?: "",
+                        productAName = finalA.productName,
+                        productAPrice = finalA.price,
+                        productAContent = finalA.contentAmount,
+                        productAUnit = finalA.selectedUnit,
+                        productAQuantity = finalA.quantity,
+                        productBName = finalB.productName,
+                        productBPrice = finalB.price,
+                        productBContent = finalB.contentAmount,
+                        productBUnit = finalB.selectedUnit,
+                        productBQuantity = finalB.quantity,
                         isProductAWinner = result?.isProductAWinner,
                         isTie = result?.isTie
                     )
