@@ -14,10 +14,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.br444n.unitwise.app.ui.theme.UnitWiseTheme
 
+import androidx.compose.ui.graphics.vector.ImageVector
 @Composable
 fun CalculateButton(
     modifier: Modifier = Modifier,
     text: String = "Calculate",
+    icon: ImageVector = Icons.Default.Calculate,
     enabled: Boolean = true,
     onClick: () -> Unit
 ) {
@@ -27,7 +29,7 @@ fun CalculateButton(
         expanded = enabled,
         icon = { 
             Icon(
-                imageVector = Icons.Default.Calculate, 
+                imageVector = icon, 
                 contentDescription = null 
             ) 
         },
