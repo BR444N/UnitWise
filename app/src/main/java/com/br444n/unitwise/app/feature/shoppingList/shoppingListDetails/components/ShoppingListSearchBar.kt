@@ -1,4 +1,4 @@
-package com.br444n.unitwise.app.feature.shoppingList.components
+package com.br444n.unitwise.app.feature.shoppingList.shoppingListDetails.components
 
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -37,7 +37,7 @@ fun ShoppingListSearchBar(
         .shadow(elevation = 2.dp, shape = RoundedCornerShape(24.dp)),
         placeholder = {
             Text(
-                text = stringResource(R.string.search_list_hint),
+                text = stringResource(R.string.search_product_hint),
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.SemiBold,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
