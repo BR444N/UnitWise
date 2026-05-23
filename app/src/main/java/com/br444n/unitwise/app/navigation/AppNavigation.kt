@@ -26,10 +26,13 @@ import com.br444n.unitwise.app.feature.settings.SettingsScreen
 import com.br444n.unitwise.app.feature.share.extractSharedComparisonKey
 import com.br444n.unitwise.app.feature.shoppingList.ShoppingListScreen
 import androidx.compose.runtime.collectAsState
+import com.br444n.unitwise.app.feature.shoppingList.shoppingListDetails.ShoppingListDetailsScreen
 
 object Screen {
     const val HOME = "home"
     const val SHOPPING_LIST = "shopping_list"
+    const val SHOPPING_LIST_DETAILS = "shopping_list_details/{listId}"
+    fun createShoppingListDetailsRoute(listId: Int) = "shopping_list_details/$listId"
     const val COMPARISON = "comparison/{id}"
     fun createComparisonRoute(id: Int) = "comparison/$id"
     const val SHARED_COMPARISON = "comparison/shared/{shareId}"
@@ -47,15 +50,24 @@ fun AppNavigation(
 
     NavHost(navController = navController, startDestination = Screen.HOME) {
         composable(Screen.HOME) { backStackEntry ->
-            HomeResultHandler(backStackEntry, homeViewModel)
+            HomeResultHandler(backStackEntry, navController, homeViewModel)
             HomeScreen(
-                onNavigateToComparison = { id -> 
-                    navController.navigate(Screen.createComparisonRoute(id)) 
-                },
-                onNavigateToHistory = { navController.navigate(Screen.HISTORY) },
-                onNavigateToShoppingList = { navController.navigate(Screen.SHOPPING_LIST) },
-                onNavigateToScann = { target -> navController.navigate(Screen.createScannRoute(target)) },
-                onNavigateToSettings = { navController.navigate(Screen.SETTINGS) },
+                navigationActions = com.br444n.unitwise.app.feature.home.HomeNavigationActions(
+                    onNavigateToComparison = { id -> 
+                        navController.navigate(Screen.createComparisonRoute(id)) 
+                    },
+                    onNavigateToHistory = { navController.navigate(Screen.HISTORY) },
+                    onNavigateToShoppingList = { navController.navigate(Screen.SHOPPING_LIST) },
+                    onNavigateToScann = { target -> navController.navigate(Screen.createScannRoute(target)) },
+                    onNavigateToSettings = { navController.navigate(Screen.SETTINGS) },
+                    onPopBackStack = { navController.popBackStack() },
+                    onResetNavigation = { 
+                        navController.navigate(Screen.HOME) {
+                            popUpTo(0) { inclusive = true }
+                            launchSingleTop = true
+                        }
+                    }
+                ),
                 viewModel = homeViewModel
             )
         }
@@ -106,7 +118,25 @@ fun AppNavigation(
         }
         composable(Screen.SHOPPING_LIST) {
             ShoppingListScreen(
-                onNavigate = { index -> handleBottomTabNav(index, 1, navController) }
+                onNavigate = { index -> handleBottomTabNav(index, 1, navController) },
+                onNavigateToDetails = { listId -> 
+                    navController.navigate(Screen.createShoppingListDetailsRoute(listId))
+                }
+            )
+        }
+        composable(
+            route = Screen.SHOPPING_LIST_DETAILS,
+            arguments = listOf(navArgument("listId") { type = NavType.IntType })
+        ) { _ ->
+            ShoppingListDetailsScreen(
+                onNavigateBack = { navController.popBackStack() },
+                onNavigateToCompare = { item ->
+                    // We need to pass the item ID to HOME.
+                    // We navigate to a new HOME instance on top of the stack.
+                    // To pass the data, we use previousBackStackEntry in HOME.
+                    navController.currentBackStackEntry?.savedStateHandle?.set("inline_comparison_item_id", item.id)
+                    navController.navigate(Screen.HOME)
+                }
             )
         }
         composable(
@@ -162,10 +192,11 @@ private fun shouldInheritUnitForScan(
 }
 
 @Composable
-private fun HomeResultHandler(backStackEntry: NavBackStackEntry, homeViewModel: HomeViewModel) {
+private fun HomeResultHandler(backStackEntry: NavBackStackEntry, navController: NavController, homeViewModel: HomeViewModel) {
     val resultA: ScannResult? = backStackEntry.savedStateHandle["scann_result_A"]
     val resultB: ScannResult? = backStackEntry.savedStateHandle["scann_result_B"]
     val editComparisonId: Int? = backStackEntry.savedStateHandle["edit_comparison_id"]
+    val inlineComparisonItemId: Int? = navController.previousBackStackEntry?.savedStateHandle?.get("inline_comparison_item_id")
 
     LaunchedEffect(resultA) {
         if (resultA != null) {
@@ -201,6 +232,14 @@ private fun HomeResultHandler(backStackEntry: NavBackStackEntry, homeViewModel: 
         if (editComparisonId != null) {
             homeViewModel.loadComparisonForEdit(editComparisonId)
             backStackEntry.savedStateHandle.remove<Int>("edit_comparison_id")
+        }
+    }
+
+    LaunchedEffect(inlineComparisonItemId) {
+        if (inlineComparisonItemId != null) {
+            // We tell the ViewModel to prepare for inline calculate
+            homeViewModel.prepareInlineComparison(inlineComparisonItemId)
+            navController.previousBackStackEntry?.savedStateHandle?.remove<Int>("inline_comparison_item_id")
         }
     }
 }
