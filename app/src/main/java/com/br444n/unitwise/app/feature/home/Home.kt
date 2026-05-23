@@ -10,6 +10,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Save
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -58,6 +60,7 @@ import com.joco.compose_showcaseview.ShowcasePosition
 import com.joco.compose_showcaseview.ShowcaseView
 import com.joco.compose_showcaseview.highlight.ShowcaseHighlight
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.filled.Calculate
 
 private val BottomNavOverlayPadding = 96.dp
 
@@ -77,7 +80,11 @@ private data class HomeContentCallbacks(
     val onUpdateProductB: (ProductInputState) -> Unit,
     val onShowIncompatibleUnitsMessage: () -> Unit,
     val onCalculate: ((Int) -> Unit) -> Unit,
-    val onCompleteHomeOnboarding: () -> Unit
+    val onCalculateInline: (Int, () -> Unit) -> Unit,
+    val onCancelInlineComparison: () -> Unit,
+    val onCompleteHomeOnboarding: () -> Unit,
+    val onPopBackStack: () -> Unit,
+    val onResetNavigation: () -> Unit
 )
 
 private data class HomeFocusConfigs(
@@ -104,14 +111,20 @@ private fun HomeUiState.otherSelectedUnitFor(
     return if (unitSelectionDriver == driver) otherUnit else null
 }
 
+data class HomeNavigationActions(
+    val onNavigateToComparison: (Int) -> Unit = {},
+    val onNavigateToHistory: () -> Unit = {},
+    val onNavigateToShoppingList: () -> Unit = {},
+    val onNavigateToScann: (String) -> Unit = {},
+    val onNavigateToSettings: () -> Unit = {},
+    val onPopBackStack: () -> Unit = {},
+    val onResetNavigation: () -> Unit = {}
+)
+
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
-    onNavigateToComparison: (Int) -> Unit,
-    onNavigateToHistory: () -> Unit = {},
-    onNavigateToShoppingList: () -> Unit = {},
-    onNavigateToScann: (String) -> Unit = {},
-    onNavigateToSettings: () -> Unit = {},
+    navigationActions: HomeNavigationActions,
     viewModel: HomeViewModel = viewModel(factory = HomeViewModel.Factory)
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -129,16 +142,23 @@ fun HomeScreen(
         modifier = modifier,
         uiState = uiState,
         callbacks = HomeContentCallbacks(
-            onNavigateToComparison = onNavigateToComparison,
-            onNavigateToHistory = onNavigateToHistory,
-            onNavigateToShoppingList = onNavigateToShoppingList,
-            onNavigateToSettings = onNavigateToSettings,
-            handleScanClick = onNavigateToScann,
+            onNavigateToComparison = navigationActions.onNavigateToComparison,
+            onNavigateToHistory = navigationActions.onNavigateToHistory,
+            onNavigateToShoppingList = navigationActions.onNavigateToShoppingList,
+            onNavigateToSettings = navigationActions.onNavigateToSettings,
+            handleScanClick = navigationActions.onNavigateToScann,
             onUpdateProductA = viewModel::updateProductA,
             onUpdateProductB = viewModel::updateProductB,
             onShowIncompatibleUnitsMessage = viewModel::showIncompatibleUnitsMessage,
             onCalculate = viewModel::calculate,
-            onCompleteHomeOnboarding = viewModel::completeHomeOnboarding
+            onCalculateInline = viewModel::calculateInline,
+            onCancelInlineComparison = {
+                viewModel.cancelInlineComparison()
+                navigationActions.onResetNavigation()
+            },
+            onCompleteHomeOnboarding = viewModel::completeHomeOnboarding,
+            onPopBackStack = navigationActions.onPopBackStack,
+            onResetNavigation = navigationActions.onResetNavigation
         ),
         focusConfigs = HomeFocusConfigs(
             productA = ProductInputFocusConfig(
@@ -187,10 +207,11 @@ private fun HomeContent(
                 )
             },
             floatingActionButton = {
-                CalculateButton(
-                    onClick = { callbacks.onCalculate(callbacks.onNavigateToComparison) },
-                    enabled = uiState.isCalculateEnabled && !uiState.isLoading,
-                    modifier = Modifier.padding(bottom = BottomNavOverlayPadding)
+                HomeFloatingActionButton(
+                    inlineComparisonItemId = uiState.inlineComparisonItemId,
+                    isCalculateEnabled = uiState.isCalculateEnabled,
+                    isLoading = uiState.isLoading,
+                    callbacks = callbacks
                 )
             },
             floatingActionButtonPosition = FabPosition.End,
@@ -262,6 +283,7 @@ private fun HomeContent(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .fillMaxWidth(),
+            onNavigateToHome = callbacks.onCancelInlineComparison,
             onNavigateToHistory = callbacks.onNavigateToHistory,
             onNavigateToShoppingList = callbacks.onNavigateToShoppingList
         )
@@ -285,14 +307,7 @@ private fun HomeContent(
             productACardCoordinates = productACardCoordinates,
             productBCardCoordinates = productBCardCoordinates,
             onNext = {
-                showcaseStep = when (showcaseStep) {
-                    HomeShowcaseStep.SCAN_BUTTON -> HomeShowcaseStep.PRODUCT_A_CARD
-                    HomeShowcaseStep.PRODUCT_A_CARD -> HomeShowcaseStep.PRODUCT_B_CARD
-                    HomeShowcaseStep.PRODUCT_B_CARD -> {
-                        callbacks.onCompleteHomeOnboarding()
-                        HomeShowcaseStep.PRODUCT_B_CARD
-                    }
-                }
+                showcaseStep = getNextShowcaseStep(showcaseStep, callbacks.onCompleteHomeOnboarding)
             },
             onSkip = callbacks.onCompleteHomeOnboarding
         )
@@ -300,8 +315,44 @@ private fun HomeContent(
 } // End HomeScreen
 
 @Composable
+private fun HomeFloatingActionButton(
+    inlineComparisonItemId: Int?,
+    isCalculateEnabled: Boolean,
+    isLoading: Boolean,
+    callbacks: HomeContentCallbacks
+) {
+    CalculateButton(
+        text = if (inlineComparisonItemId != null) stringResource(id = R.string.save_to_list) else "Calculate",
+        icon = if (inlineComparisonItemId != null) Icons.Default.Save else Icons.Default.Calculate,
+        onClick = {
+            if (inlineComparisonItemId != null) {
+                callbacks.onCalculateInline(inlineComparisonItemId) {
+                    callbacks.onPopBackStack()
+                }
+            } else {
+                callbacks.onCalculate(callbacks.onNavigateToComparison)
+            }
+        },
+        enabled = isCalculateEnabled && !isLoading,
+        modifier = Modifier.padding(bottom = BottomNavOverlayPadding)
+    )
+}
+
+private fun getNextShowcaseStep(current: HomeShowcaseStep, onComplete: () -> Unit): HomeShowcaseStep {
+    return when (current) {
+        HomeShowcaseStep.SCAN_BUTTON -> HomeShowcaseStep.PRODUCT_A_CARD
+        HomeShowcaseStep.PRODUCT_A_CARD -> HomeShowcaseStep.PRODUCT_B_CARD
+        HomeShowcaseStep.PRODUCT_B_CARD -> {
+            onComplete()
+            HomeShowcaseStep.PRODUCT_B_CARD
+        }
+    }
+}
+
+@Composable
 private fun HomeBottomNavigation(
     modifier: Modifier = Modifier,
+    onNavigateToHome: () -> Unit,
     onNavigateToHistory: () -> Unit,
     onNavigateToShoppingList: () -> Unit
 ) {
@@ -310,10 +361,9 @@ private fun HomeBottomNavigation(
         visible = true,
         onNavigate = { index ->
             when (index) {
+                0 -> onNavigateToHome()
                 1 -> onNavigateToShoppingList()
                 2 -> onNavigateToHistory()
-                else -> { /* already on Home */
-                }
             }
         }
     )
@@ -355,6 +405,44 @@ private fun HomeProductInputCard(
     )
 }
 
+private data class ShowcaseStepData(
+    val titleRes: Int,
+    val bodyRes: Int,
+    val dialogAlignment: Alignment,
+    val isFinishStep: Boolean,
+    val topPadding: androidx.compose.ui.unit.Dp,
+    val bottomPadding: androidx.compose.ui.unit.Dp
+)
+
+private fun getShowcaseStepData(step: HomeShowcaseStep): ShowcaseStepData {
+    return when (step) {
+        HomeShowcaseStep.SCAN_BUTTON -> ShowcaseStepData(
+            titleRes = R.string.home_showcase_scan_title,
+            bodyRes = R.string.home_showcase_scan_body,
+            dialogAlignment = Alignment.Center,
+            isFinishStep = false,
+            topPadding = 0.dp,
+            bottomPadding = 0.dp
+        )
+        HomeShowcaseStep.PRODUCT_A_CARD -> ShowcaseStepData(
+            titleRes = R.string.home_showcase_product_a_title,
+            bodyRes = R.string.home_showcase_product_a_body,
+            dialogAlignment = Alignment.BottomCenter,
+            isFinishStep = false,
+            topPadding = 0.dp,
+            bottomPadding = 32.dp
+        )
+        HomeShowcaseStep.PRODUCT_B_CARD -> ShowcaseStepData(
+            titleRes = R.string.home_showcase_product_b_title,
+            bodyRes = R.string.home_showcase_product_b_body,
+            dialogAlignment = Alignment.TopCenter,
+            isFinishStep = true,
+            topPadding = 96.dp,
+            bottomPadding = 0.dp
+        )
+    }
+}
+
 @Composable
 private fun HomeShowcaseOverlay(
     shouldShowOnboarding: Boolean,
@@ -375,29 +463,12 @@ private fun HomeShowcaseOverlay(
 
     if (!targetCoordinates.isAttached) return
 
-    val titleRes = when (step) {
-        HomeShowcaseStep.SCAN_BUTTON -> R.string.home_showcase_scan_title
-        HomeShowcaseStep.PRODUCT_A_CARD -> R.string.home_showcase_product_a_title
-        HomeShowcaseStep.PRODUCT_B_CARD -> R.string.home_showcase_product_b_title
-    }
-    val bodyRes = when (step) {
-        HomeShowcaseStep.SCAN_BUTTON -> R.string.home_showcase_scan_body
-        HomeShowcaseStep.PRODUCT_A_CARD -> R.string.home_showcase_product_a_body
-        HomeShowcaseStep.PRODUCT_B_CARD -> R.string.home_showcase_product_b_body
-    }
-    val actionRes = if (step == HomeShowcaseStep.PRODUCT_B_CARD) {
-        R.string.home_showcase_finish
-    } else {
-        R.string.home_showcase_next
-    }
+    val stepData = getShowcaseStepData(step)
+    val actionRes = if (stepData.isFinishStep) R.string.home_showcase_finish else R.string.home_showcase_next
+    
     val isDarkTheme = MaterialTheme.colorScheme.background == DarkBackgroundMain
     val nextButtonColor = if (isDarkTheme) BrandPrimary else DarkBackgroundMain
     val nextButtonContentColor = if (isDarkTheme) DarkBackgroundMain else Color.White
-    val dialogAlignment = when (step) {
-        HomeShowcaseStep.SCAN_BUTTON -> Alignment.Center
-        HomeShowcaseStep.PRODUCT_A_CARD -> Alignment.BottomCenter
-        HomeShowcaseStep.PRODUCT_B_CARD -> Alignment.TopCenter
-    }
 
     ShowcaseView(
         visible = true,
@@ -413,7 +484,7 @@ private fun HomeShowcaseOverlay(
         modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = 20.dp),
-        contentAlignment = dialogAlignment
+        contentAlignment = stepData.dialogAlignment
     ) {
         Card(
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
@@ -421,8 +492,8 @@ private fun HomeShowcaseOverlay(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(
-                    top = if (step == HomeShowcaseStep.PRODUCT_B_CARD) 96.dp else 0.dp,
-                    bottom = if (step == HomeShowcaseStep.PRODUCT_A_CARD) 32.dp else 0.dp
+                    top = stepData.topPadding,
+                    bottom = stepData.bottomPadding
                 )
         ) {
             Column(
@@ -430,12 +501,12 @@ private fun HomeShowcaseOverlay(
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 Text(
-                    text = stringResource(id = titleRes),
+                    text = stringResource(id = stepData.titleRes),
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onSurface
                 )
                 Text(
-                    text = stringResource(id = bodyRes),
+                    text = stringResource(id = stepData.bodyRes),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -490,7 +561,11 @@ fun HomeScreenPreview() {
                 onUpdateProductB = {},
                 onShowIncompatibleUnitsMessage = {},
                 onCalculate = {},
-                onCompleteHomeOnboarding = {}
+                onCalculateInline = { _, _ -> },
+                onCancelInlineComparison = {},
+                onCompleteHomeOnboarding = {},
+                onPopBackStack = {},
+                onResetNavigation = {}
             ),
             focusConfigs = HomeFocusConfigs(
                 productA = ProductInputFocusConfig(
