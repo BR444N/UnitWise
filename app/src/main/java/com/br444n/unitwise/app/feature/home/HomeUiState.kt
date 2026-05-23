@@ -15,10 +15,18 @@ data class HomeUiState(
     val unitSelectionDriver: UnitSelectionDriver? = null,
     val editingComparisonId: Int? = null,
     val editingShareId: String? = null,
-    val shouldShowOnboarding: Boolean = false
+    val shouldShowOnboarding: Boolean = false,
+    val inlineComparisonItemId: Int? = null
 ) {
     val isCalculateEnabled: Boolean
-        get() = productA.isValid() && productB.isValid()
+        get() {
+            if (inlineComparisonItemId != null) {
+                // If it's inline comparison (list), allow saving if at least one is valid
+                return productA.isValid() || productB.isValid()
+            }
+            // For normal comparison, both must be valid
+            return productA.isValid() && productB.isValid()
+        }
 }
 
 /**
@@ -26,7 +34,6 @@ data class HomeUiState(
  */
 fun ProductInputState.isValid(): Boolean {
     val quantityValue = quantity.toIntOrNull()
-
     return productName.isNotBlank() &&
             contentAmount.isNotBlank() && contentAmount.toDoubleOrNull() != null &&
             price.isNotBlank() && price.toDoubleOrNull() != null &&
