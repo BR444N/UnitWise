@@ -172,18 +172,19 @@ private fun ShoppingListDetailsDialogs(
 
 @Composable
 private fun ShoppingListDetailsHeader(uiState: ShoppingListDetailsUiState) {
-    if (uiState.fairTotalA > 0 || uiState.fairTotalB > 0 || uiState.hasOrphans) {
+    if (uiState.totalWithOrphansA > 0 || uiState.totalWithOrphansB > 0 || uiState.hasOrphans) {
         ShoppingListBadges(
-            totalA = uiState.fairTotalA,
-            totalB = uiState.fairTotalB,
+            totalA = uiState.totalWithOrphansA,
+            totalB = uiState.totalWithOrphansB,
             modifier = Modifier.padding(horizontal = 16.dp)
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
         ShoppingListSavingsCard(
-            totalA = uiState.fairTotalA,
-            totalB = uiState.fairTotalB,
+            totalA = uiState.totalWithOrphansA,
+            totalB = uiState.totalWithOrphansB,
+            smartTotal = uiState.smartTotal,
             modifier = Modifier.padding(horizontal = 16.dp)
         )
 
