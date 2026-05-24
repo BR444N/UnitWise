@@ -12,8 +12,11 @@ import com.br444n.unitwise.app.domain.repository.UserPreferencesRepository
 import com.br444n.unitwise.app.domain.usecase.GetComparisonUseCase
 import com.br444n.unitwise.app.domain.usecase.IncompatibleMeasurementUnitsException
 import com.br444n.unitwise.app.domain.usecase.SaveComparisonUseCase
+import com.br444n.unitwise.app.domain.usecase.CompareProductsUseCase
+import com.br444n.unitwise.app.data.local.dao.ShoppingListItemDao
 import com.br444n.unitwise.app.feature.home.components.ProductInputState
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -23,7 +26,9 @@ import kotlinx.coroutines.launch
 class HomeViewModel(
     private val saveComparisonUseCase: SaveComparisonUseCase,
     private val getComparisonUseCase: GetComparisonUseCase,
-    private val userPreferencesRepository: UserPreferencesRepository
+    private val userPreferencesRepository: UserPreferencesRepository,
+    private val shoppingListItemDao: ShoppingListItemDao,
+    private val compareProductsUseCase: CompareProductsUseCase = CompareProductsUseCase()
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(HomeUiState())
     val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
@@ -153,6 +158,111 @@ class HomeViewModel(
         }
     }
 
+    fun calculateInline(itemId: Int, onComplete: () -> Unit) {
+        _uiState.update { it.copy(isLoading = true) }
+        viewModelScope.launch {
+            try {
+                // Run comparison directly if both are valid, otherwise it's an orphan product
+                val isProductAValid = _uiState.value.productA.isValid()
+                val isProductBValid = _uiState.value.productB.isValid()
+                
+                val result = if (isProductAValid && isProductBValid) {
+                    compareProductsUseCase(
+                        productA = _uiState.value.productA,
+                        productB = _uiState.value.productB
+                    )
+                } else null
+                
+                delay(CALCULATION_DELAY) // Simulate work for UX
+
+                // Fetch item, update it, and save back
+                val currentItem = shoppingListItemDao.getItemById(itemId).firstOrNull()
+                if (currentItem != null) {
+                    val finalA = if (isProductAValid) _uiState.value.productA else ProductInputState()
+                    val finalB = if (isProductBValid) _uiState.value.productB else ProductInputState()
+
+                    val updated = currentItem.copy(
+                        productAName = finalA.productName,
+                        productAPrice = finalA.price,
+                        productAContent = finalA.contentAmount,
+                        productAUnit = finalA.selectedUnit,
+                        productAQuantity = finalA.quantity,
+                        productBName = finalB.productName,
+                        productBPrice = finalB.price,
+                        productBContent = finalB.contentAmount,
+                        productBUnit = finalB.selectedUnit,
+                        productBQuantity = finalB.quantity,
+                        isProductAWinner = result?.isProductAWinner,
+                        isTie = result?.isTie
+                    )
+                    shoppingListItemDao.updateItem(updated)
+                    
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            productA = ProductInputState(),
+                            productB = ProductInputState(),
+                            unitSelectionDriver = null,
+                            inlineComparisonItemId = null
+                        )
+                    }
+                    onComplete()
+                }
+            } catch (_: IncompatibleMeasurementUnitsException) {
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        incompatibleUnitsToastEvent = it.incompatibleUnitsToastEvent + 1
+                    )
+                }
+            }
+        }
+    }
+
+    fun prepareInlineComparison(itemId: Int) {
+        viewModelScope.launch {
+            val item = shoppingListItemDao.getItemById(itemId).firstOrNull()
+            if (item != null) {
+                _uiState.update {
+                    it.copy(
+                        inlineComparisonItemId = itemId,
+                        productA = ProductInputState(
+                            productName = item.productAName,
+                            price = item.productAPrice,
+                            contentAmount = item.productAContent,
+                            selectedUnit = item.productAUnit.takeIf { u -> u.isNotBlank() } ?: it.productA.selectedUnit,
+                            quantity = item.productAQuantity
+                        ),
+                        productB = ProductInputState(
+                            productName = item.productBName,
+                            price = item.productBPrice,
+                            contentAmount = item.productBContent,
+                            selectedUnit = item.productBUnit.takeIf { u -> u.isNotBlank() } ?: it.productB.selectedUnit,
+                            quantity = item.productBQuantity
+                        )
+                    )
+                }
+            } else {
+                _uiState.update {
+                    it.copy(inlineComparisonItemId = itemId)
+                }
+            }
+        }
+    }
+
+    fun cancelInlineComparison() {
+        _uiState.update {
+            it.copy(
+                inlineComparisonItemId = null,
+                productA = ProductInputState(),
+                productB = ProductInputState(),
+                unitSelectionDriver = null,
+                editingComparisonId = null,
+                editingShareId = null
+            )
+        }
+    }
+
     fun completeHomeOnboarding() {
         viewModelScope.launch {
             userPreferencesRepository.saveHomeShowcaseCompleted(completed = true)
@@ -180,10 +290,12 @@ class HomeViewModel(
                 val application = (this[APPLICATION_KEY] as UnitWiseApplication)
                 val repository = application.container.comparisonRepository
                 val userPreferencesRepository = application.container.userPreferencesRepository
+                val shoppingListItemDao = application.container.shoppingListItemDao
                 HomeViewModel(
                     saveComparisonUseCase = SaveComparisonUseCase(repository),
                     getComparisonUseCase = GetComparisonUseCase(repository),
-                    userPreferencesRepository = userPreferencesRepository
+                    userPreferencesRepository = userPreferencesRepository,
+                    shoppingListItemDao = shoppingListItemDao
                 )
             }
         }

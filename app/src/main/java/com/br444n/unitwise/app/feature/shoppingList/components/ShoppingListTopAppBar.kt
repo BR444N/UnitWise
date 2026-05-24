@@ -1,4 +1,4 @@
-package com.br444n.unitwise.app.feature.history.components
+package com.br444n.unitwise.app.feature.shoppingList.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -13,7 +13,7 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.History
+import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -33,7 +33,7 @@ import com.br444n.unitwise.app.ui.theme.UnitWiseTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HistoryTopAppBar(
+fun ShoppingListTopAppBar(
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -66,7 +66,7 @@ fun HistoryTopAppBar(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Icon(
-                    imageVector = Icons.Default.History,
+                    imageVector = Icons.AutoMirrored.Filled.List,
                     contentDescription = null, // decorative
                     tint = MaterialTheme.colorScheme.primary
                 )
@@ -74,7 +74,7 @@ fun HistoryTopAppBar(
             Spacer(modifier = Modifier.width(12.dp))
             // Title text beside the badge
             Text(
-                text = stringResource(id = R.string.history_title),
+                text = stringResource(id = R.string.my_lists_title),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold,
                 color = MaterialTheme.colorScheme.onBackground
@@ -87,8 +87,8 @@ fun HistoryTopAppBar(
 
 @Preview(showBackground = true)
 @Composable
-fun HistoryTopAppBarPreview() {
+fun ShoppingListTopAppBarPreview() {
     UnitWiseTheme {
-        HistoryTopAppBar()
+        ShoppingListTopAppBar()
     }
 }

@@ -75,6 +75,49 @@
     <string name="tie_label_quantity">Quantidade</string>
     <string name="tie_explanation">Ambos os produtos oferecem valor idêntico em relação ao preço, baseados nos preços de varejo atuais e métricas de volume. Sua escolha depende de preferência por marca, disponibilidade ou qualidade.</string>
 
+    <!-- SHOPPING LIST STRINGS -->
+    <string name="selected_count">%1$d selecionados</string>
+    <string name="save_to_list">Salvar na lista</string>
+    <string name="new_list_button">Adicionar lista</string>
+
+    <string name="savings_desc">Economias</string>
+    <string name="total_savings_with">Economia total com %1$s:</string>
+    <string name="no_savings_differences">Ainda não há diferenças de economia.</string>
+    <string name="orphan_items_impact">Impacto de itens órfãos</string>
+    <string name="orphan_items_explanation">Os totais acima são uma comparação JUSTA (excluindo itens que possuem apenas um produto). Abaixo está o total absoluto se você comprar os itens órfãos:</string>
+    <string name="list_a_absolute_total">Total absoluto Lista A:</string>
+    <string name="list_b_absolute_total">Total absoluto Lista B:</string>
+    <string name="complete_comparison_optional">Comparação completa (Opcional)</string>
+    <string name="complete_comparison_desc">Comparação completa</string>
+    <string name="winner_desc">Vencedor</string>
+    <string name="products_count">Produtos</string>
+    <string name="list_empty_title">Nenhuma lista ainda</string>
+    <string name="list_empty_subtitle">Crie sua primeira lista de compras</string>
+    <string name="create_list">Criar lista</string>
+    <string name="details_empty_title">Comece sua lista</string>
+    <string name="details_empty_subtitle">Adicione produtos e compare-os para encontrar as melhores economias.</string>
+    <string name="details_search_empty_title">Nenhum produto encontrado</string>
+    <string name="details_search_empty_subtitle">Não conseguimos encontrar nenhum produto correspondente à sua pesquisa.</string>
+    <string name="my_lists_title">Minhas listas</string>
+    <string name="create_list_dialog_title">Criar nova lista</string>
+    <string name="list_name_hint">Nome da lista (ex: Compras semanais)</string>
+    <string name="choose_color">Escolher cor</string>
+    <string name="delete_lists_dialog_title">Excluir listas</string>
+    <string name="delete_lists_dialog_message">Tem certeza de que deseja excluir as listas selecionadas?</string>
+    <string name="add_category_button">Adicionar item</string>
+    <string name="list_a">Lista A</string>
+    <string name="list_b">Lista B</string>
+    <string name="touch_to_compare">Toque para comparar</string>
+    <string name="total_list_a">Total Lista A</string>
+    <string name="total_list_b">Total Lista B</string>
+    <string name="search_product_hint">Buscar itens…</string>
+    <string name="add_category_dialog_title">Adicionar novo item</string>
+    <string name="category_name_hint">Nome do item (ex: Leite)</string>
+    <string name="delete_items_dialog_title">Excluir itens</string>
+    <string name="delete_items_dialog_message">Tem certeza de que deseja excluir estes itens?</string>
+    <string name="list">Lista</string>
+    <string name="select_all">Selecionar tudo</string>
+
     <!-- SCAN STRINGS -->
     <string name="toggle_flash">Alternar flash</string>
     <string name="navigate_up">Sair</string>

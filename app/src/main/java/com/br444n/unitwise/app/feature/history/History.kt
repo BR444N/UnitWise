@@ -170,7 +170,7 @@ fun HistoryContent(
                 .align(Alignment.BottomCenter)
                 .fillMaxWidth(),
             visible = isBottomNavVisible,
-            selectedIndex = 1,
+            selectedIndex = 2,
             onNavigate = onNavigate
         )
     }

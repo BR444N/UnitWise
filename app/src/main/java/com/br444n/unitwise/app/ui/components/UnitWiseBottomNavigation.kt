@@ -7,6 +7,8 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ReceiptLong
+import androidx.compose.material.icons.automirrored.outlined.ReceiptLong
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.outlined.History
@@ -53,6 +55,11 @@ fun UnitWiseBottomNavigation(
             title = stringResource(id = R.string.home_tab),
             selectedIcon = Icons.Filled.Home,
             unselectedIcon = Icons.Outlined.Home
+        ),
+        NavigationItem(
+            title = stringResource(id = R.string.list),
+            selectedIcon = Icons.AutoMirrored.Filled.ReceiptLong,
+            unselectedIcon = Icons.AutoMirrored.Outlined.ReceiptLong
         ),
         NavigationItem(
             title = stringResource(id = R.string.history_tab),

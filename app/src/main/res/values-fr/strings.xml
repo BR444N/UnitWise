@@ -75,6 +75,49 @@
     <string name="tie_label_quantity">Quantité</string>
     <string name="tie_explanation">Les deux produits offrent un rapport qualité-prix identique en fonction des prix de détail actuels et des indicateurs de volume. Votre choix dépend de la préférence de la marque, de la disponibilité ou de la préférence de qualité.</string>
 
+    <!-- SHOPPING LIST STRINGS -->
+    <string name="selected_count">%1$d sélectionnés</string>
+    <string name="save_to_list">Enregistrer dans la liste</string>
+    <string name="new_list_button">Ajouter une liste</string>
+
+    <string name="savings_desc">Économies</string>
+    <string name="total_savings_with">Économies totales avec %1$s :</string>
+    <string name="no_savings_differences">Pas encore de différence d\'économies.</string>
+    <string name="orphan_items_impact">Impact des articles orphelins</string>
+    <string name="orphan_items_explanation">Les totaux ci-dessus sont une comparaison ÉQUITABLE (excluant les articles qui n\'ont qu\'un seul produit). Ci-dessous se trouve le total absolu si vous achetez les articles orphelins :</string>
+    <string name="list_a_absolute_total">Total absolu Liste A :</string>
+    <string name="list_b_absolute_total">Total absolu Liste B :</string>
+    <string name="complete_comparison_optional">Comparaison complète (Optionnel)</string>
+    <string name="complete_comparison_desc">Comparaison complète</string>
+    <string name="winner_desc">Gagnant</string>
+    <string name="products_count">Produits</string>
+    <string name="list_empty_title">Pas encore de liste</string>
+    <string name="list_empty_subtitle">Créez votre première liste de courses</string>
+    <string name="create_list">Créer une liste</string>
+    <string name="details_empty_title">Commencez votre liste</string>
+    <string name="details_empty_subtitle">Ajoutez des produits et comparez-les pour trouver les meilleures économies.</string>
+    <string name="details_search_empty_title">Aucun produit trouvé</string>
+    <string name="details_search_empty_subtitle">Nous n\'avons trouvé aucun produit correspondant à votre recherche.</string>
+    <string name="my_lists_title">Mes listes</string>
+    <string name="create_list_dialog_title">Créer une nouvelle liste</string>
+    <string name="list_name_hint">Nom de la liste (ex: Courses hebdomadaires)</string>
+    <string name="choose_color">Choisir une couleur</string>
+    <string name="delete_lists_dialog_title">Supprimer les listes</string>
+    <string name="delete_lists_dialog_message">Voulez-vous vraiment supprimer les listes sélectionnées ?</string>
+    <string name="add_category_button">Ajouter un article</string>
+    <string name="list_a">Liste A</string>
+    <string name="list_b">Liste B</string>
+    <string name="touch_to_compare">Toucher pour comparer</string>
+    <string name="total_list_a">Total Liste A</string>
+    <string name="total_list_b">Total Liste B</string>
+    <string name="search_product_hint">Rechercher des articles…</string>
+    <string name="add_category_dialog_title">Ajouter un nouvel article</string>
+    <string name="category_name_hint">Nom de l\'article (ex: Lait)</string>
+    <string name="delete_items_dialog_title">Supprimer les articles</string>
+    <string name="delete_items_dialog_message">Voulez-vous vraiment supprimer ces articles ?</string>
+    <string name="list">Liste</string>
+    <string name="select_all">Tout sélectionner</string>
+
     <!-- SCAN STRINGS -->
     <string name="toggle_flash">Activer/désactiver le flash</string>
     <string name="navigate_up">Quitter</string>

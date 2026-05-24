@@ -42,6 +42,8 @@ val BadgeText = Color(0xFF102214)
    Dark Mode — Brand
    ========================= */
 
+val BlueColor = Color(0xFF0F172A)
+
 /* =========================
    Dark Backgrounds & Surfaces
    ========================= */
