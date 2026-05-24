@@ -76,6 +76,7 @@
     <string name="tie_explanation">Ambos os produtos oferecem valor idêntico em relação ao preço, baseados nos preços de varejo atuais e métricas de volume. Sua escolha depende de preferência por marca, disponibilidade ou qualidade.</string>
 
     <!-- SHOPPING LIST STRINGS -->
+    <string name="selected_count">%1$d selecionados</string>
     <string name="save_to_list">Salvar na lista</string>
     <string name="new_list_button">Adicionar lista</string>
     <string name="products_count">Produtos</string>

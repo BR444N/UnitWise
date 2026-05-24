@@ -76,6 +76,7 @@
     <string name="tie_explanation">Entrambi i prodotti offrono un rapporto qualità-prezzo identico basato sui prezzi al dettaglio attuali e sulle metriche di volume. La tua scelta dipende dalla preferenza della marca, dalla disponibilità o dalla qualità.</string>
 
     <!-- SHOPPING LIST STRINGS -->
+    <string name="selected_count">%1$d selezionati</string>
     <string name="save_to_list">Salva nell\'elenco</string>
     <string name="new_list_button">Aggiungi elenco</string>
     <string name="products_count">Prodotti</string>

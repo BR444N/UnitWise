@@ -76,6 +76,7 @@
     <string name="tie_explanation">Both products offer identical value for money based on current retail prices and volume metrics. Your choice depends on brand preference, availability or quality preference.</string>
 
     <!-- SHOPPING LIST STRINGS -->
+    <string name="selected_count">%1$d selected</string>
     <string name="save_to_list">Save to List</string>
     <string name="new_list_button">Add List</string>
     <string name="products_count">Products</string>

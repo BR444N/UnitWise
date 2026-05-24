@@ -76,6 +76,7 @@
     <string name="tie_explanation">Beide Produkte bieten basierend auf aktuellen Einzelhandelspreisen und Volumenmetriken ein identisches Preis-Leistungs-Verhältnis. Ihre Wahl hängt von Markenpräferenz, Verfügbarkeit oder Qualität ab.</string>
 
     <!-- SHOPPING LIST STRINGS -->
+    <string name="selected_count">%1$d ausgewählt</string>
     <string name="save_to_list">In Liste speichern</string>
     <string name="new_list_button">Liste hinzufügen</string>
     <string name="products_count">Produkte</string>

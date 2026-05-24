@@ -76,6 +76,7 @@
     <string name="tie_explanation">Ambos productos ofrecen una relación calidad-precio idéntica basándose en los precios de venta actuales y las métricas de volumen. Tu elección depende de la preferencia de marca, disponibilidad o calidad.</string>
 
     <!-- SHOPPING LIST STRINGS -->
+    <string name="selected_count">%1$d seleccionados</string>
     <string name="save_to_list">Guardar en la lista</string>
     <string name="new_list_button">Añadir lista</string>
     <string name="products_count">Productos</string>
