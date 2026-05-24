@@ -118,7 +118,7 @@ fun ShoppingListSavingsCard(
                     ) {
                         Icon(
                             imageVector = Icons.Default.Savings,
-                            contentDescription = "Savings",
+                            contentDescription = stringResource(id = R.string.savings_desc),
                             tint = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.size(32.dp)
                         )
@@ -128,7 +128,7 @@ fun ShoppingListSavingsCard(
                     
                     Column {
                         Text(
-                            text = "Total savings with $winnerName:",
+                            text = stringResource(id = R.string.total_savings_with, winnerName),
                             style = MaterialTheme.typography.titleMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -145,7 +145,7 @@ fun ShoppingListSavingsCard(
                 }
             } else {
                 Text(
-                    text = "No savings differences yet.",
+                    text = stringResource(id = R.string.no_savings_differences),
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.align(Alignment.CenterHorizontally)
