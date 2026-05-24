@@ -79,6 +79,17 @@
     <string name="selected_count">%1$d selecionados</string>
     <string name="save_to_list">Salvar na lista</string>
     <string name="new_list_button">Adicionar lista</string>
+
+    <string name="savings_desc">Economias</string>
+    <string name="total_savings_with">Economia total com %1$s:</string>
+    <string name="no_savings_differences">Ainda não há diferenças de economia.</string>
+    <string name="orphan_items_impact">Impacto de itens órfãos</string>
+    <string name="orphan_items_explanation">Os totais acima são uma comparação JUSTA (excluindo itens que possuem apenas um produto). Abaixo está o total absoluto se você comprar os itens órfãos:</string>
+    <string name="list_a_absolute_total">Total absoluto Lista A:</string>
+    <string name="list_b_absolute_total">Total absoluto Lista B:</string>
+    <string name="complete_comparison_optional">Comparação completa (Opcional)</string>
+    <string name="complete_comparison_desc">Comparação completa</string>
+    <string name="winner_desc">Vencedor</string>
     <string name="products_count">Produtos</string>
     <string name="list_empty_title">Nenhuma lista ainda</string>
     <string name="list_empty_subtitle">Crie sua primeira lista de compras</string>

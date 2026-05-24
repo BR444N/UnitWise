@@ -79,6 +79,17 @@
     <string name="selected_count">%1$d sélectionnés</string>
     <string name="save_to_list">Enregistrer dans la liste</string>
     <string name="new_list_button">Ajouter une liste</string>
+
+    <string name="savings_desc">Économies</string>
+    <string name="total_savings_with">Économies totales avec %1$s :</string>
+    <string name="no_savings_differences">Pas encore de différence d\'économies.</string>
+    <string name="orphan_items_impact">Impact des articles orphelins</string>
+    <string name="orphan_items_explanation">Les totaux ci-dessus sont une comparaison ÉQUITABLE (excluant les articles qui n\'ont qu\'un seul produit). Ci-dessous se trouve le total absolu si vous achetez les articles orphelins :</string>
+    <string name="list_a_absolute_total">Total absolu Liste A :</string>
+    <string name="list_b_absolute_total">Total absolu Liste B :</string>
+    <string name="complete_comparison_optional">Comparaison complète (Optionnel)</string>
+    <string name="complete_comparison_desc">Comparaison complète</string>
+    <string name="winner_desc">Gagnant</string>
     <string name="products_count">Produits</string>
     <string name="list_empty_title">Pas encore de liste</string>
     <string name="list_empty_subtitle">Créez votre première liste de courses</string>

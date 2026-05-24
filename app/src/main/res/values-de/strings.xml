@@ -79,6 +79,17 @@
     <string name="selected_count">%1$d ausgewählt</string>
     <string name="save_to_list">In Liste speichern</string>
     <string name="new_list_button">Liste hinzufügen</string>
+
+    <string name="savings_desc">Ersparnisse</string>
+    <string name="total_savings_with">Gesamtersparnis mit %1$s:</string>
+    <string name="no_savings_differences">Noch keine Ersparnisunterschiede.</string>
+    <string name="orphan_items_impact">Auswirkung verwaister Artikel</string>
+    <string name="orphan_items_explanation">Die obigen Summen sind ein FAIRER Vergleich (ohne Artikel, die nur in einer Liste vorhanden sind). Unten ist die absolute Gesamtsumme, wenn Sie die verwaisten Artikel kaufen:</string>
+    <string name="list_a_absolute_total">Absolute Gesamtsumme Liste A:</string>
+    <string name="list_b_absolute_total">Absolute Gesamtsumme Liste B:</string>
+    <string name="complete_comparison_optional">Vollständiger Vergleich (Optional)</string>
+    <string name="complete_comparison_desc">Vollständiger Vergleich</string>
+    <string name="winner_desc">Gewinner</string>
     <string name="products_count">Produkte</string>
     <string name="list_empty_title">Noch keine Liste</string>
     <string name="list_empty_subtitle">Erstellen Sie Ihre erste Einkaufsliste</string>

@@ -79,6 +79,17 @@
     <string name="selected_count">%1$d selected</string>
     <string name="save_to_list">Save to List</string>
     <string name="new_list_button">Add List</string>
+
+    <string name="savings_desc">Savings</string>
+    <string name="total_savings_with">Total savings with %1$s:</string>
+    <string name="no_savings_differences">No savings differences yet.</string>
+    <string name="orphan_items_impact">Orphan items impact</string>
+    <string name="orphan_items_explanation">The above totals are a FAIR comparison (excluding items that only have one product). Below is the absolute total if you buy the orphan items:</string>
+    <string name="list_a_absolute_total">List A Absolute Total:</string>
+    <string name="list_b_absolute_total">List B Absolute Total:</string>
+    <string name="complete_comparison_optional">Complete comparison (Optional)</string>
+    <string name="complete_comparison_desc">Complete comparison</string>
+    <string name="winner_desc">Winner</string>
     <string name="products_count">Products</string>
     <string name="list_empty_title">No list yet</string>
     <string name="list_empty_subtitle">Create your first shopping list</string>
