@@ -208,7 +208,7 @@ private fun CollapsedCardTitleSection(
             )
             if (isOrphan && !isCompared) {
                 Text(
-                    text = "Complete comparison (Optional)",
+                    text = stringResource(id = R.string.complete_comparison_optional),
                     style = MaterialTheme.typography.labelSmall,
                     color = BrandPrimaryUnfocused,
                     modifier = Modifier.padding(top = 2.dp)
@@ -263,7 +263,7 @@ private fun CollapsedCardTrailingSection(
         IconButton(onClick = onClick) {
             Icon(
                 imageVector = Icons.Default.ChevronRight,
-                contentDescription = "Complete comparison",
+                contentDescription = stringResource(id = R.string.complete_comparison_desc),
                 tint = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
@@ -290,7 +290,7 @@ private fun ExpandedProductRow(
         if (isWinner) {
             Icon(
                 imageVector = Icons.Default.CheckCircle,
-                contentDescription = "Winner",
+                contentDescription = stringResource(id = R.string.winner_desc),
                 tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier
                     .size(20.dp)
@@ -337,7 +337,7 @@ private fun PriceDisplay(
         if (isWinner) {
             Icon(
                 imageVector = Icons.Default.CheckCircle,
-                contentDescription = "Winner",
+                contentDescription = stringResource(id = R.string.winner_desc),
                 tint = winnerColor,
                 modifier = Modifier
                     .size(16.dp)
