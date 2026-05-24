@@ -101,6 +101,7 @@
     <string name="delete_items_dialog_title">Excluir itens</string>
     <string name="delete_items_dialog_message">Tem certeza de que deseja excluir estes itens?</string>
     <string name="list">Lista</string>
+    <string name="select_all">Selecionar tudo</string>
 
     <!-- SCAN STRINGS -->
     <string name="toggle_flash">Alternar flash</string>

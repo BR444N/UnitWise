@@ -101,6 +101,7 @@
     <string name="delete_items_dialog_title">Artikel löschen</string>
     <string name="delete_items_dialog_message">Sind Sie sicher, dass Sie diese Artikel löschen möchten?</string>
     <string name="list">Liste</string>
+    <string name="select_all">Alle auswählen</string>
 
     <!-- SCAN STRINGS -->
     <string name="toggle_flash">Blitz umschalten</string>

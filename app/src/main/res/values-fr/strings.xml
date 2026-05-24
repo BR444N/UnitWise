@@ -101,6 +101,7 @@
     <string name="delete_items_dialog_title">Supprimer les articles</string>
     <string name="delete_items_dialog_message">Voulez-vous vraiment supprimer ces articles ?</string>
     <string name="list">Liste</string>
+    <string name="select_all">Tout sélectionner</string>
 
     <!-- SCAN STRINGS -->
     <string name="toggle_flash">Activer/désactiver le flash</string>
