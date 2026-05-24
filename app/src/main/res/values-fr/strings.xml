@@ -94,6 +94,10 @@
     <string name="list_empty_title">Pas encore de liste</string>
     <string name="list_empty_subtitle">Créez votre première liste de courses</string>
     <string name="create_list">Créer une liste</string>
+    <string name="details_empty_title">Commencez votre liste</string>
+    <string name="details_empty_subtitle">Ajoutez des produits et comparez-les pour trouver les meilleures économies.</string>
+    <string name="details_search_empty_title">Aucun produit trouvé</string>
+    <string name="details_search_empty_subtitle">Nous n\'avons trouvé aucun produit correspondant à votre recherche.</string>
     <string name="my_lists_title">Mes listes</string>
     <string name="create_list_dialog_title">Créer une nouvelle liste</string>
     <string name="list_name_hint">Nom de la liste (ex: Courses hebdomadaires)</string>

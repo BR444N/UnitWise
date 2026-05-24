@@ -94,6 +94,10 @@
     <string name="list_empty_title">No list yet</string>
     <string name="list_empty_subtitle">Create your first shopping list</string>
     <string name="create_list">Create list</string>
+    <string name="details_empty_title">Start your list</string>
+    <string name="details_empty_subtitle">Add products and compare them to find the best savings.</string>
+    <string name="details_search_empty_title">No products found</string>
+    <string name="details_search_empty_subtitle">We couldn\'t find any product matching your search.</string>
     <string name="my_lists_title">My Lists</string>
     <string name="create_list_dialog_title">Create New List</string>
     <string name="list_name_hint">List Name (e.g. Weekly Groceries)</string>

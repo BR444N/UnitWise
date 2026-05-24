@@ -94,6 +94,10 @@
     <string name="list_empty_title">Nenhuma lista ainda</string>
     <string name="list_empty_subtitle">Crie sua primeira lista de compras</string>
     <string name="create_list">Criar lista</string>
+    <string name="details_empty_title">Comece sua lista</string>
+    <string name="details_empty_subtitle">Adicione produtos e compare-os para encontrar as melhores economias.</string>
+    <string name="details_search_empty_title">Nenhum produto encontrado</string>
+    <string name="details_search_empty_subtitle">Não conseguimos encontrar nenhum produto correspondente à sua pesquisa.</string>
     <string name="my_lists_title">Minhas listas</string>
     <string name="create_list_dialog_title">Criar nova lista</string>
     <string name="list_name_hint">Nome da lista (ex: Compras semanais)</string>

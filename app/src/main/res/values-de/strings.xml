@@ -94,6 +94,10 @@
     <string name="list_empty_title">Noch keine Liste</string>
     <string name="list_empty_subtitle">Erstellen Sie Ihre erste Einkaufsliste</string>
     <string name="create_list">Liste erstellen</string>
+    <string name="details_empty_title">Starten Sie Ihre Liste</string>
+    <string name="details_empty_subtitle">Fügen Sie Produkte hinzu und vergleichen Sie sie, um die besten Ersparnisse zu finden.</string>
+    <string name="details_search_empty_title">Keine Produkte gefunden</string>
+    <string name="details_search_empty_subtitle">Wir konnten kein Produkt finden, das Ihrer Suche entspricht.</string>
     <string name="my_lists_title">Meine Listen</string>
     <string name="create_list_dialog_title">Neue Liste erstellen</string>
     <string name="list_name_hint">Listenname (z. B. Wocheneinkauf)</string>
