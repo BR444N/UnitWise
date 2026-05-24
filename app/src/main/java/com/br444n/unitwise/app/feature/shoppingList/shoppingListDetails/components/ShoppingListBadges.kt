@@ -123,7 +123,7 @@ private fun ListBadge(
                     modifier = Modifier.padding(end = 2.dp)
                 )
                 Text(
-                    text = "Winner",
+                    text = stringResource(R.string.winner_desc),
                     style = MaterialTheme.typography.labelSmall,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onPrimary
