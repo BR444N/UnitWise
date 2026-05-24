@@ -10,10 +10,16 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.SelectAll
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Text
+import androidx.compose.material3.TooltipAnchorPosition
+import androidx.compose.material3.TooltipBox
+import androidx.compose.material3.TooltipDefaults
+import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,6 +32,7 @@ import com.br444n.unitwise.R
 import com.br444n.unitwise.app.ui.components.topAppBarBorder
 import com.br444n.unitwise.app.ui.theme.UnitWiseTheme
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ShoppingListSelectionAppBar(
     selectedCount: Int,
@@ -49,12 +56,30 @@ fun ShoppingListSelectionAppBar(
         verticalAlignment = Alignment.CenterVertically
     ) {
         // Cancel Button
-        IconButton(onClick = onCancelSelection) {
-            Icon(
-                imageVector = Icons.Default.Close,
-                contentDescription = "Cancel selection",
-                tint = MaterialTheme.colorScheme.onSurface
-            )
+        TooltipBox(
+            positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
+                positioning = TooltipAnchorPosition.Below
+            ),
+            tooltip = {
+                PlainTooltip(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.cancel),
+                        color = MaterialTheme.colorScheme.onPrimary
+                    )
+                }
+            },
+            state = rememberTooltipState()
+        ) {
+            IconButton(onClick = onCancelSelection) {
+                Icon(
+                    imageVector = Icons.Default.Close,
+                    contentDescription = stringResource(id = R.string.cancel),
+                    tint = MaterialTheme.colorScheme.onSurface
+                )
+            }
         }
         
         // Selected Count
@@ -69,21 +94,57 @@ fun ShoppingListSelectionAppBar(
         )
         
         // Select All Button
-        IconButton(onClick = onSelectAll) {
-            Icon(
-                imageVector = Icons.Default.SelectAll,
-                contentDescription = "Select all",
-                tint = MaterialTheme.colorScheme.onSurfaceVariant
-            )
+        TooltipBox(
+            positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
+                positioning = TooltipAnchorPosition.Below
+            ),
+            tooltip = {
+                PlainTooltip(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.select_all),
+                        color = MaterialTheme.colorScheme.onPrimary
+                    )
+                }
+            },
+            state = rememberTooltipState()
+        ) {
+            IconButton(onClick = onSelectAll) {
+                Icon(
+                    imageVector = Icons.Default.SelectAll,
+                    contentDescription = stringResource(id = R.string.select_all),
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
         }
         
         // Delete Button
-        IconButton(onClick = onDeleteSelected) {
-            Icon(
-                imageVector = Icons.Default.Delete,
-                contentDescription = "Delete selected",
-                tint = MaterialTheme.colorScheme.error
-            )
+        TooltipBox(
+            positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
+                positioning = TooltipAnchorPosition.Below
+            ),
+            tooltip = {
+                PlainTooltip(
+                    containerColor = MaterialTheme.colorScheme.error,
+                    contentColor = MaterialTheme.colorScheme.onError
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.delete),
+                        color = MaterialTheme.colorScheme.onError
+                    )
+                }
+            },
+            state = rememberTooltipState()
+        ) {
+            IconButton(onClick = onDeleteSelected) {
+                Icon(
+                    imageVector = Icons.Default.Delete,
+                    contentDescription = stringResource(id = R.string.delete),
+                    tint = MaterialTheme.colorScheme.error
+                )
+            }
         }
     }
 }
