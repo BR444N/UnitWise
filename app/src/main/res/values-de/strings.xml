@@ -75,6 +75,32 @@
     <string name="tie_label_quantity">Menge</string>
     <string name="tie_explanation">Beide Produkte bieten basierend auf aktuellen Einzelhandelspreisen und Volumenmetriken ein identisches Preis-Leistungs-Verhältnis. Ihre Wahl hängt von Markenpräferenz, Verfügbarkeit oder Qualität ab.</string>
 
+    <!-- SHOPPING LIST STRINGS -->
+    <string name="save_to_list">In Liste speichern</string>
+    <string name="new_list_button">Liste hinzufügen</string>
+    <string name="products_count">Produkte</string>
+    <string name="list_empty_title">Noch keine Liste</string>
+    <string name="list_empty_subtitle">Erstellen Sie Ihre erste Einkaufsliste</string>
+    <string name="create_list">Liste erstellen</string>
+    <string name="my_lists_title">Meine Listen</string>
+    <string name="create_list_dialog_title">Neue Liste erstellen</string>
+    <string name="list_name_hint">Listenname (z. B. Wocheneinkauf)</string>
+    <string name="choose_color">Farbe wählen</string>
+    <string name="delete_lists_dialog_title">Listen löschen</string>
+    <string name="delete_lists_dialog_message">Sind Sie sicher, dass Sie die ausgewählten Listen löschen möchten?</string>
+    <string name="add_category_button">Artikel hinzufügen</string>
+    <string name="list_a">Liste A</string>
+    <string name="list_b">Liste B</string>
+    <string name="touch_to_compare">Zum Vergleichen tippen</string>
+    <string name="total_list_a">Gesamt Liste A</string>
+    <string name="total_list_b">Gesamt Liste B</string>
+    <string name="search_product_hint">Artikel suchen…</string>
+    <string name="add_category_dialog_title">Neuen Artikel hinzufügen</string>
+    <string name="category_name_hint">Artikelname (z. B. Milch)</string>
+    <string name="delete_items_dialog_title">Artikel löschen</string>
+    <string name="delete_items_dialog_message">Sind Sie sicher, dass Sie diese Artikel löschen möchten?</string>
+    <string name="list">Liste</string>
+
     <!-- SCAN STRINGS -->
     <string name="toggle_flash">Blitz umschalten</string>
     <string name="navigate_up">Beenden</string>

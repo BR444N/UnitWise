@@ -75,6 +75,32 @@
     <string name="tie_label_quantity">Quantity</string>
     <string name="tie_explanation">Both products offer identical value for money based on current retail prices and volume metrics. Your choice depends on brand preference, availability or quality preference.</string>
 
+    <!-- SHOPPING LIST STRINGS -->
+    <string name="save_to_list">Save to List</string>
+    <string name="new_list_button">Add List</string>
+    <string name="products_count">Products</string>
+    <string name="list_empty_title">No list yet</string>
+    <string name="list_empty_subtitle">Create your first shopping list</string>
+    <string name="create_list">Create list</string>
+    <string name="my_lists_title">My Lists</string>
+    <string name="create_list_dialog_title">Create New List</string>
+    <string name="list_name_hint">List Name (e.g. Weekly Groceries)</string>
+    <string name="choose_color">Choose color</string>
+    <string name="delete_lists_dialog_title">Delete Lists</string>
+    <string name="delete_lists_dialog_message">Are you sure you want to delete the selected lists?</string>
+    <string name="add_category_button">Add Item</string>
+    <string name="list_a">List A</string>
+    <string name="list_b">List B</string>
+    <string name="touch_to_compare">Touch to compare</string>
+    <string name="total_list_a">Total List A</string>
+    <string name="total_list_b">Total List B</string>
+    <string name="search_product_hint">Search items…</string>
+    <string name="add_category_dialog_title">Add New Item</string>
+    <string name="category_name_hint">Item name (e.g. Milk)</string>
+    <string name="delete_items_dialog_title">Delete Items</string>
+    <string name="delete_items_dialog_message">Are you sure you want to delete these items?</string>
+    <string name="list">List</string>
+
     <!-- SCAN STRINGS -->
     <string name="toggle_flash">Toggle flash</string>
     <string name="navigate_up">Go Back</string>

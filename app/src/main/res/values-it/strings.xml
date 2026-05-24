@@ -75,6 +75,32 @@
     <string name="tie_label_quantity">Quantità</string>
     <string name="tie_explanation">Entrambi i prodotti offrono un rapporto qualità-prezzo identico basato sui prezzi al dettaglio attuali e sulle metriche di volume. La tua scelta dipende dalla preferenza della marca, dalla disponibilità o dalla qualità.</string>
 
+    <!-- SHOPPING LIST STRINGS -->
+    <string name="save_to_list">Salva nell\'elenco</string>
+    <string name="new_list_button">Aggiungi elenco</string>
+    <string name="products_count">Prodotti</string>
+    <string name="list_empty_title">Nessun elenco ancora</string>
+    <string name="list_empty_subtitle">Crea la tua prima lista della spesa</string>
+    <string name="create_list">Crea elenco</string>
+    <string name="my_lists_title">I miei elenchi</string>
+    <string name="create_list_dialog_title">Crea nuovo elenco</string>
+    <string name="list_name_hint">Nome elenco (es. Spesa settimanale)</string>
+    <string name="choose_color">Scegli colore</string>
+    <string name="delete_lists_dialog_title">Elimina elenchi</string>
+    <string name="delete_lists_dialog_message">Sei sicuro di voler eliminare gli elenchi selezionati?</string>
+    <string name="add_category_button">Aggiungi articolo</string>
+    <string name="list_a">Elenco A</string>
+    <string name="list_b">Elenco B</string>
+    <string name="touch_to_compare">Tocca per confrontare</string>
+    <string name="total_list_a">Totale Elenco A</string>
+    <string name="total_list_b">Totale Elenco B</string>
+    <string name="search_product_hint">Cerca articoli…</string>
+    <string name="add_category_dialog_title">Aggiungi nuovo articolo</string>
+    <string name="category_name_hint">Nome articolo (es. Latte)</string>
+    <string name="delete_items_dialog_title">Elimina articoli</string>
+    <string name="delete_items_dialog_message">Sei sicuro di voler eliminare questi articoli?</string>
+    <string name="list">Elenco</string>
+
     <!-- SCAN STRINGS -->
     <string name="toggle_flash">Attiva/disattiva flash</string>
     <string name="navigate_up">Esci</string>

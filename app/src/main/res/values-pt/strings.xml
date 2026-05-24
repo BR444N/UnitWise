@@ -75,6 +75,32 @@
     <string name="tie_label_quantity">Quantidade</string>
     <string name="tie_explanation">Ambos os produtos oferecem valor idêntico em relação ao preço, baseados nos preços de varejo atuais e métricas de volume. Sua escolha depende de preferência por marca, disponibilidade ou qualidade.</string>
 
+    <!-- SHOPPING LIST STRINGS -->
+    <string name="save_to_list">Salvar na lista</string>
+    <string name="new_list_button">Adicionar lista</string>
+    <string name="products_count">Produtos</string>
+    <string name="list_empty_title">Nenhuma lista ainda</string>
+    <string name="list_empty_subtitle">Crie sua primeira lista de compras</string>
+    <string name="create_list">Criar lista</string>
+    <string name="my_lists_title">Minhas listas</string>
+    <string name="create_list_dialog_title">Criar nova lista</string>
+    <string name="list_name_hint">Nome da lista (ex: Compras semanais)</string>
+    <string name="choose_color">Escolher cor</string>
+    <string name="delete_lists_dialog_title">Excluir listas</string>
+    <string name="delete_lists_dialog_message">Tem certeza de que deseja excluir as listas selecionadas?</string>
+    <string name="add_category_button">Adicionar item</string>
+    <string name="list_a">Lista A</string>
+    <string name="list_b">Lista B</string>
+    <string name="touch_to_compare">Toque para comparar</string>
+    <string name="total_list_a">Total Lista A</string>
+    <string name="total_list_b">Total Lista B</string>
+    <string name="search_product_hint">Buscar itens…</string>
+    <string name="add_category_dialog_title">Adicionar novo item</string>
+    <string name="category_name_hint">Nome do item (ex: Leite)</string>
+    <string name="delete_items_dialog_title">Excluir itens</string>
+    <string name="delete_items_dialog_message">Tem certeza de que deseja excluir estes itens?</string>
+    <string name="list">Lista</string>
+
     <!-- SCAN STRINGS -->
     <string name="toggle_flash">Alternar flash</string>
     <string name="navigate_up">Sair</string>

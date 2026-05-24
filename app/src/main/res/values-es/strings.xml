@@ -75,6 +75,32 @@
     <string name="tie_label_quantity">Cantidad</string>
     <string name="tie_explanation">Ambos productos ofrecen una relación calidad-precio idéntica basándose en los precios de venta actuales y las métricas de volumen. Tu elección depende de la preferencia de marca, disponibilidad o calidad.</string>
 
+    <!-- SHOPPING LIST STRINGS -->
+    <string name="save_to_list">Guardar en la lista</string>
+    <string name="new_list_button">Añadir lista</string>
+    <string name="products_count">Productos</string>
+    <string name="list_empty_title">Aún no hay listas</string>
+    <string name="list_empty_subtitle">Crea tu primera lista de la compra</string>
+    <string name="create_list">Crear lista</string>
+    <string name="my_lists_title">Mis listas</string>
+    <string name="create_list_dialog_title">Crear nueva lista</string>
+    <string name="list_name_hint">Nombre de la lista (ej. Compra semanal)</string>
+    <string name="choose_color">Elegir color</string>
+    <string name="delete_lists_dialog_title">Eliminar listas</string>
+    <string name="delete_lists_dialog_message">¿Estás seguro de que quieres eliminar las listas seleccionadas?</string>
+    <string name="add_category_button">Añadir artículo</string>
+    <string name="list_a">Lista A</string>
+    <string name="list_b">Lista B</string>
+    <string name="touch_to_compare">Toca para comparar</string>
+    <string name="total_list_a">Total Lista A</string>
+    <string name="total_list_b">Total Lista B</string>
+    <string name="search_product_hint">Buscar artículos…</string>
+    <string name="add_category_dialog_title">Añadir nuevo artículo</string>
+    <string name="category_name_hint">Nombre del artículo (ej. Leche)</string>
+    <string name="delete_items_dialog_title">Eliminar artículos</string>
+    <string name="delete_items_dialog_message">¿Estás seguro de que quieres eliminar estos artículos?</string>
+    <string name="list">Lista</string>
+
     <!-- SCAN STRINGS -->
     <string name="toggle_flash">Alternar flash</string>
     <string name="navigate_up">Atrás</string>
