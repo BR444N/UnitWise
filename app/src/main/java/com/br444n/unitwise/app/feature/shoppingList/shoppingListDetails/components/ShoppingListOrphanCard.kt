@@ -30,9 +30,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.br444n.unitwise.R
 import com.br444n.unitwise.app.core.utils.PriceUtils
 import com.br444n.unitwise.app.ui.theme.Badge
 import com.br444n.unitwise.app.ui.theme.BlueColor
@@ -78,7 +80,7 @@ fun ShoppingListOrphanCard(
                         tint = MaterialTheme.colorScheme.primary
                     )
                     Text(
-                        text = "Orphan items impact",
+                        text = stringResource(id = R.string.orphan_items_impact),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         color = BlueColor
@@ -101,7 +103,7 @@ fun ShoppingListOrphanCard(
                     modifier = Modifier.padding(top = 8.dp)
                 ) {
                     Text(
-                        text = "The above totals are a FAIR comparison (excluding items that only have one product). Below is the absolute total if you buy the orphan items:",
+                        text = stringResource(id = R.string.orphan_items_explanation),
                         style = MaterialTheme.typography.bodyMedium,
                         color = BlueColor
                     )
@@ -111,7 +113,7 @@ fun ShoppingListOrphanCard(
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Text(
-                            text = "List A Absolute Total:",
+                            text = stringResource(id = R.string.list_a_absolute_total),
                             style = MaterialTheme.typography.bodyMedium,
                             fontWeight = FontWeight.SemiBold,
                             color = BlueColor
@@ -128,7 +130,7 @@ fun ShoppingListOrphanCard(
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Text(
-                            text = "List B Absolute Total:",
+                            text = stringResource(id = R.string.list_b_absolute_total),
                             style = MaterialTheme.typography.bodyMedium,
                             fontWeight = FontWeight.SemiBold,
                             color = BlueColor
