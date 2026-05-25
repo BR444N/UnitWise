@@ -29,9 +29,22 @@ import com.br444n.unitwise.app.feature.home.components.ProductInputCard
 import com.br444n.unitwise.app.feature.home.components.ProductInputOptions
 import com.br444n.unitwise.app.feature.home.components.ProductInputState
 import com.br444n.unitwise.app.feature.share.SharedComparisonData
+import com.br444n.unitwise.app.core.ui.components.navigation.AppTopBar
 import com.br444n.unitwise.app.ui.components.UnitWiseBottomNavigation
-import com.br444n.unitwise.app.ui.components.UnitWiseDefaultTopAppBar
 import com.br444n.unitwise.app.ui.theme.UnitWiseTheme
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.TooltipBox
+import androidx.compose.material3.TooltipDefaults
+import androidx.compose.material3.TooltipAnchorPosition
+import androidx.compose.material3.rememberTooltipState
+import androidx.compose.material3.PlainTooltip
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Text
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.ui.text.font.FontWeight
 
 @Composable
 fun ComparisonScreen(
@@ -58,10 +71,22 @@ fun ComparisonScreen(
     
     Scaffold(
         topBar = {
-            UnitWiseDefaultTopAppBar(
-                title = stringResource(id = R.string.comparison_result),
-                navigationContentDescription = stringResource(id = R.string.navigate_up),
-                onBackClick = onBackClick
+            AppTopBar(
+                title = {
+                    Text(
+                        text = stringResource(id = R.string.comparison_result),
+                        style = MaterialTheme.typography.titleLarge.copy(
+                            fontWeight = FontWeight.SemiBold
+                        ),
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                },
+                navigationIcon = {
+                    ComparisonBackButton(
+                        contentDesc = stringResource(id = R.string.navigate_up),
+                        onClick = onBackClick
+                    )
+                }
             )
         },
         bottomBar = {
@@ -224,5 +249,35 @@ fun ComparisonScreenTiePreview() {
                 unitPriceB = "2.00"
             )
         )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun ComparisonBackButton(contentDesc: String, onClick: () -> Unit) {
+    TooltipBox(
+        positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
+            positioning = TooltipAnchorPosition.Below
+        ),
+        tooltip = {
+            PlainTooltip(
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary
+            ) {
+                Text(
+                    text = contentDesc,
+                    color = MaterialTheme.colorScheme.onPrimary
+                )
+            }
+        },
+        state = rememberTooltipState()
+    ) {
+        IconButton(onClick = onClick) {
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                contentDescription = contentDesc,
+                tint = MaterialTheme.colorScheme.onBackground
+            )
+        }
     }
 }
