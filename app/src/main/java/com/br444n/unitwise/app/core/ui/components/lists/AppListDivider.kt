@@ -1,4 +1,4 @@
-package com.br444n.unitwise.app.feature.settings.components.titles
+package com.br444n.unitwise.app.core.ui.components.lists
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -13,7 +13,7 @@ import androidx.compose.ui.unit.dp
 import com.br444n.unitwise.app.ui.theme.UnitWiseTheme
 
 @Composable
-fun SettingsDivider(
+fun AppListDivider(
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier.padding(horizontal = 16.dp)) {
@@ -28,8 +28,8 @@ fun SettingsDivider(
 
 @Preview(showBackground = true)
 @Composable
-fun SettingsDividerPreview() {
+fun AppListDividerPreview() {
     UnitWiseTheme {
-        SettingsDivider()
+        AppListDivider()
     }
 }
