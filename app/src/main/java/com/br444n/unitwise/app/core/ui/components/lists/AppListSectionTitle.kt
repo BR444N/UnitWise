@@ -1,4 +1,4 @@
-package com.br444n.unitwise.app.feature.settings.components.titles
+package com.br444n.unitwise.app.core.ui.components.lists
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -8,15 +8,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.br444n.unitwise.R
 import com.br444n.unitwise.app.ui.theme.UnitWiseTheme
 
 @Composable
-fun SettingsSectionTitle(
+fun AppListSectionTitle(
     text: String,
     modifier: Modifier = Modifier
 ) {
@@ -33,10 +31,10 @@ fun SettingsSectionTitle(
 
 @Preview(showBackground = true)
 @Composable
-fun SettingsSectionTitlePreview() {
+fun AppListSectionTitlePreview() {
     UnitWiseTheme {
-        SettingsSectionTitle(
-            text = stringResource(id = R.string.settings_appearance)
+        AppListSectionTitle(
+            text = "Section Title"
         )
     }
 }
