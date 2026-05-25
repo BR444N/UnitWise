@@ -40,6 +40,7 @@ import androidx.compose.material.icons.filled.History
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import com.br444n.unitwise.app.ui.theme.Badge
 import com.br444n.unitwise.R
@@ -143,7 +144,7 @@ fun HistoryContent(
                             }
                             Spacer(modifier = Modifier.width(12.dp))
                             Text(
-                                text = androidx.compose.ui.res.stringResource(id = R.string.history_title),
+                                text = stringResource(id = R.string.history_title),
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.SemiBold,
                                 color = MaterialTheme.colorScheme.onBackground
