@@ -71,6 +71,7 @@ fun ShoppingListScreen(
         }
     ) { innerPadding ->
         ShoppingListContent(
+            isLoading = uiState.isLoading,
             lists = uiState.lists,
             selectedListIds = selectedListIds,
             onToggleSelection = { id, isSelected ->
@@ -82,7 +83,7 @@ fun ShoppingListScreen(
                 .fillMaxSize()
                 .padding(innerPadding)
         )
-        
+
         if (showCreateDialog) {
             CreateListDialog(
                 onDismiss = { showCreateDialog = false },
@@ -110,6 +111,7 @@ fun ShoppingListScreen(
 
 @Composable
 private fun ShoppingListContent(
+    isLoading: Boolean,
     lists: List<ShoppingListWithItemCount>,
     selectedListIds: Set<Int>,
     onToggleSelection: (Int, Boolean) -> Unit,
@@ -117,39 +119,47 @@ private fun ShoppingListContent(
     onCreateListClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    if (lists.isEmpty()) {
-        Box(modifier = modifier) {
-            ShoppingListEmptyState(
-                onCreateListClick = onCreateListClick
-            )
+    when {
+        isLoading -> {
+            // Keep background clean while loading to avoid flickers
         }
-    } else {
-        LazyColumn(
-            modifier = modifier,
-            contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            items(lists, key = { it.list.id }) { item ->
-                val isSelected = selectedListIds.contains(item.list.id)
-                ShoppingListCard(
-                    state = ShoppingListCardState(
-                        name = item.list.name,
-                        timestamp = item.list.timestamp,
-                        productCount = item.itemCount,
-                        colorArgb = item.list.colorBadge,
-                        isSelected = isSelected
-                    ),
-                    onClick = { 
-                        if (selectedListIds.isNotEmpty()) {
-                            onToggleSelection(item.list.id, isSelected)
-                        } else {
-                            onNavigateToDetails(item.list.id) 
-                        }
-                    },
-                    onLongClick = {
-                        onToggleSelection(item.list.id, isSelected)
-                    }
+
+        lists.isEmpty() -> {
+            Box(modifier = modifier) {
+                ShoppingListEmptyState(
+                    onCreateListClick = onCreateListClick
                 )
+            }
+        }
+
+        else -> {
+            LazyColumn(
+                modifier = modifier,
+                contentPadding = PaddingValues(16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                items(lists, key = { it.list.id }) { item ->
+                    val isSelected = selectedListIds.contains(item.list.id)
+                    ShoppingListCard(
+                        state = ShoppingListCardState(
+                            name = item.list.name,
+                            timestamp = item.list.timestamp,
+                            productCount = item.itemCount,
+                            colorArgb = item.list.colorBadge,
+                            isSelected = isSelected
+                        ),
+                        onClick = {
+                            if (selectedListIds.isNotEmpty()) {
+                                onToggleSelection(item.list.id, isSelected)
+                            } else {
+                                onNavigateToDetails(item.list.id)
+                            }
+                        },
+                        onLongClick = {
+                            onToggleSelection(item.list.id, isSelected)
+                        }
+                    )
+                }
             }
         }
     }
