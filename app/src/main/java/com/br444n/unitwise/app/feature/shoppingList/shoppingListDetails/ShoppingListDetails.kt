@@ -23,7 +23,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.br444n.unitwise.app.data.local.entity.ShoppingListItemEntity
 import com.br444n.unitwise.app.core.ui.components.buttons.AppFloatingActionButton
 import com.br444n.unitwise.app.feature.shoppingList.shoppingListDetails.dialog.AddItemDialog
-import com.br444n.unitwise.app.feature.shoppingList.shoppingListDetails.dialog.DeleteItemDialog
+import com.br444n.unitwise.app.core.ui.components.dialogs.AppDialog
+import com.br444n.unitwise.app.core.ui.components.dialogs.AppDialogConfig
 import com.br444n.unitwise.app.feature.shoppingList.shoppingListDetails.components.ShoppingListBadges
 import com.br444n.unitwise.app.feature.shoppingList.shoppingListDetails.components.ShoppingListItemCard
 import com.br444n.unitwise.app.feature.shoppingList.shoppingListDetails.components.ShoppingListSavingsCard
@@ -215,10 +216,21 @@ private fun ShoppingListDetailsDialogs(
     }
 
     if (showDeleteDialog) {
-        DeleteItemDialog(
-            onDismiss = onDismissDeleteDialog,
-            onConfirm = onConfirmDeleteDialog
-        )
+        AppDialog(
+            config = AppDialogConfig(
+                title = stringResource(id = R.string.delete_items_dialog_title),
+                confirmText = stringResource(id = R.string.delete),
+                isErrorAction = true
+            ),
+            onDismissRequest = onDismissDeleteDialog,
+            onConfirmClick = onConfirmDeleteDialog
+        ) {
+            Text(
+                text = stringResource(id = R.string.delete_items_dialog_message),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
     }
 }
 
