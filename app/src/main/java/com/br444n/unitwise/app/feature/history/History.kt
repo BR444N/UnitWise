@@ -46,8 +46,8 @@ import com.br444n.unitwise.app.ui.theme.Badge
 import com.br444n.unitwise.R
 import com.br444n.unitwise.app.feature.history.components.HistorySectionHeader
 import com.br444n.unitwise.app.feature.share.components.ComparisonShareBottomSheet
-import com.br444n.unitwise.app.ui.components.rememberBottomNavVisibility
-import com.br444n.unitwise.app.ui.components.UnitWiseBottomNavigation
+import com.br444n.unitwise.app.navigation.components.rememberBottomNavVisibility
+import com.br444n.unitwise.app.navigation.components.UnitWiseBottomNavigation
 import com.br444n.unitwise.app.ui.theme.UnitWiseTheme
 import com.br444n.unitwise.app.feature.history.dialog.ClearHistoryDialog
 
