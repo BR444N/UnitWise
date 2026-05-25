@@ -30,7 +30,7 @@ import com.br444n.unitwise.app.feature.home.components.ProductInputOptions
 import com.br444n.unitwise.app.feature.home.components.ProductInputState
 import com.br444n.unitwise.app.feature.share.SharedComparisonData
 import com.br444n.unitwise.app.core.ui.components.navigation.AppTopBar
-import com.br444n.unitwise.app.ui.components.UnitWiseBottomNavigation
+import com.br444n.unitwise.app.navigation.components.UnitWiseBottomNavigation
 import com.br444n.unitwise.app.ui.theme.UnitWiseTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
