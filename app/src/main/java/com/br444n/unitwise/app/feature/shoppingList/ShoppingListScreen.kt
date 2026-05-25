@@ -19,10 +19,37 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.br444n.unitwise.app.feature.shoppingList.components.ShoppingListTopAppBar
-import com.br444n.unitwise.app.feature.shoppingList.dialog.DeleteListDialog
-import com.br444n.unitwise.app.feature.shoppingList.components.ShoppingListSelectionAppBar
+import com.br444n.unitwise.app.core.ui.components.navigation.AppTopBar
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.List
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.SelectAll
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.TooltipBox
+import androidx.compose.material3.TooltipDefaults
+import androidx.compose.material3.TooltipAnchorPosition
+import androidx.compose.material3.rememberTooltipState
+import androidx.compose.material3.PlainTooltip
+import androidx.compose.material3.Text
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.foundation.layout.Row
+import androidx.compose.ui.Alignment
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.draw.clip
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.ui.res.stringResource
+import com.br444n.unitwise.app.ui.theme.Badge
+import com.br444n.unitwise.R
 import com.br444n.unitwise.app.feature.shoppingList.components.ShoppingListEmptyState
+import com.br444n.unitwise.app.feature.shoppingList.dialog.DeleteListDialog
 import com.br444n.unitwise.app.feature.shoppingList.components.ShoppingListCard
 import com.br444n.unitwise.app.feature.shoppingList.components.ShoppingListCardState
 import com.br444n.unitwise.app.feature.shoppingList.components.AddListButton
@@ -44,14 +71,63 @@ fun ShoppingListScreen(
         containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             if (selectedListIds.isEmpty()) {
-                ShoppingListTopAppBar()
+                AppTopBar(
+                    title = {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Box(
+                                modifier = Modifier
+                                    .size(40.dp)
+                                    .clip(RoundedCornerShape(16.dp))
+                                    .background(Badge)
+                                    .border(
+                                        BorderStroke(2.dp, MaterialTheme.colorScheme.primary),
+                                        RoundedCornerShape(50.dp)
+                                    ),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    imageVector = Icons.AutoMirrored.Filled.List,
+                                    contentDescription = null, // decorative
+                                    tint = MaterialTheme.colorScheme.primary,
+                                    modifier = Modifier.size(24.dp)
+                                )
+                            }
+                            Spacer(modifier = Modifier.width(12.dp))
+                            Text(
+                                text = stringResource(id = R.string.my_lists_title),
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.SemiBold,
+                                color = MaterialTheme.colorScheme.onBackground
+                            )
+                        }
+                    }
+                )
             } else {
-                ShoppingListSelectionAppBar(
-                    selectedCount = selectedListIds.size,
-                    onCancelSelection = { selectedListIds = emptySet() },
-                    onSelectAll = { selectedListIds = uiState.lists.map { it.list.id }.toSet() },
-                    onDeleteSelected = {
-                        showDeleteDialog = true
+                AppTopBar(
+                    title = {
+                        Text(
+                            text = stringResource(
+                                id = R.string.selected_count,
+                                selectedListIds.size
+                            ),
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.SemiBold,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                    },
+                    navigationIcon = {
+                        ShoppingListSelectionCancelButton(
+                            contentDesc = stringResource(id = R.string.cancel),
+                            onClick = { selectedListIds = emptySet() }
+                        )
+                    },
+                    actions = {
+                        ShoppingListSelectionActions(
+                            onSelectAll = {
+                                selectedListIds = uiState.lists.map { it.list.id }.toSet()
+                            },
+                            onDeleteSelected = { showDeleteDialog = true }
+                        )
                     }
                 )
             }
@@ -161,6 +237,95 @@ private fun ShoppingListContent(
                     )
                 }
             }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun ShoppingListSelectionCancelButton(contentDesc: String, onClick: () -> Unit) {
+    TooltipBox(
+        positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
+            positioning = TooltipAnchorPosition.Below
+        ),
+        tooltip = {
+            PlainTooltip(
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary
+            ) {
+                Text(
+                    text = contentDesc,
+                    color = MaterialTheme.colorScheme.onPrimary
+                )
+            }
+        },
+        state = rememberTooltipState()
+    ) {
+        IconButton(onClick = onClick) {
+            Icon(
+                imageVector = Icons.Default.Close,
+                contentDescription = contentDesc,
+                tint = MaterialTheme.colorScheme.onSurface
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun ShoppingListSelectionActions(
+    onSelectAll: () -> Unit,
+    onDeleteSelected: () -> Unit
+) {
+    TooltipBox(
+        positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
+            positioning = TooltipAnchorPosition.Below
+        ),
+        tooltip = {
+            PlainTooltip(
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary
+            ) {
+                Text(
+                    text = stringResource(id = R.string.select_all),
+                    color = MaterialTheme.colorScheme.onPrimary
+                )
+            }
+        },
+        state = rememberTooltipState()
+    ) {
+        IconButton(onClick = onSelectAll) {
+            Icon(
+                imageVector = Icons.Default.SelectAll,
+                contentDescription = stringResource(id = R.string.select_all),
+                tint = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+    }
+
+    TooltipBox(
+        positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
+            positioning = TooltipAnchorPosition.Below
+        ),
+        tooltip = {
+            PlainTooltip(
+                containerColor = MaterialTheme.colorScheme.error,
+                contentColor = MaterialTheme.colorScheme.onError
+            ) {
+                Text(
+                    text = stringResource(id = R.string.delete),
+                    color = MaterialTheme.colorScheme.onError
+                )
+            }
+        },
+        state = rememberTooltipState()
+    ) {
+        IconButton(onClick = onDeleteSelected) {
+            Icon(
+                imageVector = Icons.Default.Delete,
+                contentDescription = stringResource(id = R.string.delete),
+                tint = MaterialTheme.colorScheme.error
+            )
         }
     }
 }
