@@ -44,6 +44,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.ui.res.stringResource
 import com.br444n.unitwise.app.ui.theme.Badge
@@ -52,7 +53,7 @@ import com.br444n.unitwise.app.feature.shoppingList.components.ShoppingListEmpty
 import com.br444n.unitwise.app.feature.shoppingList.dialog.DeleteListDialog
 import com.br444n.unitwise.app.feature.shoppingList.components.ShoppingListCard
 import com.br444n.unitwise.app.feature.shoppingList.components.ShoppingListCardState
-import com.br444n.unitwise.app.feature.shoppingList.components.AddListButton
+import com.br444n.unitwise.app.core.ui.components.buttons.AppFloatingActionButton
 import com.br444n.unitwise.app.feature.shoppingList.dialog.CreateListDialog
 import com.br444n.unitwise.app.data.local.dao.ShoppingListWithItemCount
 
@@ -140,7 +141,9 @@ fun ShoppingListScreen(
         },
         floatingActionButton = {
             if (uiState.lists.isNotEmpty()) {
-                AddListButton(
+                AppFloatingActionButton(
+                    text = stringResource(id = R.string.new_list_button),
+                    icon = Icons.Default.Add,
                     onClick = { showCreateDialog = true }
                 )
             }
