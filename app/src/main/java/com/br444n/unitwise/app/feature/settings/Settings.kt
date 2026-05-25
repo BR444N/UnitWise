@@ -26,7 +26,7 @@ import com.br444n.unitwise.app.feature.settings.components.ToggleThemeCard
 import com.br444n.unitwise.app.feature.settings.components.titles.SettingsDivider
 import com.br444n.unitwise.app.feature.settings.components.titles.SettingsSectionTitle
 import com.br444n.unitwise.app.core.ui.components.navigation.AppTopBar
-import com.br444n.unitwise.app.ui.components.UnitWiseBottomNavigation
+import com.br444n.unitwise.app.navigation.components.UnitWiseBottomNavigation
 import com.br444n.unitwise.app.ui.theme.UnitWiseTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
