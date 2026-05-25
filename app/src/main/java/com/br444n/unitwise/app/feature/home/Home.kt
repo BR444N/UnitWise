@@ -41,7 +41,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.br444n.unitwise.R
-import com.br444n.unitwise.app.feature.home.components.CalculateButton
+import com.br444n.unitwise.app.core.ui.components.buttons.AppFloatingActionButton
 import com.br444n.unitwise.app.feature.home.components.HomeHeaderText
 import com.br444n.unitwise.app.feature.home.components.HomeToastMessage
 import com.br444n.unitwise.app.feature.home.components.ProductInputActions
@@ -357,7 +357,7 @@ private fun HomeFloatingActionButton(
     isLoading: Boolean,
     callbacks: HomeContentCallbacks
 ) {
-    CalculateButton(
+    AppFloatingActionButton(
         text = if (inlineComparisonItemId != null) stringResource(id = R.string.save_to_list) else "Calculate",
         icon = if (inlineComparisonItemId != null) Icons.Default.Save else Icons.Default.Calculate,
         onClick = {
