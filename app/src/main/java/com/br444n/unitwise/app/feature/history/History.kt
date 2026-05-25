@@ -26,8 +26,24 @@ import com.br444n.unitwise.app.feature.history.components.HistoryComparisonCardA
 import com.br444n.unitwise.app.feature.history.components.HistoryComparisonCard
 import com.br444n.unitwise.app.feature.history.components.HistoryEmptyState
 import com.br444n.unitwise.app.feature.history.components.HistorySearchBar
+import com.br444n.unitwise.app.core.ui.components.navigation.AppTopBar
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.History
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.font.FontWeight
+import com.br444n.unitwise.app.ui.theme.Badge
+import com.br444n.unitwise.R
 import com.br444n.unitwise.app.feature.history.components.HistorySectionHeader
-import com.br444n.unitwise.app.feature.history.components.HistoryTopAppBar
 import com.br444n.unitwise.app.feature.share.components.ComparisonShareBottomSheet
 import com.br444n.unitwise.app.ui.components.rememberBottomNavVisibility
 import com.br444n.unitwise.app.ui.components.UnitWiseBottomNavigation
@@ -104,7 +120,37 @@ fun HistoryContent(
             modifier = Modifier.fillMaxSize(),
             containerColor = MaterialTheme.colorScheme.background,
             topBar = {
-                HistoryTopAppBar()
+                AppTopBar(
+                    title = {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Box(
+                                modifier = Modifier
+                                    .size(40.dp)
+                                    .clip(RoundedCornerShape(16.dp))
+                                    .background(Badge)
+                                    .border(
+                                        BorderStroke(2.dp, MaterialTheme.colorScheme.primary),
+                                        RoundedCornerShape(50.dp)
+                                    ),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.History,
+                                    contentDescription = null, // decorative
+                                    tint = MaterialTheme.colorScheme.primary,
+                                    modifier = Modifier.size(24.dp)
+                                )
+                            }
+                            Spacer(modifier = Modifier.width(12.dp))
+                            Text(
+                                text = androidx.compose.ui.res.stringResource(id = R.string.history_title),
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.SemiBold,
+                                color = MaterialTheme.colorScheme.onBackground
+                            )
+                        }
+                    }
+                )
             }
         ) { innerPadding ->
             when {
