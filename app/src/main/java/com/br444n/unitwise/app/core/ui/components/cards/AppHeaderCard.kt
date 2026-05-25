@@ -1,4 +1,4 @@
-package com.br444n.unitwise.app.feature.settings.components
+package com.br444n.unitwise.app.core.ui.components.cards
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -19,22 +19,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.br444n.unitwise.R
-import com.br444n.unitwise.app.ui.theme.Badge
-import com.br444n.unitwise.app.ui.theme.UnitWiseTheme
 
 @Composable
-fun SettingsHeaderCard(
-    modifier: Modifier = Modifier
+fun AppHeaderCard(
+    imagePainter: Painter,
+    tagline: String,
+    modifier: Modifier = Modifier,
+    imageBackgroundColor: Color = MaterialTheme.colorScheme.primary,
 ) {
     Card(
-        modifier = modifier
-            .fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = Color.Transparent),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
@@ -44,16 +41,15 @@ fun SettingsHeaderCard(
                 .padding(vertical = 32.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Icon wrapper: Rounded circle with Badge background
             Box(
                 modifier = Modifier
                     .size(100.dp)
                     .clip(CircleShape)
-                    .background(Badge),
+                    .background(imageBackgroundColor),
                 contentAlignment = Alignment.Center
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.splash_icon),
+                    painter = imagePainter,
                     contentDescription = null,
                     modifier = Modifier.size(120.dp)
                 )
@@ -61,21 +57,12 @@ fun SettingsHeaderCard(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Tagline
             Text(
-                text = stringResource(id = R.string.settings_header_tagline),
+                text = tagline,
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface
             )
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun SettingsHeaderCardPreview() {
-    UnitWiseTheme {
-        SettingsHeaderCard()
     }
 }
