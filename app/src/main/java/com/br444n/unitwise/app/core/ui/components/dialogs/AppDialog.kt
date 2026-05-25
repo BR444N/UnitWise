@@ -1,4 +1,4 @@
-package com.br444n.unitwise.app.feature.history.dialog
+package com.br444n.unitwise.app.core.ui.components.dialogs
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -21,22 +23,39 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import com.br444n.unitwise.R
 import com.br444n.unitwise.app.ui.theme.UnitWiseTheme
 
+data class AppDialogConfig(
+    val title: String,
+    val confirmText: String,
+    val dismissText: String? = null,
+    val isConfirmEnabled: Boolean = true,
+    val isErrorAction: Boolean = false
+)
+
 @Composable
-fun ClearHistoryDialog(
+fun AppDialog(
+    config: AppDialogConfig,
     onDismissRequest: () -> Unit,
-    onConfirmClick: () -> Unit
+    onConfirmClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit
 ) {
-    Dialog(onDismissRequest = onDismissRequest) {
+    Dialog(
+        onDismissRequest = onDismissRequest,
+        properties = DialogProperties(usePlatformDefaultWidth = false)
+    ) {
         Card(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = modifier
+                .fillMaxWidth()
+                .padding(24.dp),
             shape = RoundedCornerShape(24.dp),
             colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surface,
+                containerColor = MaterialTheme.colorScheme.surface
             ),
-            elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
+            elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
         ) {
             Column(
                 modifier = Modifier
@@ -44,36 +63,39 @@ fun ClearHistoryDialog(
                     .padding(24.dp)
             ) {
                 Text(
-                    text = stringResource(id = R.string.clear_history_dialog_title),
-                    style = MaterialTheme.typography.titleLarge,
+                    text = config.title,
+                    style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface
                 )
+                
                 Spacer(modifier = Modifier.height(16.dp))
-                Text(
-                    text = stringResource(id = R.string.clear_history_dialog_message),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-                Spacer(modifier = Modifier.height(24.dp))
+
+                content()
+
+                Spacer(modifier = Modifier.height(32.dp))
+
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.End
                 ) {
                     TextButton(onClick = onDismissRequest) {
                         Text(
-                            text = stringResource(id = R.string.cancel),
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            fontWeight = FontWeight.SemiBold
+                            text = config.dismissText ?: stringResource(id = R.string.cancel),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                     Spacer(modifier = Modifier.width(8.dp))
-                    TextButton(onClick = onConfirmClick) {
-                        Text(
-                            text = stringResource(id = R.string.delete),
-                            color = MaterialTheme.colorScheme.error,
-                            fontWeight = FontWeight.SemiBold
-                        )
+                    Button(
+                        onClick = onConfirmClick,
+                        enabled = config.isConfirmEnabled,
+                        colors = if (config.isErrorAction) {
+                            ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
+                        } else {
+                            ButtonDefaults.buttonColors()
+                        }
+                    ) {
+                        Text(text = config.confirmText)
                     }
                 }
             }
@@ -81,13 +103,19 @@ fun ClearHistoryDialog(
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
-fun ClearHistoryDialogPreview() {
+fun AppDialogPreview() {
     UnitWiseTheme {
-        ClearHistoryDialog(
+        AppDialog(
+            config = AppDialogConfig(
+                title = "Preview Dialog",
+                confirmText = "Confirm"
+            ),
             onDismissRequest = {},
             onConfirmClick = {}
-        )
+        ) {
+            Text("This is a preview of the AppDialog component.")
+        }
     }
 }
