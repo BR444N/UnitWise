@@ -50,7 +50,8 @@ import androidx.compose.ui.res.stringResource
 import com.br444n.unitwise.app.ui.theme.Badge
 import com.br444n.unitwise.R
 import com.br444n.unitwise.app.feature.shoppingList.components.ShoppingListEmptyState
-import com.br444n.unitwise.app.feature.shoppingList.dialog.DeleteListDialog
+import com.br444n.unitwise.app.core.ui.components.dialogs.AppDialog
+import com.br444n.unitwise.app.core.ui.components.dialogs.AppDialogConfig
 import com.br444n.unitwise.app.feature.shoppingList.components.ShoppingListCard
 import com.br444n.unitwise.app.feature.shoppingList.components.ShoppingListCardState
 import com.br444n.unitwise.app.core.ui.components.buttons.AppFloatingActionButton
@@ -176,14 +177,25 @@ fun ShoppingListScreen(
         }
 
         if (showDeleteDialog) {
-            DeleteListDialog(
-                onDismiss = { showDeleteDialog = false },
-                onConfirm = {
+            AppDialog(
+                config = AppDialogConfig(
+                    title = stringResource(id = R.string.delete_lists_dialog_title),
+                    confirmText = stringResource(id = R.string.delete),
+                    isErrorAction = true
+                ),
+                onDismissRequest = { showDeleteDialog = false },
+                onConfirmClick = {
                     viewModel.deleteLists(selectedListIds)
                     selectedListIds = emptySet()
                     showDeleteDialog = false
                 }
-            )
+            ) {
+                Text(
+                    text = stringResource(id = R.string.delete_lists_dialog_message),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
         }
     }
 }
