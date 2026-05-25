@@ -51,7 +51,7 @@ import com.br444n.unitwise.app.feature.home.components.ProductInputHints
 import com.br444n.unitwise.app.feature.home.components.ProductInputOptions
 import com.br444n.unitwise.app.feature.home.components.ProductInputState
 import com.br444n.unitwise.app.core.ui.components.navigation.AppTopBar
-import com.br444n.unitwise.app.ui.components.UnitWiseBottomNavigation
+import com.br444n.unitwise.app.navigation.components.UnitWiseBottomNavigation
 import com.br444n.unitwise.app.ui.components.UnitWiseLoading
 import com.br444n.unitwise.app.ui.theme.BrandPrimary
 import com.br444n.unitwise.app.ui.theme.DarkBackgroundMain
