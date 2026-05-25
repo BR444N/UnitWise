@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.br444n.unitwise.app.data.local.entity.ShoppingListItemEntity
-import com.br444n.unitwise.app.feature.shoppingList.shoppingListDetails.components.AddItemButton
+import com.br444n.unitwise.app.core.ui.components.buttons.AppFloatingActionButton
 import com.br444n.unitwise.app.feature.shoppingList.shoppingListDetails.dialog.AddItemDialog
 import com.br444n.unitwise.app.feature.shoppingList.shoppingListDetails.dialog.DeleteItemDialog
 import com.br444n.unitwise.app.feature.shoppingList.shoppingListDetails.components.ShoppingListBadges
@@ -48,6 +48,7 @@ import com.br444n.unitwise.R
 import com.br444n.unitwise.app.feature.shoppingList.shoppingListDetails.components.ShoppingListSearchBar
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.ui.res.stringResource
 import com.br444n.unitwise.app.feature.shoppingList.shoppingListDetails.components.ShoppingListOrphanCard
 import com.br444n.unitwise.app.feature.shoppingList.shoppingListDetails.components.ShoppingListDetailsEmptyState
@@ -78,7 +79,11 @@ fun ShoppingListDetailsScreen(
             )
         },
         floatingActionButton = {
-            AddItemButton(onClick = { showAddDialog = true })
+            AppFloatingActionButton(
+                text = stringResource(id = R.string.add_category_button),
+                icon = Icons.Default.Add,
+                onClick = { showAddDialog = true }
+            )
         }
     ) { innerPadding ->
         Column(
