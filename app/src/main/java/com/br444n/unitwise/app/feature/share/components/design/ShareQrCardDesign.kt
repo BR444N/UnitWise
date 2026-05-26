@@ -10,8 +10,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -36,6 +34,7 @@ import io.github.alexzhirkevich.qrose.options.QrPixelShape
 import io.github.alexzhirkevich.qrose.options.solid
 import io.github.alexzhirkevich.qrose.options.square
 import io.github.alexzhirkevich.qrose.rememberQrCodePainter
+import com.br444n.unitwise.app.core.ui.components.layout.AppCard
 
 @Composable
 fun ShareQrCardDesign(
@@ -50,10 +49,8 @@ fun ShareQrCardDesign(
         ballBrush = QrBrush.solid(TextPrimary)
     )
 
-    Card(
-        modifier = modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background),
-        shape = RoundedCornerShape(24.dp)
+    AppCard(
+        modifier = modifier.fillMaxWidth()
     ) {
         Column(
             modifier = Modifier
