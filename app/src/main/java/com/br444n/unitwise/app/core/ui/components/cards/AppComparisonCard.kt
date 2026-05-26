@@ -1,4 +1,4 @@
-package com.br444n.unitwise.app.feature.history.components
+package com.br444n.unitwise.app.core.ui.components.cards
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -10,22 +10,18 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Share
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material.icons.filled.Verified
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Text
 import androidx.compose.material3.TooltipAnchorPosition
@@ -41,39 +37,48 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.br444n.unitwise.R
+import com.br444n.unitwise.app.core.ui.components.buttons.AppPrimaryButton
+import com.br444n.unitwise.app.core.ui.components.buttons.AppSecondaryButton
+import com.br444n.unitwise.app.core.ui.components.lists.AppListDivider
 import com.br444n.unitwise.app.ui.theme.UnitWiseTheme
+import androidx.compose.ui.graphics.vector.ImageVector
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-private const val HISTORY_TITLE_WRAP_THRESHOLD = 20
+data class AppComparisonCardConfig(
+    val title: String,
+    val timestamp: Long,
+    val badgeText: String? = null,
+    val primaryActionText: String,
+    val secondaryActionText: String,
+    val primaryActionIcon: ImageVector? = null,
+    val secondaryActionIcon: ImageVector? = null
+)
 
-data class HistoryComparisonCardActions(
+data class AppComparisonCardActions(
     val onEditClick: () -> Unit = {},
-    val onViewDetailsClick: () -> Unit = {},
-    val onShareClick: () -> Unit = {}
+    val onPrimaryActionClick: () -> Unit = {},
+    val onSecondaryActionClick: () -> Unit = {}
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HistoryComparisonCard(
-    modifier: Modifier = Modifier,
-    productAName: String,
-    productBName: String,
-    winnerName: String?,
-    timestamp: Long,
-    actions: HistoryComparisonCardActions = HistoryComparisonCardActions()
+fun AppComparisonCard(
+    config: AppComparisonCardConfig,
+    actions: AppComparisonCardActions,
+    modifier: Modifier = Modifier
 ) {
     val formattedDate = SimpleDateFormat(
         "MMM dd, yyyy • hh:mm a",
         Locale.getDefault()
-    ).format(Date(timestamp))
+    ).format(Date(config.timestamp))
 
     Box(modifier = modifier.fillMaxWidth()) {
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 12.dp), // space for the badge overlay
+                .padding(top = 12.dp),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
             shape = RoundedCornerShape(16.dp),
             elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
@@ -89,12 +94,7 @@ fun HistoryComparisonCard(
                     verticalAlignment = Alignment.Top
                 ) {
                     Text(
-                        text = formatComparisonTitle(
-                            productAName = productAName,
-                            productBName = productBName,
-                            defaultProductA = stringResource(R.string.comparison_default_product_a),
-                            defaultProductB = stringResource(R.string.comparison_default_product_b)
-                        ),
+                        text = config.title,
                         modifier = Modifier.weight(1f),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.SemiBold,
@@ -141,7 +141,7 @@ fun HistoryComparisonCard(
                 )
 
                 Spacer(modifier = Modifier.height(12.dp))
-                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+                AppListDivider()
                 Spacer(modifier = Modifier.height(12.dp))
 
                 // Action buttons
@@ -150,88 +150,54 @@ fun HistoryComparisonCard(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    // View Details (primary, green)
-                    Button(
-                        onClick = actions.onViewDetailsClick,
-                        modifier = Modifier.weight(1f),
-                        shape = RoundedCornerShape(12.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.primary
-                        )
-                    ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                            contentDescription = null,
-                            modifier = Modifier.size(16.dp)
-                        )
-                        Spacer(modifier = Modifier.width(6.dp))
-                        Text(
-                            text = stringResource(id = R.string.view_details),
-                            style = MaterialTheme.typography.labelLarge,
-                            fontWeight = FontWeight.SemiBold
-                        )
-                    }
+                    AppPrimaryButton(
+                        text = config.primaryActionText,
+                        onClick = actions.onPrimaryActionClick,
+                        icon = config.primaryActionIcon,
+                        modifier = Modifier.weight(1f)
+                    )
 
-                    // Share (outlined / secondary tone)
-                    OutlinedButton(
-                        onClick = actions.onShareClick,
-                        shape = RoundedCornerShape(12.dp),
-                        colors = ButtonDefaults.outlinedButtonColors(
-                            contentColor = MaterialTheme.colorScheme.secondary
-                        )
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Share,
-                            contentDescription = stringResource(id = R.string.share),
-                            modifier = Modifier.size(16.dp)
-                        )
-                        Spacer(modifier = Modifier.width(6.dp))
-                        Text(
-                            text = stringResource(id = R.string.share),
-                            style = MaterialTheme.typography.labelLarge,
-                            fontWeight = FontWeight.SemiBold
-                        )
-                    }
+                    AppSecondaryButton(
+                        text = config.secondaryActionText,
+                        onClick = actions.onSecondaryActionClick,
+                        icon = config.secondaryActionIcon
+                    )
                 }
             }
         }
 
         // Top-left overlay badge
-        BestValueMicroBadge(
-            winnerName = winnerName,
-            modifier = Modifier
-                .align(Alignment.TopStart)
-                .offset(x = 12.dp, y = 0.dp)
-        )
-    }
-}
-
-private fun formatComparisonTitle(
-    productAName: String,
-    productBName: String,
-    defaultProductA: String,
-    defaultProductB: String
-): String {
-    val firstName = productAName.ifBlank { defaultProductA }
-    val secondName = productBName.ifBlank { defaultProductB }
-
-    return if (firstName.length > HISTORY_TITLE_WRAP_THRESHOLD || secondName.length > HISTORY_TITLE_WRAP_THRESHOLD) {
-        "$firstName vs\n$secondName"
-    } else {
-        "$firstName vs $secondName"
+        if (config.badgeText != null) {
+            AppMicroBadge(
+                text = config.badgeText,
+                icon = Icons.Default.Verified,
+                modifier = Modifier
+                    .align(Alignment.TopStart)
+                    .offset(x = 12.dp, y = 0.dp)
+            )
+        }
     }
 }
 
 @Preview(showBackground = true)
 @Composable
-fun HistoryComparisonCardPreview() {
+fun AppComparisonCardPreview() {
     UnitWiseTheme {
-        HistoryComparisonCard(
-            productAName = "Gel Neutrogena 600g",
-            productBName = "Gel Nivea 400g",
-            winnerName = "Gel Neutrogena",
-            timestamp = System.currentTimeMillis(),
-            actions = HistoryComparisonCardActions(),
+        AppComparisonCard(
+            config = AppComparisonCardConfig(
+                title = "Gel Neutrogena 600g vs Gel Nivea 400g",
+                timestamp = System.currentTimeMillis(),
+                badgeText = "Gel Neutrogena",
+                primaryActionText = "View Details",
+                secondaryActionText = "Share",
+                primaryActionIcon = Icons.AutoMirrored.Filled.ArrowForward,
+                secondaryActionIcon = Icons.Default.Share
+            ),
+            actions = AppComparisonCardActions(
+                onEditClick = {},
+                onPrimaryActionClick = {},
+                onSecondaryActionClick = {}
+            ),
             modifier = Modifier.padding(16.dp)
         )
     }
