@@ -1,4 +1,4 @@
-package com.br444n.unitwise.app.feature.history.components
+package com.br444n.unitwise.app.core.ui.components.inputs
 
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,18 +15,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color.Companion.Transparent
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.br444n.unitwise.R
 import com.br444n.unitwise.app.ui.theme.UnitWiseTheme
 
 @Composable
-fun HistorySearchBar(
-    modifier: Modifier = Modifier,
+fun AppSearchBar(
     query: String,
-    onQueryChange: (String) -> Unit
+    onQueryChange: (String) -> Unit,
+    hint: String,
+    modifier: Modifier = Modifier
 ) {
     OutlinedTextField(
         value = query,
@@ -34,10 +33,10 @@ fun HistorySearchBar(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
-        .shadow(elevation = 2.dp, shape = RoundedCornerShape(24.dp)),
+            .shadow(elevation = 2.dp, shape = RoundedCornerShape(24.dp)),
         placeholder = {
             Text(
-                text = stringResource(R.string.search_comparison_hint),
+                text = hint,
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.SemiBold,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -63,26 +62,27 @@ fun HistorySearchBar(
     )
 }
 
-// Agrupar varias configuraciones en una sola función de Preview es más eficiente
 @Preview(name = "Light Mode - Empty", showBackground = true)
 @Preview(name = "Dark Mode - Empty", showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
-fun HistorySearchBarEmptyPreview() {
+fun AppSearchBarEmptyPreview() {
     UnitWiseTheme {
-            HistorySearchBar(
-                query = "",
-                onQueryChange = {}
-            )
+        AppSearchBar(
+            query = "",
+            onQueryChange = {},
+            hint = "Search for items..."
+        )
     }
 }
 
 @Preview(name = "Light Mode - With Text", showBackground = true)
 @Composable
-fun HistorySearchBarFilledPreview() {
+fun AppSearchBarFilledPreview() {
     UnitWiseTheme {
-            HistorySearchBar(
-                query = "Kilogramos a Libras", // Ver cómo se ve con texto real
-                onQueryChange = {}
-            )
+        AppSearchBar(
+            query = "Kilograms",
+            onQueryChange = {},
+            hint = "Search for items..."
+        )
     }
 }
