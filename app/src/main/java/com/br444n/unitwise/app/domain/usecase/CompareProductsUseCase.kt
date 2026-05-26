@@ -1,7 +1,7 @@
 package com.br444n.unitwise.app.domain.usecase
 
 import com.br444n.unitwise.app.domain.model.MeasurementUnit
-import com.br444n.unitwise.app.feature.home.components.ProductInputState
+import com.br444n.unitwise.app.domain.model.ProductInputState
 import java.util.Locale
 import kotlin.math.abs
 
