@@ -19,7 +19,7 @@ import com.br444n.unitwise.app.feature.history.HistoryScreen
 import com.br444n.unitwise.app.feature.home.HomeScreen
 import com.br444n.unitwise.app.feature.home.HomeViewModel
 import com.br444n.unitwise.app.feature.home.UnitSelectionDriver
-import com.br444n.unitwise.app.feature.home.components.ProductInputState
+import com.br444n.unitwise.app.domain.model.ProductInputState
 import com.br444n.unitwise.app.feature.scann.ScannScreen
 import com.br444n.unitwise.app.feature.scann.ScannResult
 import com.br444n.unitwise.app.feature.settings.SettingsScreen
