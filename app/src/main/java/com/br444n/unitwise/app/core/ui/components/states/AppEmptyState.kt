@@ -20,13 +20,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.br444n.unitwise.R
 import com.br444n.unitwise.app.ui.theme.UnitWiseTheme
+import androidx.compose.foundation.layout.ColumnScope
 
 @Composable
 fun AppEmptyState(
     title: String,
     subtitle: String,
     iconResId: Int,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    content: @Composable ColumnScope.() -> Unit = {}
 ) {
     Column(
         modifier = modifier
@@ -59,6 +61,8 @@ fun AppEmptyState(
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
+        
+        content()
     }
 }
 
