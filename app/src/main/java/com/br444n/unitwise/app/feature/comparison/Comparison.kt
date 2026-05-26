@@ -38,17 +38,25 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.br444n.unitwise.R
+import com.br444n.unitwise.app.core.ui.components.inputs.AppTextField
+import com.br444n.unitwise.app.core.ui.components.inputs.AppTextFieldConfig
+import com.br444n.unitwise.app.core.ui.components.inputs.AppTextFieldContent
+import com.br444n.unitwise.app.core.ui.components.layout.AppCard
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.draw.clip
+import com.br444n.unitwise.app.domain.model.ProductInputState
+import com.br444n.unitwise.app.core.ui.components.navigation.AppTopBar
+import com.br444n.unitwise.app.core.ui.components.wrappers.AppHighlightedWrapper
+import com.br444n.unitwise.app.feature.share.SharedComparisonData
+import com.br444n.unitwise.app.navigation.components.UnitWiseBottomNavigation
 import com.br444n.unitwise.app.core.ui.components.cards.AppBadgeCard
 import com.br444n.unitwise.app.core.ui.components.lists.AppIconTextRow
 import com.br444n.unitwise.app.core.ui.components.lists.AppKeyValueRow
-import com.br444n.unitwise.app.core.ui.components.navigation.AppTopBar
-import com.br444n.unitwise.app.core.ui.components.wrappers.AppHighlightedWrapper
-import com.br444n.unitwise.app.feature.home.components.ProductInputActions
-import com.br444n.unitwise.app.feature.home.components.ProductInputCard
-import com.br444n.unitwise.app.feature.home.components.ProductInputOptions
-import com.br444n.unitwise.app.feature.home.components.ProductInputState
-import com.br444n.unitwise.app.feature.share.SharedComparisonData
-import com.br444n.unitwise.app.navigation.components.UnitWiseBottomNavigation
 import com.br444n.unitwise.app.ui.theme.Badge
 import com.br444n.unitwise.app.ui.theme.UnitWiseTheme
 
@@ -149,11 +157,9 @@ private fun TieResultContent(uiState: ComparisonUiState) {
         containerColor = Badge
     )
 
-    ProductInputCard(
+    ComparisonProductCard(
         title = stringResource(R.string.product_a_title),
-        state = uiState.productA,
-        actions = ProductInputActions(),
-        options = ProductInputOptions(isReadOnly = true)
+        state = uiState.productA
     )
 
     Column(modifier = Modifier.fillMaxWidth()) {
@@ -183,11 +189,9 @@ private fun TieResultContent(uiState: ComparisonUiState) {
         )
     }
 
-    ProductInputCard(
+    ComparisonProductCard(
         title = stringResource(R.string.product_b_title),
-        state = uiState.productB,
-        actions = ProductInputActions(),
-        options = ProductInputOptions(isReadOnly = true)
+        state = uiState.productB
     )
 }
 
@@ -206,11 +210,9 @@ private fun WinnerResultContent(uiState: ComparisonUiState) {
         badgeText = stringResource(id = R.string.best_value_badge),
         badgeIcon = Icons.Default.Stars
     ) {
-        ProductInputCard(
+        ComparisonProductCard(
             title = if (uiState.isProductAWinner) stringResource(R.string.product_a_title) else stringResource(R.string.product_b_title),
-            state = uiState.winningProduct,
-            actions = ProductInputActions(),
-            options = ProductInputOptions(isReadOnly = true)
+            state = uiState.winningProduct
         )
     }
 
@@ -252,11 +254,9 @@ private fun WinnerResultContent(uiState: ComparisonUiState) {
         )
     }
 
-    ProductInputCard(
+    ComparisonProductCard(
         title = if (!uiState.isProductAWinner) stringResource(R.string.product_a_title) else stringResource(R.string.product_b_title),
-        state = uiState.losingProduct,
-        actions = ProductInputActions(),
-        options = ProductInputOptions(isReadOnly = true)
+        state = uiState.losingProduct
     )
 }
 
@@ -348,6 +348,95 @@ private fun ComparisonBackButton(contentDesc: String, onClick: () -> Unit) {
                 contentDescription = contentDesc,
                 tint = MaterialTheme.colorScheme.onBackground
             )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun ComparisonProductCard(
+    title: String,
+    state: ProductInputState
+) {
+    AppCard(modifier = Modifier.fillMaxWidth()) {
+        Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
+            // Header
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Box(
+                    modifier = Modifier
+                        .height(24.dp)
+                        .width(4.dp)
+                        .clip(RoundedCornerShape(2.dp))
+                        .background(MaterialTheme.colorScheme.primary)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.SemiBold,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+            
+            // Product Name Row
+            AppTextField(
+                value = state.productName,
+                onValueChange = {},
+                modifier = Modifier.fillMaxWidth(),
+                config = AppTextFieldConfig(readOnly = true, enabled = false),
+                content = AppTextFieldContent(
+                    placeholder = { Text(stringResource(id = R.string.scan_hint)) }
+                )
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+            
+            // Content Amount & Unit Row
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                AppTextField(
+                    value = state.contentAmount,
+                    onValueChange = {},
+                    modifier = Modifier.weight(1f),
+                    config = AppTextFieldConfig(readOnly = true, enabled = false),
+                    content = AppTextFieldContent(
+                        label = { Text(stringResource(id = R.string.content_label)) }
+                    )
+                )
+                
+                AppTextField(
+                    value = state.selectedUnit,
+                    onValueChange = {},
+                    modifier = Modifier.weight(1f),
+                    config = AppTextFieldConfig(readOnly = true, enabled = false),
+                    content = AppTextFieldContent(
+                        label = { Text(stringResource(id = R.string.unit_label)) }
+                    )
+                )
+            }
+            Spacer(modifier = Modifier.height(12.dp))
+            
+            // Price & Quantity Row
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                AppTextField(
+                    value = state.price,
+                    onValueChange = {},
+                    modifier = Modifier.weight(1f),
+                    config = AppTextFieldConfig(readOnly = true, enabled = false),
+                    content = AppTextFieldContent(
+                        label = { Text(stringResource(id = R.string.price_label)) }
+                    )
+                )
+                
+                AppTextField(
+                    value = state.quantity,
+                    onValueChange = {},
+                    modifier = Modifier.weight(1f),
+                    config = AppTextFieldConfig(readOnly = true, enabled = false),
+                    content = AppTextFieldContent(
+                        label = { Text(stringResource(id = R.string.quantity_label)) }
+                    )
+                )
+            }
         }
     }
 }
