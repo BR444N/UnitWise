@@ -44,12 +44,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.height
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.ui.res.stringResource
 import com.br444n.unitwise.app.ui.theme.Badge
 import com.br444n.unitwise.R
-import com.br444n.unitwise.app.feature.shoppingList.components.ShoppingListEmptyState
+import com.br444n.unitwise.app.core.ui.components.states.AppEmptyState
+import com.br444n.unitwise.app.core.ui.components.buttons.AppPrimaryButton
 import com.br444n.unitwise.app.core.ui.components.dialogs.AppDialog
 import com.br444n.unitwise.app.core.ui.components.dialogs.AppDialogConfig
 import com.br444n.unitwise.app.feature.shoppingList.components.ShoppingListCard
@@ -217,9 +219,17 @@ private fun ShoppingListContent(
 
         lists.isEmpty() -> {
             Box(modifier = modifier) {
-                ShoppingListEmptyState(
-                    onCreateListClick = onCreateListClick
-                )
+                AppEmptyState(
+                    title = stringResource(id = R.string.list_empty_title),
+                    subtitle = stringResource(id = R.string.list_empty_subtitle),
+                    iconResId = R.drawable.empty_state_list
+                ) {
+                    Spacer(modifier = Modifier.height(32.dp))
+                    AppPrimaryButton(
+                        text = stringResource(id = R.string.new_list_button),
+                        onClick = onCreateListClick
+                    )
+                }
             }
         }
 
