@@ -55,6 +55,7 @@ import com.br444n.unitwise.app.core.ui.components.wrappers.AppHighlightedWrapper
 import com.br444n.unitwise.app.feature.share.SharedComparisonData
 import com.br444n.unitwise.app.navigation.components.UnitWiseBottomNavigation
 import com.br444n.unitwise.app.core.ui.components.cards.AppBadgeCard
+import com.br444n.unitwise.app.core.ui.components.cards.AppBadgeCardDefaults
 import com.br444n.unitwise.app.core.ui.components.lists.AppIconTextRow
 import com.br444n.unitwise.app.core.ui.components.lists.AppKeyValueRow
 import com.br444n.unitwise.app.ui.theme.Badge
@@ -154,7 +155,7 @@ private fun TieResultContent(uiState: ComparisonUiState) {
         title = stringResource(id = R.string.tie_title),
         subtitle = stringResource(id = R.string.tie_subtitle),
         icon = Icons.Default.Info,
-        containerColor = Badge
+        colors = AppBadgeCardDefaults.colors(containerColor = Badge)
     )
 
     ComparisonProductCard(
@@ -203,7 +204,7 @@ private fun WinnerResultContent(uiState: ComparisonUiState) {
         title = stringResource(id = R.string.smart_choice_title),
         subtitle = stringResource(id = R.string.smart_choice_subtitle, winningProductName),
         icon = Icons.Default.ShoppingCart,
-        containerColor = Badge
+        colors = AppBadgeCardDefaults.colors(containerColor = Badge)
     )
 
     AppHighlightedWrapper(
