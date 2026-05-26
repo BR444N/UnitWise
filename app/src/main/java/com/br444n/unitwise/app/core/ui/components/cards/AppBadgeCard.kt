@@ -5,11 +5,13 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -27,48 +29,78 @@ import androidx.compose.material.icons.filled.Info
 import com.br444n.unitwise.app.ui.theme.UnitWiseTheme
 import com.br444n.unitwise.app.ui.theme.Badge
 
+data class AppBadgeCardColors(
+    val containerColor: Color,
+    val borderColor: Color,
+    val iconTint: Color
+)
+
+object AppBadgeCardDefaults {
+    @Composable
+    fun colors(
+        containerColor: Color,
+        borderColor: Color = MaterialTheme.colorScheme.primary,
+        iconTint: Color = MaterialTheme.colorScheme.primary
+    ): AppBadgeCardColors = AppBadgeCardColors(
+        containerColor = containerColor,
+        borderColor = borderColor,
+        iconTint = iconTint
+    )
+}
+
 @Composable
 fun AppBadgeCard(
+    modifier: Modifier = Modifier,
     title: String,
     subtitle: String,
     icon: ImageVector,
-    modifier: Modifier = Modifier,
-    containerColor: Color,
-    borderColor: Color = MaterialTheme.colorScheme.primary,
-    iconTint: Color = MaterialTheme.colorScheme.primary
+    colors: AppBadgeCardColors,
+    trailingContent: @Composable () -> Unit = {},
+    content: @Composable ColumnScope.() -> Unit = {}
 ) {
     Column(
         modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(16.dp))
-            .background(containerColor)
+            .background(colors.containerColor)
             .border(
-                BorderStroke(2.dp, borderColor),
+                BorderStroke(2.dp, colors.borderColor),
                 RoundedCornerShape(16.dp)
             )
             .padding(16.dp)
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Icon(
-                imageVector = icon,
-                contentDescription = null,
-                tint = iconTint
-            )
-            Spacer(modifier = Modifier.width(8.dp))
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    tint = colors.iconTint
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.SemiBold,
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+            }
+            trailingContent()
+        }
+        
+        if (subtitle.isNotEmpty()) {
             Text(
-                text = title,
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.onBackground
+                text = subtitle,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(top = 8.dp)
             )
         }
         
-        Text(
-            text = subtitle,
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.padding(top = 8.dp)
-        )
+        content()
     }
 }
 
@@ -80,7 +112,7 @@ fun AppBadgeCardPreview() {
             title = "Preview Title",
             subtitle = "This is a preview subtitle to show how the badge looks.",
             icon = Icons.Default.Info,
-            containerColor = Badge,
+            colors = AppBadgeCardDefaults.colors(containerColor = Badge),
             modifier = Modifier.padding(16.dp)
         )
     }
