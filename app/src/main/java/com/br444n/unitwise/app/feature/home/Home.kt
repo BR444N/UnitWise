@@ -90,8 +90,11 @@ import com.joco.compose_showcaseview.ShowcaseAlignment
 import com.joco.compose_showcaseview.ShowcasePosition
 import com.joco.compose_showcaseview.ShowcaseView
 import com.joco.compose_showcaseview.highlight.ShowcaseHighlight
-
+import com.br444n.unitwise.app.domain.model.CONTENT_AMOUNT_MAX_LENGTH
+import com.br444n.unitwise.app.domain.model.PRICE_MAX_LENGTH
+import com.br444n.unitwise.app.domain.model.PRODUCT_NAME_MAX_LENGTH
 import com.br444n.unitwise.app.domain.model.ProductInputState
+import com.br444n.unitwise.app.domain.model.QUANTITY_MAX_LENGTH
 
 private val BottomNavOverlayPadding = 96.dp
 
@@ -103,8 +106,8 @@ private enum class HomeShowcaseStep {
 
 data class ProductInputHints(
     val productNameHint: Int = R.string.scan_hint,
-    val contentAmountLabel: Int = R.string.content_label,
-    val priceLabel: Int = R.string.price_label
+    val contentAmountHint: Int = R.string.content_label,
+    val priceHint: Int = R.string.price_label
 )
 
 data class ProductInputFocusConfig(
@@ -116,10 +119,6 @@ data class ProductInputFocusConfig(
     val nextProductName: FocusRequester? = null
 )
 
-private const val PRODUCT_NAME_MAX_LENGTH = 24
-private const val CONTENT_AMOUNT_MAX_LENGTH = 7
-private const val PRICE_MAX_LENGTH = 7
-private const val QUANTITY_MAX_LENGTH = 3
 
 private fun sanitizeProductNameInput(input: String): String {
     return input.take(PRODUCT_NAME_MAX_LENGTH)
@@ -376,8 +375,8 @@ private fun HomeContent(
                         focusConfig = focusConfigs.productB,
                         hints = ProductInputHints(
                             productNameHint = R.string.scan_hint_b,
-                            contentAmountLabel = R.string.content_label_b,
-                            priceLabel = R.string.price_label_b
+                            contentAmountHint = R.string.content_label_b,
+                            priceHint = R.string.price_label_b
                         ),
                         cardModifier = Modifier.onGloballyPositioned {
                             productBCardCoordinates = it
@@ -386,7 +385,6 @@ private fun HomeContent(
                     onShowIncompatibleUnitsMessage = callbacks.onShowIncompatibleUnitsMessage,
                     onScanClick = callbacks.handleScanClick
                 )
-
             }
         } // End Scaffold
 
@@ -555,11 +553,22 @@ private fun HomeProductNameField(
     onFocusChange: (Boolean) -> Unit,
     onScanClick: (String) -> Unit
 ) {
+    var isFieldFocused by remember { mutableStateOf(false) }
+
     val productNameModifier = Modifier
         .fillMaxWidth()
-        .onFocusChanged { onFocusChange(it.isFocused) }
+        .onFocusChanged { 
+            isFieldFocused = it.isFocused
+            onFocusChange(it.isFocused) 
+        }
         .focusRequester(config.focusConfig.productName)
         
+    val labelText = if (isFieldFocused || config.state.productName.isNotEmpty()) {
+        stringResource(id = R.string.product_name_label)
+    } else {
+        stringResource(id = config.hints.productNameHint)
+    }
+
     AppTextField(
         value = config.state.productName,
         onValueChange = { 
@@ -573,6 +582,7 @@ private fun HomeProductNameField(
             )
         ),
         content = AppTextFieldContent(
+            label = { Text(labelText) },
             placeholder = { Text(stringResource(id = config.hints.productNameHint)) },
             trailingIcon = {
                 TooltipBox(
@@ -616,11 +626,22 @@ private fun HomeProductContentRow(
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
 
+    var isFieldFocused by remember { mutableStateOf(false) }
+
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
         val contentModifier = Modifier
             .weight(1f)
-            .onFocusChanged { onFocusChange(it.isFocused) }
+            .onFocusChanged { 
+                isFieldFocused = it.isFocused
+                onFocusChange(it.isFocused) 
+            }
             .focusRequester(config.focusConfig.contentAmount)
+            
+        val labelText = if (isFieldFocused || config.state.contentAmount.isNotEmpty()) {
+            stringResource(id = R.string.label_content)
+        } else {
+            stringResource(id = config.hints.contentAmountHint)
+        }
         
         AppTextField(
             value = config.state.contentAmount,
@@ -641,7 +662,8 @@ private fun HomeProductContentRow(
                 )
             ),
             content = AppTextFieldContent(
-                label = { Text(stringResource(id = config.hints.contentAmountLabel)) }
+                label = { Text(labelText) },
+                placeholder = { Text(stringResource(id = config.hints.contentAmountHint)) }
             )
         )
         
@@ -678,11 +700,22 @@ private fun HomeProductPriceQuantityRow(
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
 
+    var isPriceFocused by remember { mutableStateOf(false) }
+
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
         val priceModifier = Modifier
             .weight(1f)
-            .onFocusChanged { onFocusChange(it.isFocused) }
+            .onFocusChanged { 
+                isPriceFocused = it.isFocused
+                onFocusChange(it.isFocused) 
+            }
             .focusRequester(config.focusConfig.price)
+
+        val priceLabel = if (isPriceFocused || config.state.price.isNotEmpty()) {
+            stringResource(id = R.string.label_price)
+        } else {
+            stringResource(id = config.hints.priceHint)
+        }
 
         AppTextField(
             value = config.state.price,
@@ -700,7 +733,9 @@ private fun HomeProductPriceQuantityRow(
                 )
             ),
             content = AppTextFieldContent(
-                label = { Text(stringResource(id = config.hints.priceLabel)) }
+                label = { Text(priceLabel) },
+                leadingIcon = { Text("$ ") },
+                placeholder = { Text(stringResource(id = config.hints.priceHint)) }
             )
         )
         
@@ -735,6 +770,7 @@ private fun HomeProductPriceQuantityRow(
             ),
             content = AppTextFieldContent(
                 label = { Text(stringResource(id = R.string.quantity_label)) },
+                placeholder = { Text("1") },
                 supportingText = {
                     if (isQuantityZero) {
                         Text(text = stringResource(id = R.string.quantity_min_error))
