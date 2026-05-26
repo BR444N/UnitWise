@@ -1,6 +1,6 @@
 package com.br444n.unitwise.app.feature.comparison
 
-import com.br444n.unitwise.app.feature.home.components.ProductInputState
+import com.br444n.unitwise.app.domain.model.ProductInputState
 
 data class ComparisonUiState(
     val productA: ProductInputState = ProductInputState(),
