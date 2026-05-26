@@ -1,17 +1,14 @@
 package com.br444n.unitwise.app.feature.share.components
 
 import android.net.Uri
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
@@ -41,11 +38,15 @@ import androidx.compose.ui.unit.dp
 import com.br444n.unitwise.R
 import com.br444n.unitwise.app.UnitWiseApplication
 import com.br444n.unitwise.app.data.local.entity.ComparisonEntity
-import com.br444n.unitwise.app.feature.share.ShareQrCard
+import com.br444n.unitwise.app.feature.share.components.design.ShareQrCardDesign
 import com.br444n.unitwise.app.feature.share.ShareImageExporter
 import com.br444n.unitwise.app.feature.share.SharedComparisonLink
 import com.br444n.unitwise.app.feature.share.launchNativeShareSheet
-import com.br444n.unitwise.app.ui.theme.Badge
+import com.br444n.unitwise.app.core.ui.components.cards.AppMicroBadge
+import com.br444n.unitwise.app.core.ui.components.buttons.AppPrimaryButton
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Timer
+import androidx.compose.material.icons.filled.Share
 import com.br444n.unitwise.app.ui.components.UnitWiseLoading
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -182,7 +183,7 @@ private fun ShareBottomSheetContent(
         Spacer(modifier = Modifier.height(20.dp))
 
         shareLink?.let {
-            ShareQrCard(
+            ShareQrCardDesign(
                 shareLink = it,
                 modifier = modifier
             )
@@ -190,30 +191,10 @@ private fun ShareBottomSheetContent(
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        Text(
-            text = shareLink?.url.orEmpty(),
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            textAlign = TextAlign.Center
+        AppMicroBadge(
+            text = stringResource(id = R.string.share_qr_expiration_message),
+            icon = Icons.Default.Timer
         )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Row(
-            modifier = Modifier
-                .clip(RoundedCornerShape(8.dp))
-                .background(Badge)
-                .padding(horizontal = 8.dp, vertical = 4.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = stringResource(id = R.string.share_qr_expiration_message),
-                style = MaterialTheme.typography.labelSmall,
-                fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.onPrimary,
-                textAlign = TextAlign.Center
-            )
-        }
 
         Spacer(modifier = Modifier.height(20.dp))
 
@@ -225,12 +206,12 @@ private fun ShareBottomSheetContent(
                 textAlign = TextAlign.Center
             )
         } else if (isReady) {
-            Button(
+            AppPrimaryButton(
+                text = stringResource(id = R.string.share_again),
+                icon = Icons.Default.Share,
                 onClick = onShareAgainClick,
                 modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(text = stringResource(id = R.string.share_again))
-            }
+            )
         }
 
         Spacer(modifier = Modifier.height(12.dp))
