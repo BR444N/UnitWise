@@ -1,4 +1,4 @@
-package com.br444n.unitwise.app.feature.home.components
+package com.br444n.unitwise.app.core.ui.components.messages
 
 import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedVisibility
@@ -27,7 +27,7 @@ import kotlinx.coroutines.delay
 private const val TOAST_DURATION_MS = 2000L
 
 @Composable
-fun HomeToastMessage(
+fun AppToastMessage(
     eventKey: Int,
     @StringRes messageResId: Int,
     modifier: Modifier = Modifier
@@ -42,7 +42,7 @@ fun HomeToastMessage(
         }
     }
 
-    HomeToastMessage(
+    AppToastMessage(
         visible = visible,
         message = stringResource(messageResId),
         modifier = modifier
@@ -50,7 +50,7 @@ fun HomeToastMessage(
 }
 
 @Composable
-fun HomeToastMessage(
+fun AppToastMessage(
     visible: Boolean,
     message: String,
     modifier: Modifier = Modifier
@@ -78,9 +78,9 @@ fun HomeToastMessage(
 
 @Preview(showBackground = true)
 @Composable
-private fun HomeToastMessagePreview() {
+private fun AppToastMessagePreview() {
     UnitWiseTheme {
-        HomeToastMessage(
+        AppToastMessage(
             visible = true,
             message = "Units cannot be compared.",
             modifier = Modifier.padding(16.dp)
