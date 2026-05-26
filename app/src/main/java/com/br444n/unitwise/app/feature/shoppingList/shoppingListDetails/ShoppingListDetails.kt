@@ -46,13 +46,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.foundation.layout.Row
 import androidx.compose.ui.Alignment
 import com.br444n.unitwise.R
-import com.br444n.unitwise.app.feature.shoppingList.shoppingListDetails.components.ShoppingListSearchBar
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.ui.res.stringResource
+import com.br444n.unitwise.app.core.ui.components.states.AppEmptyState
+import com.br444n.unitwise.app.core.ui.components.inputs.AppSearchBar
 import com.br444n.unitwise.app.feature.shoppingList.shoppingListDetails.components.ShoppingListOrphanCard
-import com.br444n.unitwise.app.feature.shoppingList.shoppingListDetails.components.ShoppingListDetailsEmptyState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -94,9 +94,10 @@ fun ShoppingListDetailsScreen(
         ) {
             Spacer(modifier = Modifier.height(16.dp))
 
-            ShoppingListSearchBar(
+            AppSearchBar(
                 query = searchQuery,
-                onQueryChange = { searchQuery = it }
+                onQueryChange = { searchQuery = it },
+                hint = stringResource(R.string.search_product_hint)
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -274,7 +275,14 @@ private fun ShoppingListDetailsList(
     onNavigateToCompare: (ShoppingListItemEntity) -> Unit
 ) {
     if (items.isEmpty()) {
-        ShoppingListDetailsEmptyState(isSearchActive = isSearchActive)
+        AppEmptyState(
+            title = if (isSearchActive) stringResource(id = R.string.details_search_empty_title) 
+                   else stringResource(id = R.string.details_empty_title),
+            subtitle = if (isSearchActive) stringResource(id = R.string.details_search_empty_subtitle) 
+                   else stringResource(id = R.string.details_empty_subtitle),
+            iconResId = if (isSearchActive) R.drawable.empty_products 
+                   else R.drawable.empty_state_list_details
+        )
     } else {
         ShoppingListItemsColumn(
             items = items,
