@@ -47,8 +47,7 @@ import com.br444n.unitwise.app.feature.share.components.ComparisonShareBottomShe
 import com.br444n.unitwise.app.navigation.components.rememberBottomNavVisibility
 import com.br444n.unitwise.app.navigation.components.UnitWiseBottomNavigation
 import com.br444n.unitwise.app.ui.theme.UnitWiseTheme
-import com.br444n.unitwise.app.core.ui.components.dialogs.AppDialog
-import com.br444n.unitwise.app.core.ui.components.dialogs.AppDialogConfig
+import com.br444n.unitwise.app.feature.history.dialog.ClearHistoryDialog
 import com.br444n.unitwise.app.core.ui.components.states.AppEmptyState
 import com.br444n.unitwise.app.core.ui.components.inputs.AppSearchBar
 import com.br444n.unitwise.app.core.ui.components.cards.AppComparisonCard
@@ -115,24 +114,13 @@ fun HistoryContent(
     val defaultProductB = stringResource(R.string.comparison_default_product_b)
 
     if (showClearDialog.value) {
-        AppDialog(
-            config = AppDialogConfig(
-                title = stringResource(id = R.string.clear_history_dialog_title),
-                confirmText = stringResource(id = R.string.delete),
-                isErrorAction = true
-            ),
+        ClearHistoryDialog(
             onDismissRequest = { showClearDialog.value = false },
             onConfirmClick = {
                 showClearDialog.value = false
                 onClearAllClick()
             }
-        ) {
-            Text(
-                text = stringResource(id = R.string.clear_history_dialog_message),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        }
+        )
     }
 
     val filteredComparisons = remember(uiState.comparisons, searchQueryState.value) {
