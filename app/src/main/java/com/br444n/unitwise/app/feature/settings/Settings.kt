@@ -69,8 +69,7 @@ private data class LanguageItem(
 fun SettingsScreen(
     modifier: Modifier = Modifier,
     viewModel: SettingsViewModel = viewModel(factory = SettingsViewModel.Factory),
-    onBackClick: () -> Unit,
-    onNavigate: (Int) -> Unit = {}
+    onBackClick: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -79,8 +78,7 @@ fun SettingsScreen(
         uiState = uiState,
         onToggleTheme = viewModel::toggleTheme,
         onLanguageSelected = viewModel::updateLanguage,
-        onBackClick = onBackClick,
-        onNavigate = onNavigate
+        onBackClick = onBackClick
     )
 }
 
@@ -90,7 +88,6 @@ fun SettingsContent(
     onToggleTheme: (Boolean) -> Unit,
     onLanguageSelected: (String) -> Unit,
     onBackClick: () -> Unit,
-    onNavigate: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Scaffold(
@@ -320,8 +317,7 @@ fun SettingsScreenPreview() {
             ),
             onToggleTheme = {},
             onLanguageSelected = {},
-            onBackClick = {},
-            onNavigate = {}
+            onBackClick = {}
         )
     }
 }
