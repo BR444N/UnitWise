@@ -80,7 +80,6 @@ import com.br444n.unitwise.app.core.ui.components.messages.AppToastMessage
 import com.br444n.unitwise.app.core.ui.components.navigation.AppTopBar
 import com.br444n.unitwise.app.domain.model.MeasurementUnit
 import com.br444n.unitwise.app.domain.model.MeasurementUnit.SUPPORTED_UNITS
-import com.br444n.unitwise.app.navigation.components.UnitWiseBottomNavigation
 import com.br444n.unitwise.app.ui.components.UnitWiseLoading
 import com.br444n.unitwise.app.ui.theme.BrandPrimary
 import com.br444n.unitwise.app.ui.theme.BrandPrimaryUnfocused
@@ -96,7 +95,7 @@ import com.br444n.unitwise.app.domain.model.PRODUCT_NAME_MAX_LENGTH
 import com.br444n.unitwise.app.domain.model.ProductInputState
 import com.br444n.unitwise.app.domain.model.QUANTITY_MAX_LENGTH
 
-private val BottomNavOverlayPadding = 96.dp
+private val BottomNavOverlayPadding = 16.dp
 
 private enum class HomeShowcaseStep {
     SCAN_BUTTON,
@@ -388,15 +387,6 @@ private fun HomeContent(
             }
         } // End Scaffold
 
-        HomeBottomNavigation(
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .fillMaxWidth(),
-            onNavigateToHome = callbacks.onCancelInlineComparison,
-            onNavigateToHistory = callbacks.onNavigateToHistory,
-            onNavigateToShoppingList = callbacks.onNavigateToShoppingList
-        )
-
         AppToastMessage(
             eventKey = uiState.incompatibleUnitsToastEvent,
             messageResId = R.string.units_cannot_be_compared,
@@ -456,26 +446,6 @@ private fun getNextShowcaseStep(current: HomeShowcaseStep, onComplete: () -> Uni
             HomeShowcaseStep.PRODUCT_B_CARD
         }
     }
-}
-
-@Composable
-private fun HomeBottomNavigation(
-    modifier: Modifier = Modifier,
-    onNavigateToHome: () -> Unit,
-    onNavigateToHistory: () -> Unit,
-    onNavigateToShoppingList: () -> Unit
-) {
-    UnitWiseBottomNavigation(
-        modifier = modifier,
-        visible = true,
-        onNavigate = { index ->
-            when (index) {
-                0 -> onNavigateToHome()
-                1 -> onNavigateToShoppingList()
-                2 -> onNavigateToHistory()
-            }
-        }
-    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
