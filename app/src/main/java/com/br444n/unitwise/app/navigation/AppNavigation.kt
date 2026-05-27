@@ -13,6 +13,13 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.navigation.navArgument
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.navDeepLink
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.material3.Scaffold
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.ui.Modifier
+import com.br444n.unitwise.app.navigation.components.UnitWiseBottomNavigation
 import com.br444n.unitwise.app.feature.comparison.ComparisonScreen
 import com.br444n.unitwise.app.feature.comparison.SharedComparisonRoute
 import com.br444n.unitwise.app.feature.history.HistoryScreen
@@ -26,6 +33,7 @@ import com.br444n.unitwise.app.feature.settings.SettingsScreen
 import com.br444n.unitwise.app.feature.share.extractSharedComparisonKey
 import com.br444n.unitwise.app.feature.shoppingList.ShoppingListScreen
 import androidx.compose.runtime.collectAsState
+import com.br444n.unitwise.app.feature.home.HomeNavigationActions
 import com.br444n.unitwise.app.feature.shoppingList.shoppingListDetails.ShoppingListDetailsScreen
 
 object Screen {
@@ -47,135 +55,168 @@ fun AppNavigation(
     navController: NavHostController = rememberNavController()
 ) {
     val homeViewModel: HomeViewModel = viewModel(factory = HomeViewModel.Factory)
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
 
-    NavHost(navController = navController, startDestination = Screen.HOME) {
-        composable(Screen.HOME) { backStackEntry ->
-            HomeResultHandler(backStackEntry, navController, homeViewModel)
-            HomeScreen(
-                navigationActions = com.br444n.unitwise.app.feature.home.HomeNavigationActions(
-                    onNavigateToComparison = { id -> 
-                        navController.navigate(Screen.createComparisonRoute(id)) 
-                    },
-                    onNavigateToHistory = { navController.navigate(Screen.HISTORY) },
-                    onNavigateToShoppingList = { navController.navigate(Screen.SHOPPING_LIST) },
-                    onNavigateToScann = { target -> navController.navigate(Screen.createScannRoute(target)) },
-                    onNavigateToSettings = { navController.navigate(Screen.SETTINGS) },
-                    onPopBackStack = { navController.popBackStack() },
-                    onResetNavigation = { 
-                        navController.navigate(Screen.HOME) {
-                            popUpTo(0) { inclusive = true }
-                            launchSingleTop = true
-                        }
-                    }
-                ),
-                viewModel = homeViewModel
-            )
-        }
-        composable(
-            route = Screen.COMPARISON,
-            arguments = listOf(navArgument("id") { type = NavType.IntType })
-        ) { backStackEntry ->
-            val id = backStackEntry.arguments?.getInt("id") ?: return@composable
-            ComparisonScreen(
-                comparisonId = id,
-                onBackClick = { navController.popBackStack() },
-                onNavigate = { index -> handleBottomTabNav(index, -1, navController) }
-            )
-        }
-        composable(
-            route = Screen.SHARED_COMPARISON,
-            arguments = listOf(navArgument("shareId") { type = NavType.StringType }),
-            deepLinks = listOf(
-                navDeepLink {
-                    uriPattern = "https://unitwise-app.vercel.app/c/{shareId}"
-                }
-            )
-        ) { backStackEntry ->
-            val shareId = backStackEntry.arguments?.getString("shareId") ?: return@composable
-            @Suppress("DEPRECATION")
-            val deepLinkIntent = backStackEntry.arguments
-                ?.getParcelable<Intent>(NavController.KEY_DEEP_LINK_INTENT)
-            val encryptionKey = extractSharedComparisonKey(deepLinkIntent?.data)
+    val topLevelDestinations = listOf(Screen.HOME, Screen.SHOPPING_LIST, Screen.HISTORY)
+    val shouldShowBottomBar = topLevelDestinations.any { route -> 
+        currentRoute == route || currentRoute?.startsWith(route) == true 
+    }
+    
+    val selectedIndex = when {
+        currentRoute?.startsWith(Screen.HOME) == true -> 0
+        currentRoute?.startsWith(Screen.SHOPPING_LIST) == true -> 1
+        currentRoute?.startsWith(Screen.HISTORY) == true -> 2
+        else -> -1
+    }
 
-            ComparisonScreen(
-                sharedComparisonLink = SharedComparisonRoute(
-                    shareId = shareId,
-                    encryptionKey = encryptionKey
-                ),
-                onBackClick = { navController.popBackStack() },
-                onNavigate = { index -> handleBottomTabNav(index, -1, navController) }
-            )
-        }
-        composable(Screen.HISTORY) {
-            HistoryScreen(
-                onNavigate = { index -> handleBottomTabNav(index, 2, navController) },
-                onViewDetails = { id -> navController.navigate(Screen.createComparisonRoute(id)) },
-                onEditComparison = { id ->
-                    navController.previousBackStackEntry?.savedStateHandle?.set("edit_comparison_id", id)
-                    navController.popBackStack()
-                }
-            )
-        }
-        composable(Screen.SHOPPING_LIST) {
-            ShoppingListScreen(
-                onNavigate = { index -> handleBottomTabNav(index, 1, navController) },
-                onNavigateToDetails = { listId -> 
-                    navController.navigate(Screen.createShoppingListDetailsRoute(listId))
-                }
-            )
-        }
-        composable(
-            route = Screen.SHOPPING_LIST_DETAILS,
-            arguments = listOf(navArgument("listId") { type = NavType.IntType })
-        ) { _ ->
-            ShoppingListDetailsScreen(
-                onNavigateBack = { navController.popBackStack() },
-                onNavigateToCompare = { item ->
-                    // We need to pass the item ID to HOME.
-                    // We navigate to a new HOME instance on top of the stack.
-                    // To pass the data, we use previousBackStackEntry in HOME.
-                    navController.currentBackStackEntry?.savedStateHandle?.set("inline_comparison_item_id", item.id)
-                    navController.navigate(Screen.HOME)
-                }
-            )
-        }
-        composable(
-            route = Screen.SCANN,
-            arguments = listOf(navArgument("targetProduct") { type = NavType.StringType })
-        ) { backStackEntry ->
-            val targetProduct = backStackEntry.arguments?.getString("targetProduct") ?: return@composable
-            val homeState = homeViewModel.uiState.collectAsState().value
-            val inheritedUnit = when (targetProduct) {
-                "A" -> homeState.productB.selectedUnit.takeIf {
-                    shouldInheritUnitForScan(
-                        product = homeState.productB,
-                        expectedDriver = UnitSelectionDriver.PRODUCT_B,
-                        currentDriver = homeState.unitSelectionDriver
-                    )
-                }
-                "B" -> homeState.productA.selectedUnit.takeIf {
-                    shouldInheritUnitForScan(
-                        product = homeState.productA,
-                        expectedDriver = UnitSelectionDriver.PRODUCT_A,
-                        currentDriver = homeState.unitSelectionDriver
-                    )
-                }
-                else -> null
+    Scaffold(
+        bottomBar = {
+            if (shouldShowBottomBar) {
+                UnitWiseBottomNavigation(
+                    selectedIndex = selectedIndex,
+                    onNavigate = { index -> handleBottomTabNav(index, selectedIndex, navController) }
+                )
             }
-            ScannScreen(
-                onBackClick = { navController.popBackStack() },
-                inheritedUnit = inheritedUnit,
-                onResultClick = { result ->
-                    navController.previousBackStackEntry?.savedStateHandle?.set("scann_result_$targetProduct", result)
-                    navController.popBackStack()
+        },
+        contentWindowInsets = WindowInsets(0, 0, 0, 0)
+    ) { innerPadding ->
+        NavHost(
+            navController = navController, 
+            startDestination = Screen.HOME,
+            modifier = Modifier.padding(innerPadding)
+        ) {
+            composable(Screen.HOME) { backStackEntry ->
+                HomeResultHandler(backStackEntry, navController, homeViewModel)
+                HomeScreen(
+                    navigationActions = HomeNavigationActions(
+                        onNavigateToComparison = { id ->
+                            navController.navigate(Screen.createComparisonRoute(id))
+                        },
+                        onNavigateToHistory = { navController.navigate(Screen.HISTORY) },
+                        onNavigateToShoppingList = { navController.navigate(Screen.SHOPPING_LIST) },
+                        onNavigateToScann = { target ->
+                            navController.navigate(
+                                Screen.createScannRoute(
+                                    target
+                                )
+                            )
+                        },
+                        onNavigateToSettings = { navController.navigate(Screen.SETTINGS) },
+                        onPopBackStack = { navController.popBackStack() },
+                        onResetNavigation = {
+                            navController.navigate(Screen.HOME) {
+                                popUpTo(0) { inclusive = true }
+                                launchSingleTop = true
+                            }
+                        }
+                    ),
+                    viewModel = homeViewModel
+                )
+            }
+            composable(
+                route = Screen.COMPARISON,
+                arguments = listOf(navArgument("id") { type = NavType.IntType })
+            ) { backStackEntry ->
+                val id = backStackEntry.arguments?.getInt("id") ?: return@composable
+                ComparisonScreen(
+                    comparisonId = id,
+                    onBackClick = { navController.popBackStack() },
+                    onNavigate = { index -> handleBottomTabNav(index, -1, navController) }
+                )
+            }
+            composable(
+                route = Screen.SHARED_COMPARISON,
+                arguments = listOf(navArgument("shareId") { type = NavType.StringType }),
+                deepLinks = listOf(
+                    navDeepLink {
+                        uriPattern = "https://unitwise-app.vercel.app/c/{shareId}"
+                    }
+                )
+            ) { backStackEntry ->
+                val shareId = backStackEntry.arguments?.getString("shareId") ?: return@composable
+                @Suppress("DEPRECATION")
+                val deepLinkIntent = backStackEntry.arguments
+                    ?.getParcelable<Intent>(NavController.KEY_DEEP_LINK_INTENT)
+                val encryptionKey = extractSharedComparisonKey(deepLinkIntent?.data)
+    
+                ComparisonScreen(
+                    sharedComparisonLink = SharedComparisonRoute(
+                        shareId = shareId,
+                        encryptionKey = encryptionKey
+                    ),
+                    onBackClick = { navController.popBackStack() },
+                    onNavigate = { index -> handleBottomTabNav(index, -1, navController) }
+                )
+            }
+            composable(Screen.HISTORY) {
+                HistoryScreen(
+                    onNavigate = { index -> handleBottomTabNav(index, 2, navController) },
+                    onViewDetails = { id -> navController.navigate(Screen.createComparisonRoute(id)) },
+                    onEditComparison = { id ->
+                        navController.previousBackStackEntry?.savedStateHandle?.set("edit_comparison_id", id)
+                        navController.popBackStack()
+                    }
+                )
+            }
+            composable(Screen.SHOPPING_LIST) {
+                ShoppingListScreen(
+                    onNavigate = { index -> handleBottomTabNav(index, 1, navController) },
+                    onNavigateToDetails = { listId -> 
+                        navController.navigate(Screen.createShoppingListDetailsRoute(listId))
+                    }
+                )
+            }
+            composable(
+                route = Screen.SHOPPING_LIST_DETAILS,
+                arguments = listOf(navArgument("listId") { type = NavType.IntType })
+            ) { _ ->
+                ShoppingListDetailsScreen(
+                    onNavigateBack = { navController.popBackStack() },
+                    onNavigateToCompare = { item ->
+                        navController.currentBackStackEntry?.savedStateHandle?.set("inline_comparison_item_id", item.id)
+                        navController.navigate(Screen.HOME)
+                    }
+                )
+            }
+            composable(
+                route = Screen.SCANN,
+                arguments = listOf(navArgument("targetProduct") { type = NavType.StringType })
+            ) { backStackEntry ->
+                val targetProduct = backStackEntry.arguments?.getString("targetProduct") ?: return@composable
+                val homeState = homeViewModel.uiState.collectAsState().value
+                val inheritedUnit = when (targetProduct) {
+                    "A" -> homeState.productB.selectedUnit.takeIf {
+                        shouldInheritUnitForScan(
+                            product = homeState.productB,
+                            expectedDriver = UnitSelectionDriver.PRODUCT_B,
+                            currentDriver = homeState.unitSelectionDriver
+                        )
+                    }
+                    "B" -> homeState.productA.selectedUnit.takeIf {
+                        shouldInheritUnitForScan(
+                            product = homeState.productA,
+                            expectedDriver = UnitSelectionDriver.PRODUCT_A,
+                            currentDriver = homeState.unitSelectionDriver
+                        )
+                    }
+                    else -> null
                 }
-            )
-        }
-        composable(Screen.SETTINGS) {
-            SettingsScreen(
-                onBackClick = { navController.popBackStack() },
-                onNavigate = { index -> handleBottomTabNav(index, 3, navController) }
-            )
+                ScannScreen(
+                    onBackClick = { navController.popBackStack() },
+                    inheritedUnit = inheritedUnit,
+                    onResultClick = { result ->
+                        navController.previousBackStackEntry?.savedStateHandle?.set("scann_result_$targetProduct", result)
+                        navController.popBackStack()
+                    }
+                )
+            }
+            composable(Screen.SETTINGS) {
+                SettingsScreen(
+                    onBackClick = { navController.popBackStack() },
+                    onNavigate = { index -> handleBottomTabNav(index, 3, navController) }
+                )
+            }
         }
     }
 }
