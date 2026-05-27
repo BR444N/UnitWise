@@ -57,7 +57,6 @@ import com.br444n.unitwise.app.core.ui.components.lists.AppListSectionTitle
 import com.br444n.unitwise.app.core.ui.components.navigation.AppTopBar
 import com.br444n.unitwise.app.core.ui.components.cards.AppHeaderCard
 import androidx.compose.ui.res.painterResource
-import com.br444n.unitwise.app.navigation.components.UnitWiseBottomNavigation
 import com.br444n.unitwise.app.ui.theme.Badge
 import com.br444n.unitwise.app.ui.theme.UnitWiseTheme
 
@@ -70,8 +69,7 @@ private data class LanguageItem(
 fun SettingsScreen(
     modifier: Modifier = Modifier,
     viewModel: SettingsViewModel = viewModel(factory = SettingsViewModel.Factory),
-    onBackClick: () -> Unit,
-    onNavigate: (Int) -> Unit = {}
+    onBackClick: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -80,8 +78,7 @@ fun SettingsScreen(
         uiState = uiState,
         onToggleTheme = viewModel::toggleTheme,
         onLanguageSelected = viewModel::updateLanguage,
-        onBackClick = onBackClick,
-        onNavigate = onNavigate
+        onBackClick = onBackClick
     )
 }
 
@@ -91,7 +88,6 @@ fun SettingsContent(
     onToggleTheme: (Boolean) -> Unit,
     onLanguageSelected: (String) -> Unit,
     onBackClick: () -> Unit,
-    onNavigate: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Scaffold(
@@ -115,12 +111,7 @@ fun SettingsContent(
                 }
             )
         },
-        bottomBar = {
-            UnitWiseBottomNavigation(
-                selectedIndex = 2, // No tab selected as it's not in the main 2 tabs
-                onNavigate = onNavigate
-            )
-        },
+
         containerColor = MaterialTheme.colorScheme.background
     ) { paddingValues ->
         LazyColumn(
@@ -326,8 +317,7 @@ fun SettingsScreenPreview() {
             ),
             onToggleTheme = {},
             onLanguageSelected = {},
-            onBackClick = {},
-            onNavigate = {}
+            onBackClick = {}
         )
     }
 }

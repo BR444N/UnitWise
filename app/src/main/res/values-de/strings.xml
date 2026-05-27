@@ -21,6 +21,9 @@
     <string name="home_showcase_skip">Überspringen</string>
     <string name="home_showcase_next">Weiter</string>
     <string name="home_showcase_finish">Fertigstellen</string>
+    <string name="product_name_label">Produktname</string>
+    <string name="label_content">Inhalt</string>
+    <string name="label_price">Preis</string>
 
     <!-- Card to Compare PRODUCT A -->
     <string name="scan_hint">Vollmilch</string>
