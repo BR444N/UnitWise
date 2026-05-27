@@ -4,18 +4,15 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -31,6 +28,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.tooling.preview.Preview
@@ -38,7 +36,11 @@ import androidx.compose.ui.unit.dp
 import com.br444n.unitwise.R
 import com.br444n.unitwise.app.ui.theme.UnitWiseTheme
 import com.br444n.unitwise.app.core.ui.components.dialogs.AppDialog
-import com.br444n.unitwise.app.core.ui.components.dialogs.AppDialogConfig
+import com.br444n.unitwise.app.core.ui.components.inputs.AppTextField
+import com.br444n.unitwise.app.core.ui.components.inputs.AppTextFieldContent
+import com.br444n.unitwise.app.core.ui.components.inputs.AppTextFieldKeyboard
+import com.br444n.unitwise.app.core.ui.components.buttons.AppPrimaryButton
+import com.br444n.unitwise.app.core.ui.components.buttons.AppSecondaryButton
 
 private val defaultColors = listOf(
     Color(0xFF4CAF50), // Green (Default Brand)
@@ -49,7 +51,6 @@ private val defaultColors = listOf(
     Color(0xFF607D8B)  // Blue Grey
 )
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateListDialog(
     onDismiss: () -> Unit,
@@ -63,55 +64,72 @@ fun CreateListDialog(
         focusRequester.requestFocus()
     }
 
-    AppDialog(
-        config = AppDialogConfig(
-            title = stringResource(id = R.string.create_list_dialog_title),
-            confirmText = stringResource(id = R.string.create_list),
-            isConfirmEnabled = listName.isNotBlank()
-        ),
-        onDismissRequest = onDismiss,
-        onConfirmClick = { onCreate(listName.trim(), selectedColor.toArgb()) }
-    ) {
-        Column(
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            OutlinedTextField(
-                value = listName,
-                onValueChange = { if (it.length <= 40) listName = it },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .focusRequester(focusRequester),
-                placeholder = { Text(stringResource(id = R.string.list_name_hint)) },
-                singleLine = true,
-                shape = RoundedCornerShape(12.dp),
-                keyboardOptions = KeyboardOptions(
+    AppDialog(onDismissRequest = onDismiss) {
+        Text(
+            text = stringResource(id = R.string.create_list_dialog_title),
+            style = MaterialTheme.typography.headlineSmall,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onSurface
+        )
+        
+        Spacer(modifier = Modifier.height(16.dp))
+
+        AppTextField(
+            value = listName,
+            onValueChange = { if (it.length <= 40) listName = it },
+            modifier = Modifier
+                .fillMaxWidth()
+                .focusRequester(focusRequester),
+            content = AppTextFieldContent(
+                label = { Text(stringResource(id = R.string.list_name_hint)) }
+            ),
+            keyboard = AppTextFieldKeyboard(
+                options = KeyboardOptions(
                     capitalization = KeyboardCapitalization.Sentences,
                     imeAction = ImeAction.Done
                 )
             )
+        )
 
-            Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(24.dp))
 
-            Text(
-                text = stringResource(id = R.string.choose_color),
-                style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-            
-            Spacer(modifier = Modifier.height(12.dp))
+        Text(
+            text = stringResource(id = R.string.choose_color),
+            style = MaterialTheme.typography.labelLarge,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        
+        Spacer(modifier = Modifier.height(12.dp))
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                defaultColors.forEach { color ->
-                    ColorCircle(
-                        color = color,
-                        isSelected = selectedColor == color,
-                        onClick = { selectedColor = color }
-                    )
-                }
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            defaultColors.forEach { color ->
+                ColorCircle(
+                    color = color,
+                    isSelected = selectedColor == color,
+                    onClick = { selectedColor = color }
+                )
             }
+        }
+
+        Spacer(modifier = Modifier.height(32.dp))
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.End
+        ) {
+            AppSecondaryButton(
+                text = stringResource(id = R.string.cancel),
+                onClick = onDismiss
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            AppPrimaryButton(
+                text = stringResource(id = R.string.create_list),
+                onClick = { onCreate(listName.trim(), selectedColor.toArgb()) },
+                enabled = listName.isNotBlank()
+            )
         }
     }
 }
