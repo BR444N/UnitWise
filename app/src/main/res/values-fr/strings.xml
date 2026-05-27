@@ -21,6 +21,9 @@
     <string name="home_showcase_skip">Ignorer</string>
     <string name="home_showcase_next">Suivant</string>
     <string name="home_showcase_finish">Terminer</string>
+    <string name="product_name_label">Nom du produit</string>
+    <string name="label_content">Contenu</string>
+    <string name="label_price">Prix</string>
 
     <!-- Card to Compare PRODUCT A -->
     <string name="scan_hint">Lait entier</string>

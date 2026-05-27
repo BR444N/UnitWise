@@ -21,6 +21,9 @@
     <string name="home_showcase_skip">Omitir</string>
     <string name="home_showcase_next">Siguiente</string>
     <string name="home_showcase_finish">Finalizar</string>
+    <string name="product_name_label">Nombre del producto</string>
+    <string name="label_content">Contenido</string>
+    <string name="label_price">Precio</string>
 
     <!-- Card to Compare PRODUCT A -->
     <string name="scan_hint">Leche Entera</string>

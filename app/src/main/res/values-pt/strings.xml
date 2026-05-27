@@ -21,6 +21,9 @@
     <string name="home_showcase_skip">Pular</string>
     <string name="home_showcase_next">Próximo</string>
     <string name="home_showcase_finish">Concluir</string>
+    <string name="product_name_label">Nome do produto</string>
+    <string name="label_content">Conteúdo</string>
+    <string name="label_price">Preço</string>
 
     <!-- Card to Compare PRODUCT A -->
     <string name="scan_hint">Leite integral</string>

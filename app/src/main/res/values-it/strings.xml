@@ -21,6 +21,9 @@
     <string name="home_showcase_skip">Salta</string>
     <string name="home_showcase_next">Avanti</string>
     <string name="home_showcase_finish">Fine</string>
+    <string name="product_name_label">Nome del prodotto</string>
+    <string name="label_content">Contenuto</string>
+    <string name="label_price">Prezzo</string>
 
     <!-- Card to Compare PRODUCT A -->
     <string name="scan_hint">Latte intero</string>
