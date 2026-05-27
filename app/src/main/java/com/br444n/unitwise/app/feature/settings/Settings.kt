@@ -57,7 +57,6 @@ import com.br444n.unitwise.app.core.ui.components.lists.AppListSectionTitle
 import com.br444n.unitwise.app.core.ui.components.navigation.AppTopBar
 import com.br444n.unitwise.app.core.ui.components.cards.AppHeaderCard
 import androidx.compose.ui.res.painterResource
-import com.br444n.unitwise.app.navigation.components.UnitWiseBottomNavigation
 import com.br444n.unitwise.app.ui.theme.Badge
 import com.br444n.unitwise.app.ui.theme.UnitWiseTheme
 
@@ -115,12 +114,7 @@ fun SettingsContent(
                 }
             )
         },
-        bottomBar = {
-            UnitWiseBottomNavigation(
-                selectedIndex = 2, // No tab selected as it's not in the main 2 tabs
-                onNavigate = onNavigate
-            )
-        },
+
         containerColor = MaterialTheme.colorScheme.background
     ) { paddingValues ->
         LazyColumn(
