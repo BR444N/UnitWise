@@ -12,7 +12,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.br444n.unitwise.app.navigation.components.UnitWiseBottomNavigation
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.layout.Arrangement
@@ -134,12 +133,6 @@ fun ShoppingListScreen(
                     }
                 )
             }
-        },
-        bottomBar = {
-            UnitWiseBottomNavigation(
-                selectedIndex = 1,
-                onNavigate = onNavigate
-            )
         },
         floatingActionButton = {
             if (uiState.lists.isNotEmpty()) {
