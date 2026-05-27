@@ -121,8 +121,7 @@ fun AppNavigation(
                 val id = backStackEntry.arguments?.getInt("id") ?: return@composable
                 ComparisonScreen(
                     comparisonId = id,
-                    onBackClick = { navController.popBackStack() },
-                    onNavigate = { index -> handleBottomTabNav(index, -1, navController) }
+                    onBackClick = { navController.popBackStack() }
                 )
             }
             composable(
@@ -145,13 +144,11 @@ fun AppNavigation(
                         shareId = shareId,
                         encryptionKey = encryptionKey
                     ),
-                    onBackClick = { navController.popBackStack() },
-                    onNavigate = { index -> handleBottomTabNav(index, -1, navController) }
+                    onBackClick = { navController.popBackStack() }
                 )
             }
             composable(Screen.HISTORY) {
                 HistoryScreen(
-                    onNavigate = { index -> handleBottomTabNav(index, 2, navController) },
                     onViewDetails = { id -> navController.navigate(Screen.createComparisonRoute(id)) },
                     onEditComparison = { id ->
                         navController.previousBackStackEntry?.savedStateHandle?.set("edit_comparison_id", id)
@@ -161,7 +158,6 @@ fun AppNavigation(
             }
             composable(Screen.SHOPPING_LIST) {
                 ShoppingListScreen(
-                    onNavigate = { index -> handleBottomTabNav(index, 1, navController) },
                     onNavigateToDetails = { listId -> 
                         navController.navigate(Screen.createShoppingListDetailsRoute(listId))
                     }
@@ -213,8 +209,7 @@ fun AppNavigation(
             }
             composable(Screen.SETTINGS) {
                 SettingsScreen(
-                    onBackClick = { navController.popBackStack() },
-                    onNavigate = { index -> handleBottomTabNav(index, 3, navController) }
+                    onBackClick = { navController.popBackStack() }
                 )
             }
         }
