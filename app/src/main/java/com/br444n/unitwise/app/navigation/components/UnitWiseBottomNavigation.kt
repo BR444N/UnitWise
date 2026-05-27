@@ -1,10 +1,5 @@
 package com.br444n.unitwise.app.navigation.components
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ReceiptLong
 import androidx.compose.material.icons.automirrored.outlined.ReceiptLong
@@ -19,20 +14,20 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.background
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.br444n.unitwise.R
 import com.br444n.unitwise.app.ui.theme.UnitWiseTheme
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.runningReduce
 
 data class NavigationItem(
     val title: String,
@@ -43,7 +38,6 @@ data class NavigationItem(
 @Composable
 fun UnitWiseBottomNavigation(
     modifier: Modifier = Modifier,
-    visible: Boolean = true,
     selectedIndex: Int = 0,
     onNavigate: (Int) -> Unit = {}
 ) {
@@ -65,62 +59,47 @@ fun UnitWiseBottomNavigation(
         )
     )
 
-    AnimatedVisibility(
-        modifier = modifier,
-        visible = visible,
-        enter = slideInVertically(initialOffsetY = { it / 2 }) + fadeIn(),
-        exit = slideOutVertically(targetOffsetY = { it }) + fadeOut()
-    ) {
-        AppBottomBar {
-            items.forEachIndexed { index, item ->
-                NavigationBarItem(
-                    selected = selectedIndex == index,
-                    onClick = {
-                        onNavigate(index)
-                    },
-                    icon = {
+    AppBottomBar(modifier = modifier) {
+        items.forEachIndexed { index, item ->
+            NavigationBarItem(
+                selected = selectedIndex == index,
+                onClick = {
+                    onNavigate(index)
+                },
+                icon = {
+                    Box(
+                        modifier = Modifier
+                            .width(64.dp)
+                            .height(32.dp)
+                            .background(
+                                color = if (index == selectedIndex) MaterialTheme.colorScheme.primary else Color.Transparent,
+                                shape = RoundedCornerShape(12.dp)
+                            ),
+                        contentAlignment = Alignment.Center
+                    ) {
                         Icon(
                             imageVector = if (index == selectedIndex) {
                                 item.selectedIcon
                             } else item.unselectedIcon,
                             contentDescription = item.title
                         )
-                    },
-                    label = {
-                        Text(text = item.title, style = MaterialTheme.typography.labelMedium)
-                    },
-                    colors = NavigationBarItemDefaults.colors(
-                        selectedIconColor = MaterialTheme.colorScheme.onPrimary,
-                        selectedTextColor = MaterialTheme.colorScheme.primary,
-                        indicatorColor = MaterialTheme.colorScheme.primary,
-                        unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                        unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
+                    }
+                },
+                label = {
+                    Text(text = item.title, style = MaterialTheme.typography.labelMedium)
+                },
+                colors = NavigationBarItemDefaults.colors(
+                    selectedIconColor = MaterialTheme.colorScheme.onPrimary,
+                    selectedTextColor = MaterialTheme.colorScheme.primary,
+                    indicatorColor = Color.Transparent,
+                    unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                    unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
                 )
-            }
+            )
         }
     }
 }
 
-@Composable
-fun rememberBottomNavVisibility(positionProvider: () -> Int): Boolean {
-    var isVisible by remember { mutableStateOf(true) }
-
-    LaunchedEffect(positionProvider) {
-        snapshotFlow { positionProvider() }
-            .distinctUntilChanged()
-            .runningReduce { previousPosition, currentPosition ->
-                when {
-                    currentPosition < previousPosition -> isVisible = true
-                    currentPosition > previousPosition -> isVisible = false
-                }
-                currentPosition
-            }
-            .collect { }
-    }
-
-    return isVisible
-}
 
 @Preview(showBackground = true)
 @Composable
