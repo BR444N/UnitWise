@@ -44,8 +44,6 @@ import com.br444n.unitwise.app.ui.theme.Badge
 import com.br444n.unitwise.R
 import com.br444n.unitwise.app.core.ui.components.buttons.AppSecondaryButton
 import com.br444n.unitwise.app.feature.share.components.ComparisonShareBottomSheet
-import com.br444n.unitwise.app.navigation.components.rememberBottomNavVisibility
-import com.br444n.unitwise.app.navigation.components.UnitWiseBottomNavigation
 import com.br444n.unitwise.app.ui.theme.UnitWiseTheme
 import com.br444n.unitwise.app.feature.history.dialog.ClearHistoryDialog
 import com.br444n.unitwise.app.core.ui.components.states.AppEmptyState
@@ -72,7 +70,7 @@ private fun formatComparisonTitle(
     }
 }
 
-private val HistoryBottomNavOverlayPadding = 96.dp
+private val HistoryBottomNavOverlayPadding = 16.dp
 
 @Composable
 fun HistoryScreen(
@@ -106,10 +104,7 @@ fun HistoryContent(
     val selectedComparisonToShareState = remember { mutableStateOf<ComparisonEntity?>(null) }
     val showClearDialog = remember { mutableStateOf(false) }
     val listState = rememberLazyListState()
-    val isBottomNavVisible = rememberBottomNavVisibility {
-        (listState.firstVisibleItemIndex * 100_000) + listState.firstVisibleItemScrollOffset
-    }
-    
+
     val defaultProductA = stringResource(R.string.comparison_default_product_a)
     val defaultProductB = stringResource(R.string.comparison_default_product_b)
 
@@ -275,14 +270,6 @@ fun HistoryContent(
             }
         }
 
-        UnitWiseBottomNavigation(
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .fillMaxWidth(),
-            visible = isBottomNavVisible,
-            selectedIndex = 2,
-            onNavigate = onNavigate
-        )
     }
 }
 
