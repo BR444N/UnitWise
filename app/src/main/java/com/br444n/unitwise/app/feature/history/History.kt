@@ -76,14 +76,12 @@ private val HistoryBottomNavOverlayPadding = 16.dp
 fun HistoryScreen(
     modifier: Modifier = Modifier,
     viewModel: HistoryViewModel = viewModel(factory = HistoryViewModel.Factory),
-    onNavigate: (Int) -> Unit = {},
     onViewDetails: (Int) -> Unit = {},
     onEditComparison: (Int) -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
     HistoryContent(
         uiState = uiState,
-        onNavigate = onNavigate,
         onViewDetails = onViewDetails,
         onEditComparison = onEditComparison,
         onClearAllClick = { viewModel.clearAll() },
@@ -94,7 +92,6 @@ fun HistoryScreen(
 @Composable
 fun HistoryContent(
     uiState: HistoryUiState,
-    onNavigate: (Int) -> Unit,
     onViewDetails: (Int) -> Unit,
     onEditComparison: (Int) -> Unit,
     onClearAllClick: () -> Unit,
@@ -279,7 +276,6 @@ fun HistoryScreenPreview() {
     UnitWiseTheme {
         HistoryContent(
             uiState = HistoryUiState(),
-            onNavigate = {},
             onViewDetails = {},
             onEditComparison = {},
             onClearAllClick = {}
