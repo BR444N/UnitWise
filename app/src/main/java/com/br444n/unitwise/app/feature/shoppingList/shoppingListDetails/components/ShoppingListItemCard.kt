@@ -13,15 +13,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import com.br444n.unitwise.app.core.ui.components.layout.AppCard
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -72,7 +70,7 @@ fun ShoppingListItemCard(
         if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline
     val borderWidth = if (isSelected) 2.dp else 1.dp
 
-    Card(
+    AppCard(
         modifier = modifier
             .fillMaxWidth()
             .animateContentSize()
@@ -86,10 +84,9 @@ fun ShoppingListItemCard(
                 },
                 onLongClick = onLongClick
             ),
-        shape = RoundedCornerShape(24.dp),
-        border = BorderStroke(borderWidth, borderColor),
-        colors = CardDefaults.cardColors(containerColor = actualContainerColor),
-        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+        containerColor = actualContainerColor,
+        elevation = 0.dp,
+        border = BorderStroke(borderWidth, borderColor)
     ) {
         Column(
             modifier = Modifier

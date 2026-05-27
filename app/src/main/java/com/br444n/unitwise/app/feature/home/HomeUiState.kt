@@ -1,6 +1,6 @@
 package com.br444n.unitwise.app.feature.home
 
-import com.br444n.unitwise.app.feature.home.components.ProductInputState
+import com.br444n.unitwise.app.domain.model.ProductInputState
 
 enum class UnitSelectionDriver {
     PRODUCT_A,

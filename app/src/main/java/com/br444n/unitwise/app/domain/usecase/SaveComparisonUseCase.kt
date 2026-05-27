@@ -1,8 +1,8 @@
 package com.br444n.unitwise.app.domain.usecase
 
 import com.br444n.unitwise.app.data.local.entity.ComparisonEntity
+import com.br444n.unitwise.app.domain.model.ProductInputState
 import com.br444n.unitwise.app.domain.repository.ComparisonRepository
-import com.br444n.unitwise.app.feature.home.components.ProductInputState
 import java.security.SecureRandom
 
 class SaveComparisonUseCase(private val repository: ComparisonRepository) {

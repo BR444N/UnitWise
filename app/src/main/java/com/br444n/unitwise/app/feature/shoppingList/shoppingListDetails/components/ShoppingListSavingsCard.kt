@@ -14,9 +14,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Savings
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.HorizontalDivider
+import com.br444n.unitwise.app.core.ui.components.layout.AppCard
+import com.br444n.unitwise.app.core.ui.components.lists.AppListDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -51,11 +50,10 @@ fun ShoppingListSavingsCard(
     val savings = if (smartTotal > 0 && smartTotal < loserTotal) loserTotal - smartTotal else loserTotal - winnerTotal
     val percentage = if (loserTotal > 0) (savings / loserTotal) * 100 else 0.0
 
-    Card(
+    AppCard(
         modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(24.dp),
-        colors = CardDefaults.cardColors(containerColor = BlueColor),
-        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+        containerColor = BlueColor,
+        elevation = 0.dp
     ) {
         Column(
             modifier = Modifier
@@ -97,10 +95,7 @@ fun ShoppingListSavingsCard(
                 }
             }
 
-            HorizontalDivider(
-                modifier = Modifier.padding(vertical = 12.dp),
-                color = MaterialTheme.colorScheme.outlineVariant
-            )
+            AppListDivider(modifier = Modifier.padding(vertical = 4.dp))
             
             if (savings > 0) {
                 Row(

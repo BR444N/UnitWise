@@ -1,6 +1,6 @@
 package com.br444n.unitwise.app.feature.share
 
-import com.br444n.unitwise.app.feature.home.components.ProductInputState
+import com.br444n.unitwise.app.domain.model.ProductInputState
 
 data class SharedComparisonData(
     val shareId: String,

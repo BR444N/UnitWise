@@ -6,20 +6,16 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -28,7 +24,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -40,6 +35,7 @@ import com.br444n.unitwise.app.ui.theme.Badge
 import com.br444n.unitwise.app.ui.theme.BlueColor
 import com.br444n.unitwise.app.ui.theme.BrandPrimary
 import com.br444n.unitwise.app.ui.theme.UnitWiseTheme
+import com.br444n.unitwise.app.core.ui.components.cards.AppBadgeCard
 
 @Composable
 fun ShoppingListOrphanCard(
@@ -49,99 +45,72 @@ fun ShoppingListOrphanCard(
 ) {
     var expanded by remember { mutableStateOf(false) }
 
-    Card(
-        modifier = modifier
-            .fillMaxWidth()
-            .border(
-                width = 2.dp,
-                color = BrandPrimary,
-                shape = RoundedCornerShape(16.dp)
+    AppBadgeCard(
+        title = stringResource(id = R.string.orphan_items_impact),
+        subtitle = "",
+        icon = Icons.Default.Info,
+        colors = com.br444n.unitwise.app.core.ui.components.cards.AppBadgeCardDefaults.colors(
+            containerColor = Badge,
+            borderColor = BrandPrimary,
+            iconTint = MaterialTheme.colorScheme.primary
+        ),
+        modifier = modifier.clickable { expanded = !expanded },
+        trailingContent = {
+            Icon(
+                imageVector = if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant
             )
-            .clickable { expanded = !expanded },
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = Badge)
+        }
     ) {
-        Column(
-            modifier = Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+        AnimatedVisibility(
+            visible = expanded,
+            enter = fadeIn() + expandVertically(animationSpec = tween(300)),
+            exit = fadeOut() + shrinkVertically(animationSpec = tween(300))
         ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier.fillMaxWidth()
+            Column(
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.padding(top = 16.dp)
             ) {
+                Text(
+                    text = stringResource(id = R.string.orphan_items_explanation),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = BlueColor
+                )
+                
                 Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.Info,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary
+                    Text(
+                        text = stringResource(id = R.string.list_a_absolute_total),
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.SemiBold,
+                        color = BlueColor
                     )
                     Text(
-                        text = stringResource(id = R.string.orphan_items_impact),
-                        style = MaterialTheme.typography.titleMedium,
+                        text = PriceUtils.formatPrice(totalWithOrphansA),
+                        style = MaterialTheme.typography.bodyMedium,
                         fontWeight = FontWeight.Bold,
                         color = BlueColor
                     )
                 }
-                Icon(
-                    imageVector = if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-
-            AnimatedVisibility(
-                visible = expanded,
-                enter = fadeIn() + expandVertically(animationSpec = tween(300)),
-                exit = fadeOut() + shrinkVertically(animationSpec = tween(300))
-            ) {
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                    modifier = Modifier.padding(top = 8.dp)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = stringResource(id = R.string.orphan_items_explanation),
+                        text = stringResource(id = R.string.list_b_absolute_total),
                         style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.SemiBold,
                         color = BlueColor
                     )
-                    
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Text(
-                            text = stringResource(id = R.string.list_a_absolute_total),
-                            style = MaterialTheme.typography.bodyMedium,
-                            fontWeight = FontWeight.SemiBold,
-                            color = BlueColor
-                        )
-                        Text(
-                            text = PriceUtils.formatPrice(totalWithOrphansA),
-                            style = MaterialTheme.typography.bodyMedium,
-                            fontWeight = FontWeight.Bold,
-                            color = BlueColor
-                        )
-                    }
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Text(
-                            text = stringResource(id = R.string.list_b_absolute_total),
-                            style = MaterialTheme.typography.bodyMedium,
-                            fontWeight = FontWeight.SemiBold,
-                            color = BlueColor
-                        )
-                        Text(
-                            text = PriceUtils.formatPrice(totalWithOrphansB),
-                            style = MaterialTheme.typography.bodyMedium,
-                            fontWeight = FontWeight.Bold,
-                            color = BlueColor
-                        )
-                    }
+                    Text(
+                        text = PriceUtils.formatPrice(totalWithOrphansB),
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = BlueColor
+                    )
                 }
             }
         }

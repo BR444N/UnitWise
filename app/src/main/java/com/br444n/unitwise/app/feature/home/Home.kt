@@ -1,26 +1,46 @@
 package com.br444n.unitwise.app.feature.home
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Calculate
+import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material.icons.filled.Save
-import androidx.compose.material3.FabPosition
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.TextButton
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FabPosition
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.PlainTooltip
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TooltipAnchorPosition
+import androidx.compose.material3.TooltipBox
+import androidx.compose.material3.TooltipDefaults
+import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -29,38 +49,52 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.br444n.unitwise.R
-import com.br444n.unitwise.app.feature.home.components.CalculateButton
-import com.br444n.unitwise.app.feature.home.components.HomeHeaderText
-import com.br444n.unitwise.app.feature.home.components.HomeToastMessage
-import com.br444n.unitwise.app.feature.home.components.ProductInputActions
-import com.br444n.unitwise.app.feature.home.components.ProductInputCard
-import com.br444n.unitwise.app.feature.home.components.ProductInputFocusConfig
-import com.br444n.unitwise.app.feature.home.components.ProductInputHints
-import com.br444n.unitwise.app.feature.home.components.ProductInputOptions
-import com.br444n.unitwise.app.feature.home.components.ProductInputState
-import com.br444n.unitwise.app.feature.home.components.UnitWiseTopAppBar
-import com.br444n.unitwise.app.ui.components.UnitWiseBottomNavigation
+import com.br444n.unitwise.app.core.ui.components.buttons.AppFloatingActionButton
+import com.br444n.unitwise.app.core.ui.components.inputs.AppDropdownMenu
+import com.br444n.unitwise.app.core.ui.components.inputs.AppTextField
+import com.br444n.unitwise.app.core.ui.components.inputs.AppTextFieldConfig
+import com.br444n.unitwise.app.core.ui.components.inputs.AppTextFieldContent
+import com.br444n.unitwise.app.core.ui.components.inputs.AppTextFieldKeyboard
+import com.br444n.unitwise.app.core.ui.components.layout.AppCard
+import com.br444n.unitwise.app.core.ui.components.messages.AppToastMessage
+import com.br444n.unitwise.app.core.ui.components.navigation.AppTopBar
+import com.br444n.unitwise.app.domain.model.MeasurementUnit
+import com.br444n.unitwise.app.domain.model.MeasurementUnit.SUPPORTED_UNITS
+import com.br444n.unitwise.app.navigation.components.UnitWiseBottomNavigation
 import com.br444n.unitwise.app.ui.components.UnitWiseLoading
 import com.br444n.unitwise.app.ui.theme.BrandPrimary
+import com.br444n.unitwise.app.ui.theme.BrandPrimaryUnfocused
 import com.br444n.unitwise.app.ui.theme.DarkBackgroundMain
 import com.br444n.unitwise.app.ui.theme.UnitWiseTheme
 import com.joco.compose_showcaseview.ShowcaseAlignment
 import com.joco.compose_showcaseview.ShowcasePosition
 import com.joco.compose_showcaseview.ShowcaseView
 import com.joco.compose_showcaseview.highlight.ShowcaseHighlight
-import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.filled.Calculate
+import com.br444n.unitwise.app.domain.model.CONTENT_AMOUNT_MAX_LENGTH
+import com.br444n.unitwise.app.domain.model.PRICE_MAX_LENGTH
+import com.br444n.unitwise.app.domain.model.PRODUCT_NAME_MAX_LENGTH
+import com.br444n.unitwise.app.domain.model.ProductInputState
+import com.br444n.unitwise.app.domain.model.QUANTITY_MAX_LENGTH
 
 private val BottomNavOverlayPadding = 96.dp
 
@@ -68,6 +102,46 @@ private enum class HomeShowcaseStep {
     SCAN_BUTTON,
     PRODUCT_A_CARD,
     PRODUCT_B_CARD
+}
+
+data class ProductInputHints(
+    val productNameHint: Int = R.string.scan_hint,
+    val contentAmountHint: Int = R.string.content_label,
+    val priceHint: Int = R.string.price_label
+)
+
+data class ProductInputFocusConfig(
+    val productName: FocusRequester,
+    val contentAmount: FocusRequester,
+    val unit: FocusRequester,
+    val price: FocusRequester,
+    val quantity: FocusRequester,
+    val nextProductName: FocusRequester? = null
+)
+
+
+private fun sanitizeProductNameInput(input: String): String {
+    return input.take(PRODUCT_NAME_MAX_LENGTH)
+}
+
+private fun sanitizeDecimalInput(input: String, maxLength: Int): String {
+    val normalized = buildString(input.length) {
+        var hasDecimalSeparator = false
+        input.forEach { char ->
+            when {
+                char.isDigit() -> append(char)
+                (char == '.' || char == ',') && !hasDecimalSeparator -> {
+                    append('.')
+                    hasDecimalSeparator = true
+                }
+            }
+        }
+    }
+    return normalized.take(maxLength)
+}
+
+private fun sanitizeQuantityInput(input: String): String {
+    return input.filter(Char::isDigit).take(QUANTITY_MAX_LENGTH)
 }
 
 private data class HomeContentCallbacks(
@@ -138,6 +212,7 @@ fun HomeScreen(
     val productBUnitFocus = remember { FocusRequester() }
     val productBPriceFocus = remember { FocusRequester() }
     val productBQuantityFocus = remember { FocusRequester() }
+
     HomeContent(
         modifier = modifier,
         uiState = uiState,
@@ -202,8 +277,29 @@ private fun HomeContent(
     Box(modifier = modifier.fillMaxSize()) {
         Scaffold(
             topBar = {
-                UnitWiseTopAppBar(
-                    onSettingsClick = callbacks.onNavigateToSettings
+                AppTopBar(
+                    title = {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Image(
+                                painter = painterResource(id = R.drawable.ic_logo),
+                                contentDescription = stringResource(id = R.string.logo_desc),
+                                modifier = Modifier
+                                    .size(40.dp)
+                                    .clip(CircleShape)
+                            )
+                            Spacer(modifier = Modifier.width(12.dp))
+                            Text(
+                                text = stringResource(id = R.string.app_name),
+                                style = MaterialTheme.typography.titleLarge.copy(
+                                    fontWeight = FontWeight.Bold
+                                ),
+                                color = MaterialTheme.colorScheme.onBackground
+                            )
+                        }
+                    },
+                    actions = {
+                        HomeSettingsAction(onSettingsClick = callbacks.onNavigateToSettings)
+                    }
                 )
             },
             floatingActionButton = {
@@ -226,7 +322,22 @@ private fun HomeContent(
                     .verticalScroll(scrollState),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                HomeHeaderText(modifier = Modifier.padding(top = 16.dp))
+                // Header Text inlined
+                Column(
+                    modifier = Modifier.fillMaxWidth().padding(top = 16.dp)
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.home_header_title),
+                        style = MaterialTheme.typography.titleLarge,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = stringResource(id = R.string.home_header_subtitle),
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
 
                 HomeProductInputCard(
                     config = ProductCardContentConfig(
@@ -264,8 +375,8 @@ private fun HomeContent(
                         focusConfig = focusConfigs.productB,
                         hints = ProductInputHints(
                             productNameHint = R.string.scan_hint_b,
-                            contentAmountLabel = R.string.content_label_b,
-                            priceLabel = R.string.price_label_b
+                            contentAmountHint = R.string.content_label_b,
+                            priceHint = R.string.price_label_b
                         ),
                         cardModifier = Modifier.onGloballyPositioned {
                             productBCardCoordinates = it
@@ -274,8 +385,6 @@ private fun HomeContent(
                     onShowIncompatibleUnitsMessage = callbacks.onShowIncompatibleUnitsMessage,
                     onScanClick = callbacks.handleScanClick
                 )
-
-                /* CalculateButton moved to floatingActionButton slot */
             }
         } // End Scaffold
 
@@ -288,7 +397,7 @@ private fun HomeContent(
             onNavigateToShoppingList = callbacks.onNavigateToShoppingList
         )
 
-        HomeToastMessage(
+        AppToastMessage(
             eventKey = uiState.incompatibleUnitsToastEvent,
             messageResId = R.string.units_cannot_be_compared,
             modifier = Modifier
@@ -321,7 +430,7 @@ private fun HomeFloatingActionButton(
     isLoading: Boolean,
     callbacks: HomeContentCallbacks
 ) {
-    CalculateButton(
+    AppFloatingActionButton(
         text = if (inlineComparisonItemId != null) stringResource(id = R.string.save_to_list) else "Calculate",
         icon = if (inlineComparisonItemId != null) Icons.Default.Save else Icons.Default.Calculate,
         onClick = {
@@ -369,40 +478,307 @@ private fun HomeBottomNavigation(
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun HomeProductInputCard(
     config: ProductCardContentConfig,
     onShowIncompatibleUnitsMessage: () -> Unit,
     onScanClick: (String) -> Unit
 ) {
-    ProductInputCard(
-        title = stringResource(id = config.titleResId),
-        state = config.state,
-        actions = ProductInputActions(
-            onProductNameChange = {
-                config.onUpdateProduct(
-                    config.state.copy(productName = it)
+    var isFocused by remember { mutableStateOf(false) }
+    val onFocusChange: (Boolean) -> Unit = { focused -> if (focused) isFocused = true }
+
+    AppCard(
+        modifier = config.cardModifier.fillMaxWidth()
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            // Header (Title & Dot)
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Box(
+                    modifier = Modifier
+                        .height(24.dp)
+                        .width(4.dp)
+                        .clip(RoundedCornerShape(2.dp))
+                        .background(
+                            when {
+                                config.state.isValid() -> MaterialTheme.colorScheme.primary
+                                isFocused -> BrandPrimaryUnfocused
+                                else -> MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.3f)
+                            }
+                        )
                 )
-            },
-            onContentAmountChange = {
-                config.onUpdateProduct(
-                    config.state.copy(contentAmount = it)
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = stringResource(id = config.titleResId),
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.SemiBold,
+                    color = MaterialTheme.colorScheme.onSurface
                 )
-            },
-            onUnitChange = { config.onUpdateProduct(config.state.copy(selectedUnit = it)) },
-            onIncompatibleUnitSelected = onShowIncompatibleUnitsMessage,
-            onPriceChange = { config.onUpdateProduct(config.state.copy(price = it)) },
-            onQuantityChange = { config.onUpdateProduct(config.state.copy(quantity = it)) },
-            onScanClick = { onScanClick(config.scanTarget) }
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+            
+            // Product Name Row
+            HomeProductNameField(
+                config = config,
+                onFocusChange = onFocusChange,
+                onScanClick = onScanClick
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+            
+            // Content Amount & Unit Row
+            HomeProductContentRow(
+                config = config,
+                onFocusChange = onFocusChange,
+                onShowIncompatibleUnitsMessage = onShowIncompatibleUnitsMessage
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+            
+            // Price & Quantity Row
+            HomeProductPriceQuantityRow(
+                config = config,
+                onFocusChange = onFocusChange
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun HomeProductNameField(
+    config: ProductCardContentConfig,
+    onFocusChange: (Boolean) -> Unit,
+    onScanClick: (String) -> Unit
+) {
+    var isFieldFocused by remember { mutableStateOf(false) }
+
+    val productNameModifier = Modifier
+        .fillMaxWidth()
+        .onFocusChanged { 
+            isFieldFocused = it.isFocused
+            onFocusChange(it.isFocused) 
+        }
+        .focusRequester(config.focusConfig.productName)
+        
+    val labelText = if (isFieldFocused || config.state.productName.isNotEmpty()) {
+        stringResource(id = R.string.product_name_label)
+    } else {
+        stringResource(id = config.hints.productNameHint)
+    }
+
+    AppTextField(
+        value = config.state.productName,
+        onValueChange = { 
+            config.onUpdateProduct(config.state.copy(productName = sanitizeProductNameInput(it))) 
+        },
+        modifier = productNameModifier,
+        keyboard = AppTextFieldKeyboard(
+            options = KeyboardOptions(imeAction = ImeAction.Next),
+            actions = KeyboardActions(
+                onNext = { config.focusConfig.contentAmount.requestFocus() }
+            )
         ),
-        options = ProductInputOptions(
-            focusConfig = config.focusConfig,
-            hints = config.hints,
-            otherSelectedUnit = config.otherSelectedUnit,
-            cardModifier = config.cardModifier,
-            scanButtonModifier = config.scanButtonModifier
+        content = AppTextFieldContent(
+            label = { Text(labelText) },
+            placeholder = { Text(stringResource(id = config.hints.productNameHint)) },
+            trailingIcon = {
+                TooltipBox(
+                    positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
+                        positioning = TooltipAnchorPosition.Below
+                    ),
+                    tooltip = {
+                        PlainTooltip(
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor = MaterialTheme.colorScheme.onPrimary
+                        ) {
+                            Text(
+                                text = stringResource(id = R.string.scan_desc),
+                                color = MaterialTheme.colorScheme.onPrimary
+                            )
+                        }
+                    },
+                    state = rememberTooltipState()
+                ) {
+                    IconButton(
+                        onClick = { onScanClick(config.scanTarget) },
+                        modifier = config.scanButtonModifier
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.QrCodeScanner,
+                            contentDescription = stringResource(id = R.string.scan_desc),
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                }
+            }
         )
     )
+}
+
+@Composable
+private fun HomeProductContentRow(
+    config: ProductCardContentConfig,
+    onFocusChange: (Boolean) -> Unit,
+    onShowIncompatibleUnitsMessage: () -> Unit
+) {
+    val keyboardController = LocalSoftwareKeyboardController.current
+
+    var isFieldFocused by remember { mutableStateOf(false) }
+
+    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+        val contentModifier = Modifier
+            .weight(1f)
+            .onFocusChanged { 
+                isFieldFocused = it.isFocused
+                onFocusChange(it.isFocused) 
+            }
+            .focusRequester(config.focusConfig.contentAmount)
+            
+        val labelText = if (isFieldFocused || config.state.contentAmount.isNotEmpty()) {
+            stringResource(id = R.string.label_content)
+        } else {
+            stringResource(id = config.hints.contentAmountHint)
+        }
+        
+        AppTextField(
+            value = config.state.contentAmount,
+            onValueChange = { 
+                config.onUpdateProduct(config.state.copy(contentAmount = sanitizeDecimalInput(it, CONTENT_AMOUNT_MAX_LENGTH))) 
+            },
+            modifier = contentModifier,
+            keyboard = AppTextFieldKeyboard(
+                options = KeyboardOptions(
+                    keyboardType = KeyboardType.Decimal,
+                    imeAction = ImeAction.Next
+                ),
+                actions = KeyboardActions(
+                    onNext = {
+                        keyboardController?.hide()
+                        config.focusConfig.unit.requestFocus()
+                    }
+                )
+            ),
+            content = AppTextFieldContent(
+                label = { Text(labelText) },
+                placeholder = { Text(stringResource(id = config.hints.contentAmountHint)) }
+            )
+        )
+        
+        val compatibleUnits = remember(config.otherSelectedUnit) {
+            MeasurementUnit.compatibleUnitsFor(config.otherSelectedUnit)
+        }
+        
+        AppDropdownMenu(
+            config = com.br444n.unitwise.app.core.ui.components.inputs.AppDropdownMenuConfig(
+                selectedItem = config.state.selectedUnit,
+                items = SUPPORTED_UNITS,
+                itemLabel = { it },
+                isItemEnabled = { it == config.state.selectedUnit || compatibleUnits.contains(it) },
+                label = stringResource(id = R.string.unit_label)
+            ),
+            actions = com.br444n.unitwise.app.core.ui.components.inputs.AppDropdownMenuActions(
+                onItemSelected = { config.onUpdateProduct(config.state.copy(selectedUnit = it)) },
+                onDisabledItemClick = { onShowIncompatibleUnitsMessage() }
+            ),
+            focusConfig = com.br444n.unitwise.app.core.ui.components.inputs.AppDropdownMenuFocusConfig(
+                focusRequester = config.focusConfig.unit,
+                nextFocusRequester = config.focusConfig.price
+            ),
+            modifier = Modifier.weight(1f)
+        )
+    }
+}
+
+@Composable
+private fun HomeProductPriceQuantityRow(
+    config: ProductCardContentConfig,
+    onFocusChange: (Boolean) -> Unit
+) {
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
+
+    var isPriceFocused by remember { mutableStateOf(false) }
+
+    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+        val priceModifier = Modifier
+            .weight(1f)
+            .onFocusChanged { 
+                isPriceFocused = it.isFocused
+                onFocusChange(it.isFocused) 
+            }
+            .focusRequester(config.focusConfig.price)
+
+        val priceLabel = if (isPriceFocused || config.state.price.isNotEmpty()) {
+            stringResource(id = R.string.label_price)
+        } else {
+            stringResource(id = config.hints.priceHint)
+        }
+
+        AppTextField(
+            value = config.state.price,
+            onValueChange = { 
+                config.onUpdateProduct(config.state.copy(price = sanitizeDecimalInput(it, PRICE_MAX_LENGTH))) 
+            },
+            modifier = priceModifier,
+            keyboard = AppTextFieldKeyboard(
+                options = KeyboardOptions(
+                    keyboardType = KeyboardType.Decimal,
+                    imeAction = ImeAction.Next
+                ),
+                actions = KeyboardActions(
+                    onNext = { config.focusConfig.quantity.requestFocus() }
+                )
+            ),
+            content = AppTextFieldContent(
+                label = { Text(priceLabel) },
+                leadingIcon = { Text("$ ") },
+                placeholder = { Text(stringResource(id = config.hints.priceHint)) }
+            )
+        )
+        
+        val quantityModifier = Modifier
+            .weight(1f)
+            .onFocusChanged { onFocusChange(it.isFocused) }
+            .focusRequester(config.focusConfig.quantity)
+        
+        val isQuantityZero = config.state.quantity.toIntOrNull() == 0
+        
+        AppTextField(
+            value = config.state.quantity,
+            onValueChange = { 
+                config.onUpdateProduct(config.state.copy(quantity = sanitizeQuantityInput(it))) 
+            },
+            modifier = quantityModifier,
+            config = AppTextFieldConfig(
+                isError = isQuantityZero
+            ),
+            keyboard = AppTextFieldKeyboard(
+                options = KeyboardOptions(
+                    keyboardType = KeyboardType.Number,
+                    imeAction = if (config.focusConfig.nextProductName != null) ImeAction.Next else ImeAction.Done
+                ),
+                actions = KeyboardActions(
+                    onNext = { config.focusConfig.nextProductName?.requestFocus() },
+                    onDone = {
+                        keyboardController?.hide()
+                        focusManager.clearFocus()
+                    }
+                )
+            ),
+            content = AppTextFieldContent(
+                label = { Text(stringResource(id = R.string.quantity_label)) },
+                placeholder = { Text("1") },
+                supportingText = {
+                    if (isQuantityZero) {
+                        Text(text = stringResource(id = R.string.quantity_min_error))
+                    }
+                }
+            )
+        )
+    }
 }
 
 private data class ShowcaseStepData(
@@ -585,5 +961,35 @@ fun HomeScreenPreview() {
                 )
             )
         )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun HomeSettingsAction(onSettingsClick: () -> Unit) {
+    TooltipBox(
+        positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
+            positioning = TooltipAnchorPosition.Below
+        ),
+        tooltip = {
+            PlainTooltip(
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary
+            ) {
+                Text(
+                    text = stringResource(id = R.string.settings_desc),
+                    color = MaterialTheme.colorScheme.onPrimary
+                )
+            }
+        },
+        state = rememberTooltipState()
+    ) {
+        IconButton(onClick = onSettingsClick) {
+            Icon(
+                imageVector = Icons.Default.Settings,
+                contentDescription = stringResource(id = R.string.settings_desc),
+                tint = MaterialTheme.colorScheme.onBackground
+            )
+        }
     }
 }

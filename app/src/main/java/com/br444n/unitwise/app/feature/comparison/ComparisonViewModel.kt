@@ -10,7 +10,7 @@ import com.br444n.unitwise.app.UnitWiseApplication
 import com.br444n.unitwise.app.domain.usecase.CompareProductsUseCase
 import com.br444n.unitwise.app.domain.usecase.GetComparisonByShareIdUseCase
 import com.br444n.unitwise.app.domain.usecase.GetComparisonUseCase
-import com.br444n.unitwise.app.feature.home.components.ProductInputState
+import com.br444n.unitwise.app.domain.model.ProductInputState
 import com.br444n.unitwise.app.feature.share.SharedComparisonData
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

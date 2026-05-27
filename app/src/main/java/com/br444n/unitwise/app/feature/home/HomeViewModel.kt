@@ -14,7 +14,7 @@ import com.br444n.unitwise.app.domain.usecase.IncompatibleMeasurementUnitsExcept
 import com.br444n.unitwise.app.domain.usecase.SaveComparisonUseCase
 import com.br444n.unitwise.app.domain.usecase.CompareProductsUseCase
 import com.br444n.unitwise.app.data.local.dao.ShoppingListItemDao
-import com.br444n.unitwise.app.feature.home.components.ProductInputState
+import com.br444n.unitwise.app.domain.model.ProductInputState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.MutableStateFlow

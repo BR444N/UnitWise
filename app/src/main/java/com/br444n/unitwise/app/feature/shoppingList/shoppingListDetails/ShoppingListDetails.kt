@@ -21,19 +21,37 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.br444n.unitwise.app.data.local.entity.ShoppingListItemEntity
-import com.br444n.unitwise.app.feature.shoppingList.shoppingListDetails.components.AddItemButton
+import com.br444n.unitwise.app.core.ui.components.buttons.AppFloatingActionButton
 import com.br444n.unitwise.app.feature.shoppingList.shoppingListDetails.dialog.AddItemDialog
-import com.br444n.unitwise.app.feature.shoppingList.shoppingListDetails.dialog.DeleteItemDialog
+import com.br444n.unitwise.app.feature.shoppingList.shoppingListDetails.dialog.DeleteItemsDialog
 import com.br444n.unitwise.app.feature.shoppingList.shoppingListDetails.components.ShoppingListBadges
 import com.br444n.unitwise.app.feature.shoppingList.shoppingListDetails.components.ShoppingListItemCard
 import com.br444n.unitwise.app.feature.shoppingList.shoppingListDetails.components.ShoppingListSavingsCard
-import com.br444n.unitwise.app.feature.shoppingList.shoppingListDetails.components.ShoppingListDetailsTopAppBar
-import com.br444n.unitwise.app.feature.shoppingList.components.ShoppingListSelectionAppBar
-import com.br444n.unitwise.app.feature.shoppingList.shoppingListDetails.components.ShoppingListSearchBar
+import com.br444n.unitwise.app.core.ui.components.navigation.AppTopBar
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.SelectAll
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.TooltipBox
+import androidx.compose.material3.TooltipDefaults
+import androidx.compose.material3.TooltipAnchorPosition
+import androidx.compose.material3.rememberTooltipState
+import androidx.compose.material3.PlainTooltip
+import androidx.compose.material3.Text
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.foundation.layout.Row
+import androidx.compose.ui.Alignment
+import com.br444n.unitwise.R
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.ui.res.stringResource
+import com.br444n.unitwise.app.core.ui.components.states.AppEmptyState
+import com.br444n.unitwise.app.core.ui.components.inputs.AppSearchBar
 import com.br444n.unitwise.app.feature.shoppingList.shoppingListDetails.components.ShoppingListOrphanCard
-import com.br444n.unitwise.app.feature.shoppingList.shoppingListDetails.components.ShoppingListDetailsEmptyState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -61,7 +79,11 @@ fun ShoppingListDetailsScreen(
             )
         },
         floatingActionButton = {
-            AddItemButton(onClick = { showAddDialog = true })
+            AppFloatingActionButton(
+                text = stringResource(id = R.string.add_category_button),
+                icon = Icons.Default.Add,
+                onClick = { showAddDialog = true }
+            )
         }
     ) { innerPadding ->
         Column(
@@ -71,9 +93,10 @@ fun ShoppingListDetailsScreen(
         ) {
             Spacer(modifier = Modifier.height(16.dp))
 
-            ShoppingListSearchBar(
+            AppSearchBar(
                 query = searchQuery,
-                onQueryChange = { searchQuery = it }
+                onQueryChange = { searchQuery = it },
+                hint = stringResource(R.string.search_product_hint)
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -131,16 +154,47 @@ private fun ShoppingListDetailsTopBarHandler(
     onDeleteSelected: () -> Unit
 ) {
     if (selectedItemIds.isEmpty()) {
-        ShoppingListDetailsTopAppBar(
-            title = uiState.listName,
-            onNavigateBack = onNavigateBack
+        AppTopBar(
+            title = {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = uiState.listName,
+                        style = MaterialTheme.typography.titleLarge.copy(
+                            fontWeight = FontWeight.Bold
+                        ),
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                }
+            },
+            navigationIcon = {
+                ShoppingListDetailsBackButton(
+                    contentDesc = stringResource(id = R.string.navigate_up),
+                    onClick = onNavigateBack
+                )
+            }
         )
     } else {
-        ShoppingListSelectionAppBar(
-            selectedCount = selectedItemIds.size,
-            onCancelSelection = onCancelSelection,
-            onSelectAll = onSelectAll,
-            onDeleteSelected = onDeleteSelected
+        AppTopBar(
+            title = {
+                Text(
+                    text = stringResource(id = R.string.selected_count, selectedItemIds.size),
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.SemiBold,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            },
+            navigationIcon = {
+                ShoppingListSelectionCancelButton(
+                    contentDesc = stringResource(id = R.string.cancel),
+                    onClick = onCancelSelection
+                )
+            },
+            actions = {
+                ShoppingListSelectionActions(
+                    onSelectAll = onSelectAll,
+                    onDeleteSelected = onDeleteSelected
+                )
+            }
         )
     }
 }
@@ -162,9 +216,9 @@ private fun ShoppingListDetailsDialogs(
     }
 
     if (showDeleteDialog) {
-        DeleteItemDialog(
-            onDismiss = onDismissDeleteDialog,
-            onConfirm = onConfirmDeleteDialog
+        DeleteItemsDialog(
+            onDismissRequest = onDismissDeleteDialog,
+            onConfirmClick = onConfirmDeleteDialog
         )
     }
 }
@@ -209,7 +263,14 @@ private fun ShoppingListDetailsList(
     onNavigateToCompare: (ShoppingListItemEntity) -> Unit
 ) {
     if (items.isEmpty()) {
-        ShoppingListDetailsEmptyState(isSearchActive = isSearchActive)
+        AppEmptyState(
+            title = if (isSearchActive) stringResource(id = R.string.details_search_empty_title) 
+                   else stringResource(id = R.string.details_empty_title),
+            subtitle = if (isSearchActive) stringResource(id = R.string.details_search_empty_subtitle) 
+                   else stringResource(id = R.string.details_empty_subtitle),
+            iconResId = if (isSearchActive) R.drawable.empty_products 
+                   else R.drawable.empty_state_list_details
+        )
     } else {
         ShoppingListItemsColumn(
             items = items,
@@ -248,6 +309,125 @@ private fun ShoppingListItemsColumn(
                 onLongClick = {
                     onToggleSelection(item.id, isSelected)
                 }
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun ShoppingListDetailsBackButton(contentDesc: String, onClick: () -> Unit) {
+    TooltipBox(
+        positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
+            positioning = TooltipAnchorPosition.Below
+        ),
+        tooltip = {
+            PlainTooltip(
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary
+            ) {
+                Text(
+                    text = contentDesc,
+                    color = MaterialTheme.colorScheme.onPrimary
+                )
+            }
+        },
+        state = rememberTooltipState()
+    ) {
+        IconButton(onClick = onClick) {
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                contentDescription = contentDesc,
+                tint = MaterialTheme.colorScheme.onBackground
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun ShoppingListSelectionCancelButton(contentDesc: String, onClick: () -> Unit) {
+    TooltipBox(
+        positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
+            positioning = TooltipAnchorPosition.Below
+        ),
+        tooltip = {
+            PlainTooltip(
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary
+            ) {
+                Text(
+                    text = contentDesc,
+                    color = MaterialTheme.colorScheme.onPrimary
+                )
+            }
+        },
+        state = rememberTooltipState()
+    ) {
+        IconButton(onClick = onClick) {
+            Icon(
+                imageVector = Icons.Default.Close,
+                contentDescription = contentDesc,
+                tint = MaterialTheme.colorScheme.onSurface
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun ShoppingListSelectionActions(
+    onSelectAll: () -> Unit,
+    onDeleteSelected: () -> Unit
+) {
+    TooltipBox(
+        positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
+            positioning = TooltipAnchorPosition.Below
+        ),
+        tooltip = {
+            PlainTooltip(
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary
+            ) {
+                Text(
+                    text = stringResource(id = R.string.select_all),
+                    color = MaterialTheme.colorScheme.onPrimary
+                )
+            }
+        },
+        state = rememberTooltipState()
+    ) {
+        IconButton(onClick = onSelectAll) {
+            Icon(
+                imageVector = Icons.Default.SelectAll,
+                contentDescription = stringResource(id = R.string.select_all),
+                tint = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+    }
+
+    TooltipBox(
+        positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
+            positioning = TooltipAnchorPosition.Below
+        ),
+        tooltip = {
+            PlainTooltip(
+                containerColor = MaterialTheme.colorScheme.error,
+                contentColor = MaterialTheme.colorScheme.onError
+            ) {
+                Text(
+                    text = stringResource(id = R.string.delete),
+                    color = MaterialTheme.colorScheme.onError
+                )
+            }
+        },
+        state = rememberTooltipState()
+    ) {
+        IconButton(onClick = onDeleteSelected) {
+            Icon(
+                imageVector = Icons.Default.Delete,
+                contentDescription = stringResource(id = R.string.delete),
+                tint = MaterialTheme.colorScheme.error
             )
         }
     }
