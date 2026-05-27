@@ -67,7 +67,6 @@ fun ComparisonScreen(
     sharedComparisonData: SharedComparisonData? = null,
     sharedComparisonLink: SharedComparisonRoute? = null,
     onBackClick: () -> Unit,
-    onNavigate: (Int) -> Unit = {},
     viewModel: ComparisonViewModel = viewModel(factory = ComparisonViewModel.Factory)
 ) {
     val uiState by viewModel.uiState.collectAsState()
