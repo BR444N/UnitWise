@@ -60,7 +60,6 @@ import com.br444n.unitwise.app.data.local.dao.ShoppingListWithItemCount
 
 @Composable
 fun ShoppingListScreen(
-    onNavigate: (Int) -> Unit,
     onNavigateToDetails: (Int) -> Unit,
     viewModel: ShoppingListViewModel = viewModel(factory = ShoppingListViewModel.Factory)
 ) {
