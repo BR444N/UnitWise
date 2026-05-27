@@ -53,7 +53,6 @@ import com.br444n.unitwise.app.domain.model.ProductInputState
 import com.br444n.unitwise.app.core.ui.components.navigation.AppTopBar
 import com.br444n.unitwise.app.core.ui.components.wrappers.AppHighlightedWrapper
 import com.br444n.unitwise.app.feature.share.SharedComparisonData
-import com.br444n.unitwise.app.navigation.components.UnitWiseBottomNavigation
 import com.br444n.unitwise.app.core.ui.components.cards.AppBadgeCard
 import com.br444n.unitwise.app.core.ui.components.cards.AppBadgeCardDefaults
 import com.br444n.unitwise.app.core.ui.components.lists.AppIconTextRow
@@ -102,12 +101,6 @@ fun ComparisonScreen(
                         onClick = onBackClick
                     )
                 }
-            )
-        },
-        bottomBar = {
-            UnitWiseBottomNavigation(
-                selectedIndex = -1, // Detail screen, no tab highlighted
-                onNavigate = onNavigate
             )
         },
         modifier = modifier.fillMaxSize()
