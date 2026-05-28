@@ -85,6 +85,7 @@ fun HistoryScreen(
         onViewDetails = onViewDetails,
         onEditComparison = onEditComparison,
         onClearAllClick = { viewModel.clearAll() },
+        onShareComparison = viewModel::onComparisonShared,
         modifier = modifier
     )
 }
@@ -95,6 +96,7 @@ fun HistoryContent(
     onViewDetails: (Int) -> Unit,
     onEditComparison: (Int) -> Unit,
     onClearAllClick: () -> Unit,
+    onShareComparison: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val searchQueryState = remember { mutableStateOf("") }
@@ -258,7 +260,10 @@ fun HistoryContent(
                                 actions = AppComparisonCardActions(
                                     onEditClick = { onEditComparison(item.entity.id) },
                                     onPrimaryActionClick = { onViewDetails(item.entity.id) },
-                                    onSecondaryActionClick = { selectedComparisonToShareState.value = item.entity }
+                                    onSecondaryActionClick = { 
+                                        selectedComparisonToShareState.value = item.entity 
+                                        onShareComparison("native_share")
+                                    }
                                 )
                             )
                         }
@@ -278,7 +283,8 @@ fun HistoryScreenPreview() {
             uiState = HistoryUiState(),
             onViewDetails = {},
             onEditComparison = {},
-            onClearAllClick = {}
+            onClearAllClick = {},
+            onShareComparison = {}
         )
     }
 }
