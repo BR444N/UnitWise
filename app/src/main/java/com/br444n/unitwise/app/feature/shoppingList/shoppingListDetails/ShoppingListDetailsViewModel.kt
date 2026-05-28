@@ -13,6 +13,7 @@ import com.br444n.unitwise.app.core.utils.PriceUtils
 import com.br444n.unitwise.app.data.local.dao.ShoppingListDao
 import com.br444n.unitwise.app.data.local.dao.ShoppingListItemDao
 import com.br444n.unitwise.app.data.local.entity.ShoppingListItemEntity
+import com.br444n.unitwise.app.core.firebase.domain.usecase.LogParityToggledUseCase
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
@@ -23,7 +24,8 @@ import kotlinx.coroutines.launch
 class ShoppingListDetailsViewModel(
     savedStateHandle: SavedStateHandle,
     private val shoppingListDao: ShoppingListDao,
-    private val shoppingListItemDao: ShoppingListItemDao
+    private val shoppingListItemDao: ShoppingListItemDao,
+    private val logParityToggled: LogParityToggledUseCase
 ) : ViewModel() {
 
     private val listId: Int = checkNotNull(savedStateHandle["listId"])
@@ -96,6 +98,10 @@ class ShoppingListDetailsViewModel(
         }
     }
 
+    fun onOrphanCardToggled(isExpanded: Boolean) {
+        logParityToggled(isExpanded)
+    }
+
     fun deleteItems(ids: Set<Int>) {
         if (ids.isEmpty()) return
         viewModelScope.launch {
@@ -114,7 +120,8 @@ class ShoppingListDetailsViewModel(
                 ShoppingListDetailsViewModel(
                     savedStateHandle = savedStateHandle,
                     shoppingListDao = shoppingListDao,
-                    shoppingListItemDao = shoppingListItemDao
+                    shoppingListItemDao = shoppingListItemDao,
+                    logParityToggled = application.container.logParityToggledUseCase
                 )
             }
         }
