@@ -101,7 +101,10 @@ fun ShoppingListDetailsScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            ShoppingListDetailsHeader(uiState = uiState)
+            ShoppingListDetailsHeader(
+                uiState = uiState,
+                onOrphanCardToggled = viewModel::onOrphanCardToggled
+            )
 
             val isSearchActive = searchQuery.isNotBlank()
             val filteredItems = if (isSearchActive) {
@@ -224,7 +227,10 @@ private fun ShoppingListDetailsDialogs(
 }
 
 @Composable
-private fun ShoppingListDetailsHeader(uiState: ShoppingListDetailsUiState) {
+private fun ShoppingListDetailsHeader(
+    uiState: ShoppingListDetailsUiState,
+    onOrphanCardToggled: (Boolean) -> Unit
+) {
     if (uiState.totalWithOrphansA > 0 || uiState.totalWithOrphansB > 0 || uiState.hasOrphans) {
         ShoppingListBadges(
             totalA = uiState.totalWithOrphansA,
@@ -246,7 +252,8 @@ private fun ShoppingListDetailsHeader(uiState: ShoppingListDetailsUiState) {
             ShoppingListOrphanCard(
                 totalWithOrphansA = uiState.totalWithOrphansA,
                 totalWithOrphansB = uiState.totalWithOrphansB,
-                modifier = Modifier.padding(horizontal = 16.dp)
+                modifier = Modifier.padding(horizontal = 16.dp),
+                onToggle = onOrphanCardToggled
             )
         }
 
