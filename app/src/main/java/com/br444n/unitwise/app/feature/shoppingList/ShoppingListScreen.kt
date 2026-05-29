@@ -9,7 +9,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.lazy.LazyColumn
@@ -58,9 +57,9 @@ fun ShoppingListScreen(
     onNavigateToDetails: (Int) -> Unit,
     viewModel: ShoppingListViewModel = viewModel(factory = ShoppingListViewModel.Factory)
 ) {
-    var showCreateDialog by remember { mutableStateOf(false) }
-    var showDeleteDialog by remember { mutableStateOf(false) }
-    var selectedListIds by remember { mutableStateOf(emptySet<Int>()) }
+    val (showCreateDialog, setShowCreateDialog) = remember { mutableStateOf(false) }
+    val (showDeleteDialog, setShowDeleteDialog) = remember { mutableStateOf(false) }
+    val (selectedListIds, setSelectedListIds) = remember { mutableStateOf(emptySet<Int>()) }
     val uiState by viewModel.uiState.collectAsState()
 
     Scaffold(
@@ -114,15 +113,15 @@ fun ShoppingListScreen(
                     navigationIcon = {
                         ShoppingListSelectionCancelButton(
                             contentDesc = stringResource(id = R.string.cancel),
-                            onClick = { selectedListIds = emptySet() }
+                            onClick = { setSelectedListIds(emptySet()) }
                         )
                     },
                     actions = {
                         ShoppingListSelectionActions(
                             onSelectAll = {
-                                selectedListIds = uiState.lists.map { it.list.id }.toSet()
+                                setSelectedListIds(uiState.lists.map { it.list.id }.toSet())
                             },
-                            onDeleteSelected = { showDeleteDialog = true }
+                            onDeleteSelected = { setShowDeleteDialog(true) }
                         )
                     }
                 )
@@ -133,7 +132,7 @@ fun ShoppingListScreen(
                 AppFloatingActionButton(
                     text = stringResource(id = R.string.new_list_button),
                     icon = Icons.Default.Add,
-                    onClick = { showCreateDialog = true }
+                    onClick = { setShowCreateDialog(true) }
                 )
             }
         }
@@ -143,10 +142,10 @@ fun ShoppingListScreen(
             lists = uiState.lists,
             selectedListIds = selectedListIds,
             onToggleSelection = { id, isSelected ->
-                selectedListIds = if (isSelected) selectedListIds - id else selectedListIds + id
+                setSelectedListIds(if (isSelected) selectedListIds - id else selectedListIds + id)
             },
             onNavigateToDetails = onNavigateToDetails,
-            onCreateListClick = { showCreateDialog = true },
+            onCreateListClick = { setShowCreateDialog(true) },
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
@@ -154,10 +153,10 @@ fun ShoppingListScreen(
 
         if (showCreateDialog) {
             CreateListDialog(
-                onDismiss = { showCreateDialog = false },
+                onDismiss = { setShowCreateDialog(false) },
                 onCreate = { name, colorArgb ->
                     viewModel.createList(name, colorArgb) { newListId ->
-                        showCreateDialog = false
+                        setShowCreateDialog(false)
                         onNavigateToDetails(newListId)
                     }
                 }
@@ -166,11 +165,11 @@ fun ShoppingListScreen(
 
         if (showDeleteDialog) {
             DeleteListsDialog(
-                onDismissRequest = { showDeleteDialog = false },
+                onDismissRequest = { setShowDeleteDialog(false) },
                 onConfirmClick = {
                     viewModel.deleteLists(selectedListIds)
-                    selectedListIds = emptySet()
-                    showDeleteDialog = false
+                    setSelectedListIds(emptySet())
+                    setShowDeleteDialog(false)
                 }
             )
         }
