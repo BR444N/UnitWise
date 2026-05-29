@@ -33,14 +33,9 @@ import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TooltipAnchorPosition
-import androidx.compose.material3.TooltipBox
-import androidx.compose.material3.TooltipDefaults
-import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -78,6 +73,7 @@ import com.br444n.unitwise.app.core.ui.components.inputs.AppTextFieldKeyboard
 import com.br444n.unitwise.app.core.ui.components.layout.AppCard
 import com.br444n.unitwise.app.core.ui.components.messages.AppToastMessage
 import com.br444n.unitwise.app.core.ui.components.navigation.AppTopBar
+import com.br444n.unitwise.app.core.ui.components.feedback.UnitWiseTooltip
 import com.br444n.unitwise.app.domain.model.MeasurementUnit
 import com.br444n.unitwise.app.domain.model.MeasurementUnit.SUPPORTED_UNITS
 import com.br444n.unitwise.app.ui.components.UnitWiseLoading
@@ -555,22 +551,8 @@ private fun HomeProductNameField(
             label = { Text(labelText) },
             placeholder = { Text(stringResource(id = config.hints.productNameHint)) },
             trailingIcon = {
-                TooltipBox(
-                    positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
-                        positioning = TooltipAnchorPosition.Below
-                    ),
-                    tooltip = {
-                        PlainTooltip(
-                            containerColor = MaterialTheme.colorScheme.primary,
-                            contentColor = MaterialTheme.colorScheme.onPrimary
-                        ) {
-                            Text(
-                                text = stringResource(id = R.string.scan_desc),
-                                color = MaterialTheme.colorScheme.onPrimary
-                            )
-                        }
-                    },
-                    state = rememberTooltipState()
+                UnitWiseTooltip(
+                    tooltipText = stringResource(id = R.string.scan_desc)
                 ) {
                     IconButton(
                         onClick = { onScanClick(config.scanTarget) },
@@ -934,25 +916,10 @@ fun HomeScreenPreview() {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeSettingsAction(onSettingsClick: () -> Unit) {
-    TooltipBox(
-        positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
-            positioning = TooltipAnchorPosition.Below
-        ),
-        tooltip = {
-            PlainTooltip(
-                containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = MaterialTheme.colorScheme.onPrimary
-            ) {
-                Text(
-                    text = stringResource(id = R.string.settings_desc),
-                    color = MaterialTheme.colorScheme.onPrimary
-                )
-            }
-        },
-        state = rememberTooltipState()
+    UnitWiseTooltip(
+        tooltipText = stringResource(id = R.string.settings_desc)
     ) {
         IconButton(onClick = onSettingsClick) {
             Icon(
