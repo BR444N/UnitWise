@@ -4,7 +4,6 @@ import android.net.Uri
 import com.br444n.unitwise.app.data.local.entity.ComparisonEntity
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
-import java.security.SecureRandom
 import androidx.core.net.toUri
 
 private object ShareDeepLinkCodec {
@@ -20,14 +19,8 @@ private object ShareDeepLinkCodec {
         encodeDefaults = true
         ignoreUnknownKeys = true
     }
-    private val random = SecureRandom()
 
     fun createEncryptedShare(comparison: ComparisonEntity): Pair<SharedComparisonLink, SharedComparisonRecord> {
-        val shareId = generateShareId()
-        val encryptionKey = ShareCrypto.generateEncodedKey()
-        val iv = ShareCrypto.generateEncodedIv()
-        val now = System.currentTimeMillis()
-        val expiresAt = now + SHARE_TTL_MILLIS
         val payload = SharedComparisonPayload(
             productAName = comparison.productAName,
             productAContent = comparison.productAContent,
@@ -40,8 +33,15 @@ private object ShareDeepLinkCodec {
             productBPrice = comparison.productBPrice,
             productBQuantity = comparison.productBQuantity
         )
+        val payloadJson = json.encodeToString(payload)
+        
+        val (encryptionKey, iv, extraBytes) = ShareCrypto.deriveDeterministicMaterial(payloadJson)
+        val shareId = generateDeterministicShareId(extraBytes)
+        
+        val now = System.currentTimeMillis()
+        val expiresAt = now + SHARE_TTL_MILLIS
         val cipherText = ShareCrypto.encrypt(
-            plainText = json.encodeToString(payload),
+            plainText = payloadJson,
             encodedKey = encryptionKey,
             encodedIv = iv
         )
@@ -102,10 +102,12 @@ private object ShareDeepLinkCodec {
         return "https://unitwise-app.vercel.app/?$fragment".toUri().getQueryParameter(KEY_FRAGMENT_PARAM)
     }
 
-    private fun generateShareId(): String {
+    private fun generateDeterministicShareId(extraBytes: ByteArray): String {
         return buildString(SHARE_ID_LENGTH) {
-            repeat(SHARE_ID_LENGTH) {
-                append(SHARE_ALPHABET[random.nextInt(SHARE_ALPHABET.length)])
+            for (i in 0 until SHARE_ID_LENGTH) {
+                // Map a deterministic byte to a valid alphabet character
+                val byteVal = extraBytes[i].toInt() and 0xFF
+                append(SHARE_ALPHABET[byteVal % SHARE_ALPHABET.length])
             }
         }
     }
