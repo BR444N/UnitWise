@@ -14,6 +14,7 @@ import com.br444n.unitwise.app.domain.usecase.IncompatibleMeasurementUnitsExcept
 import com.br444n.unitwise.app.domain.usecase.SaveComparisonUseCase
 import com.br444n.unitwise.app.domain.usecase.CompareProductsUseCase
 import com.br444n.unitwise.app.data.local.dao.ShoppingListItemDao
+import com.br444n.unitwise.app.core.firebase.domain.usecase.LogListParityTypeUseCase
 import com.br444n.unitwise.app.domain.model.ProductInputState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.firstOrNull
@@ -28,6 +29,7 @@ class HomeViewModel(
     private val getComparisonUseCase: GetComparisonUseCase,
     private val userPreferencesRepository: UserPreferencesRepository,
     private val shoppingListItemDao: ShoppingListItemDao,
+    private val logListParityType: LogListParityTypeUseCase,
     private val compareProductsUseCase: CompareProductsUseCase = CompareProductsUseCase()
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(HomeUiState())
@@ -166,7 +168,10 @@ class HomeViewModel(
                 val isProductAValid = _uiState.value.productA.isValid()
                 val isProductBValid = _uiState.value.productB.isValid()
                 
-                val result = if (isProductAValid && isProductBValid) {
+                val isDual = isProductAValid && isProductBValid
+                logListParityType(isDual)
+                
+                val result = if (isDual) {
                     compareProductsUseCase(
                         productA = _uiState.value.productA,
                         productB = _uiState.value.productB
@@ -295,7 +300,8 @@ class HomeViewModel(
                     saveComparisonUseCase = SaveComparisonUseCase(repository),
                     getComparisonUseCase = GetComparisonUseCase(repository),
                     userPreferencesRepository = userPreferencesRepository,
-                    shoppingListItemDao = shoppingListItemDao
+                    shoppingListItemDao = shoppingListItemDao,
+                    logListParityType = application.container.logListParityTypeUseCase
                 )
             }
         }

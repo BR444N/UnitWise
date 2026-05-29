@@ -9,6 +9,7 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.br444n.unitwise.app.UnitWiseApplication
 import com.br444n.unitwise.app.domain.usecase.GetHistoryUseCase
 import com.br444n.unitwise.app.domain.usecase.ClearHistoryUseCase
+import com.br444n.unitwise.app.core.firebase.domain.usecase.LogListSharedUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -18,7 +19,8 @@ import kotlinx.coroutines.launch
 // ... later in the file
 class HistoryViewModel(
     private val getHistoryUseCase: GetHistoryUseCase,
-    private val clearHistoryUseCase: ClearHistoryUseCase
+    private val clearHistoryUseCase: ClearHistoryUseCase,
+    private val logListShared: LogListSharedUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(HistoryUiState())
@@ -32,6 +34,10 @@ class HistoryViewModel(
         viewModelScope.launch {
             clearHistoryUseCase()
         }
+    }
+
+    fun onComparisonShared(method: String) {
+        logListShared(method)
     }
 
     private fun loadHistory() {
@@ -71,7 +77,8 @@ class HistoryViewModel(
                 val repository = application.container.comparisonRepository
                 HistoryViewModel(
                     getHistoryUseCase = GetHistoryUseCase(repository),
-                    clearHistoryUseCase = ClearHistoryUseCase(repository)
+                    clearHistoryUseCase = ClearHistoryUseCase(repository),
+                    logListShared = application.container.logListSharedUseCase
                 )
             }
         }

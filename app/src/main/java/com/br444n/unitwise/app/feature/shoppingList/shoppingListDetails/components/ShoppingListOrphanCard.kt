@@ -41,7 +41,8 @@ import com.br444n.unitwise.app.core.ui.components.cards.AppBadgeCard
 fun ShoppingListOrphanCard(
     modifier: Modifier = Modifier,
     totalWithOrphansA: Double,
-    totalWithOrphansB: Double
+    totalWithOrphansB: Double,
+    onToggle: (Boolean) -> Unit = {}
 ) {
     var expanded by remember { mutableStateOf(false) }
 
@@ -54,7 +55,10 @@ fun ShoppingListOrphanCard(
             borderColor = BrandPrimary,
             iconTint = MaterialTheme.colorScheme.primary
         ),
-        modifier = modifier.clickable { expanded = !expanded },
+        modifier = modifier.clickable { 
+            expanded = !expanded 
+            onToggle(expanded)
+        },
         trailingContent = {
             Icon(
                 imageVector = if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,

@@ -15,10 +15,21 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import java.util.concurrent.Executors
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
+import com.br444n.unitwise.app.UnitWiseApplication
+import com.br444n.unitwise.app.core.firebase.domain.UnitWiseEvent
+import com.br444n.unitwise.app.core.firebase.domain.usecase.LogOcrAttemptUseCase
 
-class ScannViewModel : ViewModel() {
+class ScannViewModel(
+    private val logOcrAttempt: LogOcrAttemptUseCase
+) : ViewModel() {
     private val _uiState = MutableStateFlow(ScannUiState())
     val uiState: StateFlow<ScannUiState> = _uiState.asStateFlow()
+    
+    private var manualFallbackLogged = false
 
     private val textRecognizer: TextRecognizer = TextRecognition.getClient(
         TextRecognizerOptions.DEFAULT_OPTIONS
@@ -47,6 +58,7 @@ class ScannViewModel : ViewModel() {
     fun onStepChanged(step: ScanStep) {
         _uiState.update { state ->
             if (state.currentStep == step) return@update state
+            manualFallbackLogged = false
             state.copy(
                 currentStep = step,
                 selectedText = null,
@@ -55,15 +67,25 @@ class ScannViewModel : ViewModel() {
         }
     }
 
+    private fun checkManualFallback() {
+        if (!manualFallbackLogged) {
+            logOcrAttempt(UnitWiseEvent.OcrAttempt.OcrResult.MANUAL_FALLBACK)
+            manualFallbackLogged = true
+        }
+    }
+
     fun onNameChanged(value: String) {
+        checkManualFallback()
         _uiState.update { it.copy(productName = value) }
     }
 
     fun onContentChanged(value: String) {
+        checkManualFallback()
         _uiState.update { it.copy(content = value) }
     }
 
     fun onUnitChanged(value: String) {
+        checkManualFallback()
         _uiState.update { state ->
             if (value !in state.compatibleUnits) return@update state
             state.copy(selectedUnit = value)
@@ -71,15 +93,19 @@ class ScannViewModel : ViewModel() {
     }
 
     fun onPriceChanged(value: String) {
+        checkManualFallback()
         _uiState.update { it.copy(price = value) }
     }
 
     fun selectText(text: String) {
         _uiState.update { it.copy(selectedText = text) }
         applyDetectedTextToCurrentStep(text)
+        logOcrAttempt(UnitWiseEvent.OcrAttempt.OcrResult.SUCCESS)
     }
 
     fun scanAgain() {
+        logOcrAttempt(UnitWiseEvent.OcrAttempt.OcrResult.RETRY)
+        manualFallbackLogged = false
         _uiState.update { state ->
             when (state.currentStep) {
                 ScanStep.NAME -> state.copy(
@@ -269,5 +295,14 @@ class ScannViewModel : ViewModel() {
             pattern = """(\d+(?:[.,]\d+)?)\s*([a-z0-9.]{1,6})\b""",
             option = RegexOption.IGNORE_CASE
         )
+
+        val Factory: ViewModelProvider.Factory = viewModelFactory {
+            initializer {
+                val application = (this[APPLICATION_KEY] as UnitWiseApplication)
+                ScannViewModel(
+                    logOcrAttempt = application.container.logOcrAttemptUseCase
+                )
+            }
+        }
     }
 }

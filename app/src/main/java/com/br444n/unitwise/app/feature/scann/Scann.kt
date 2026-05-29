@@ -151,7 +151,7 @@ private fun GrantedScannRoute(
     onResultClick: (ScannResult) -> Unit,
     inheritedUnit: String?
 ) {
-    val viewModel: ScannViewModel = viewModel()
+    val viewModel: ScannViewModel = viewModel(factory = ScannViewModel.Factory)
     val state by viewModel.uiState.collectAsState()
 
     LaunchedEffect(inheritedUnit) {
