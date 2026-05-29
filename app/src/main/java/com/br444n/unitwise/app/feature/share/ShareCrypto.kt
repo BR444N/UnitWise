@@ -1,7 +1,6 @@
 package com.br444n.unitwise.app.feature.share
 
 import android.util.Base64
-import java.security.SecureRandom
 import javax.crypto.Cipher
 import javax.crypto.spec.GCMParameterSpec
 import javax.crypto.spec.SecretKeySpec
@@ -12,14 +11,23 @@ private const val KEY_SIZE_BYTES = 32
 private const val IV_SIZE_BYTES = 12
 
 internal object ShareCrypto {
-    private val secureRandom = SecureRandom()
 
-    fun generateEncodedKey(): String {
-        return randomBytes(KEY_SIZE_BYTES).toBase64Url()
-    }
-
-    fun generateEncodedIv(): String {
-        return randomBytes(IV_SIZE_BYTES).toBase64Url()
+    /**
+     * Derives a deterministic 32-byte Key and 12-byte IV from the payload.
+     * Uses SHA-512 to generate 64 bytes of entropy, splitting it into:
+     * - Key: first 32 bytes
+     * - IV: next 12 bytes
+     * - Extra bytes: remaining 20 bytes (returned for other purposes, e.g. Share ID)
+     */
+    fun deriveDeterministicMaterial(payload: String): Triple<String, String, ByteArray> {
+        val digest = java.security.MessageDigest.getInstance("SHA-512")
+        val hashBytes = digest.digest(payload.toByteArray(Charsets.UTF_8))
+        
+        val keyBytes = hashBytes.copyOfRange(0, KEY_SIZE_BYTES)
+        val ivBytes = hashBytes.copyOfRange(KEY_SIZE_BYTES, KEY_SIZE_BYTES + IV_SIZE_BYTES)
+        val extraBytes = hashBytes.copyOfRange(KEY_SIZE_BYTES + IV_SIZE_BYTES, hashBytes.size)
+        
+        return Triple(keyBytes.toBase64Url(), ivBytes.toBase64Url(), extraBytes)
     }
 
     fun encrypt(plainText: String, encodedKey: String, encodedIv: String): String {
@@ -40,10 +48,6 @@ internal object ShareCrypto {
             GCMParameterSpec(GCM_TAG_LENGTH_BITS, encodedIv.fromBase64Url())
         )
         return cipher.doFinal(cipherText.fromBase64Url()).toString(Charsets.UTF_8)
-    }
-
-    private fun randomBytes(size: Int): ByteArray {
-        return ByteArray(size).also(secureRandom::nextBytes)
     }
 }
 
