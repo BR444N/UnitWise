@@ -26,12 +26,8 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.SelectAll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.TooltipBox
-import androidx.compose.material3.TooltipDefaults
-import androidx.compose.material3.TooltipAnchorPosition
-import androidx.compose.material3.rememberTooltipState
-import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Text
+import com.br444n.unitwise.app.core.ui.components.feedback.UnitWiseTooltip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.foundation.layout.Row
 import androidx.compose.ui.Alignment
@@ -45,7 +41,6 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.height
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.ui.res.stringResource
 import com.br444n.unitwise.app.ui.theme.Badge
 import com.br444n.unitwise.R
@@ -246,25 +241,10 @@ private fun ShoppingListContent(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ShoppingListSelectionCancelButton(contentDesc: String, onClick: () -> Unit) {
-    TooltipBox(
-        positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
-            positioning = TooltipAnchorPosition.Below
-        ),
-        tooltip = {
-            PlainTooltip(
-                containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = MaterialTheme.colorScheme.onPrimary
-            ) {
-                Text(
-                    text = contentDesc,
-                    color = MaterialTheme.colorScheme.onPrimary
-                )
-            }
-        },
-        state = rememberTooltipState()
+    UnitWiseTooltip(
+        tooltipText = contentDesc
     ) {
         IconButton(onClick = onClick) {
             Icon(
@@ -276,28 +256,13 @@ private fun ShoppingListSelectionCancelButton(contentDesc: String, onClick: () -
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ShoppingListSelectionActions(
     onSelectAll: () -> Unit,
     onDeleteSelected: () -> Unit
 ) {
-    TooltipBox(
-        positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
-            positioning = TooltipAnchorPosition.Below
-        ),
-        tooltip = {
-            PlainTooltip(
-                containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = MaterialTheme.colorScheme.onPrimary
-            ) {
-                Text(
-                    text = stringResource(id = R.string.select_all),
-                    color = MaterialTheme.colorScheme.onPrimary
-                )
-            }
-        },
-        state = rememberTooltipState()
+    UnitWiseTooltip(
+        tooltipText = stringResource(id = R.string.select_all)
     ) {
         IconButton(onClick = onSelectAll) {
             Icon(
@@ -308,22 +273,9 @@ private fun ShoppingListSelectionActions(
         }
     }
 
-    TooltipBox(
-        positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
-            positioning = TooltipAnchorPosition.Below
-        ),
-        tooltip = {
-            PlainTooltip(
-                containerColor = MaterialTheme.colorScheme.error,
-                contentColor = MaterialTheme.colorScheme.onError
-            ) {
-                Text(
-                    text = stringResource(id = R.string.delete),
-                    color = MaterialTheme.colorScheme.onError
-                )
-            }
-        },
-        state = rememberTooltipState()
+    UnitWiseTooltip(
+        tooltipText = stringResource(id = R.string.delete),
+        isError = true
     ) {
         IconButton(onClick = onDeleteSelected) {
             Icon(
