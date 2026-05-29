@@ -1,13 +1,13 @@
 package com.br444n.unitwise.app.feature.shoppingList.shoppingListDetails
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -15,11 +15,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.ui.layout.LayoutCoordinates
+import androidx.compose.ui.layout.onGloballyPositioned
 import com.br444n.unitwise.app.data.local.entity.ShoppingListItemEntity
 import com.br444n.unitwise.app.core.ui.components.buttons.AppFloatingActionButton
 import com.br444n.unitwise.app.feature.shoppingList.shoppingListDetails.dialog.AddItemDialog
@@ -27,6 +28,8 @@ import com.br444n.unitwise.app.feature.shoppingList.shoppingListDetails.dialog.D
 import com.br444n.unitwise.app.feature.shoppingList.shoppingListDetails.components.ShoppingListBadges
 import com.br444n.unitwise.app.feature.shoppingList.shoppingListDetails.components.ShoppingListItemCard
 import com.br444n.unitwise.app.feature.shoppingList.shoppingListDetails.components.ShoppingListSavingsCard
+import com.br444n.unitwise.app.core.ui.components.feedback.AppShowcaseOverlay
+import com.br444n.unitwise.app.core.ui.components.feedback.AppShowcaseConfig
 import com.br444n.unitwise.app.core.ui.components.navigation.AppTopBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -49,6 +52,13 @@ import com.br444n.unitwise.app.core.ui.components.states.AppEmptyState
 import com.br444n.unitwise.app.core.ui.components.inputs.AppSearchBar
 import com.br444n.unitwise.app.feature.shoppingList.shoppingListDetails.components.ShoppingListOrphanCard
 
+enum class ShoppingListShowcaseStep {
+    ADD_PRODUCT,
+    DELETE_ITEM,
+    ORPHAN,
+    NONE
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ShoppingListDetailsScreen(
@@ -56,11 +66,15 @@ fun ShoppingListDetailsScreen(
     onNavigateToCompare: (ShoppingListItemEntity) -> Unit,
     viewModel: ShoppingListDetailsViewModel = viewModel(factory = ShoppingListDetailsViewModel.Factory)
 ) {
-    var showAddDialog by remember { mutableStateOf(false) }
-    var showDeleteDialog by remember { mutableStateOf(false) }
-    var searchQuery by remember { mutableStateOf("") }
-    var selectedItemIds by remember { mutableStateOf(emptySet<Int>()) }
+    val (showAddDialog, setShowAddDialog) = remember { mutableStateOf(false) }
+    val (showDeleteDialog, setShowDeleteDialog) = remember { mutableStateOf(false) }
+    val (searchQuery, setSearchQuery) = remember { mutableStateOf("") }
+    val (selectedItemIds, setSelectedItemIds) = remember { mutableStateOf(emptySet<Int>()) }
     val uiState by viewModel.uiState.collectAsState()
+    val seenFeatures by viewModel.seenFeatures.collectAsState()
+    
+    val (firstItemCoordinates, setFirstItemCoordinates) = remember { mutableStateOf<LayoutCoordinates?>(null) }
+    val (orphanCardCoordinates, setOrphanCardCoordinates) = remember { mutableStateOf<LayoutCoordinates?>(null) }
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
@@ -69,16 +83,16 @@ fun ShoppingListDetailsScreen(
                 selectedItemIds = selectedItemIds,
                 uiState = uiState,
                 onNavigateBack = onNavigateBack,
-                onCancelSelection = { selectedItemIds = emptySet() },
-                onSelectAll = { selectedItemIds = uiState.items.map { it.id }.toSet() },
-                onDeleteSelected = { showDeleteDialog = true }
+                onCancelSelection = { setSelectedItemIds(emptySet()) },
+                onSelectAll = { setSelectedItemIds(uiState.items.map { it.id }.toSet()) },
+                onDeleteSelected = { setShowDeleteDialog(true) }
             )
         },
         floatingActionButton = {
             AppFloatingActionButton(
                 text = stringResource(id = R.string.add_category_button),
                 icon = Icons.Default.Add,
-                onClick = { showAddDialog = true }
+                onClick = { setShowAddDialog(true) }
             )
         }
     ) { innerPadding ->
@@ -91,7 +105,7 @@ fun ShoppingListDetailsScreen(
 
             AppSearchBar(
                 query = searchQuery,
-                onQueryChange = { searchQuery = it },
+                onQueryChange = { setSearchQuery(it) },
                 hint = stringResource(R.string.search_product_hint)
             )
 
@@ -99,7 +113,8 @@ fun ShoppingListDetailsScreen(
 
             ShoppingListDetailsHeader(
                 uiState = uiState,
-                onOrphanCardToggled = viewModel::onOrphanCardToggled
+                onOrphanCardToggled = viewModel::onOrphanCardToggled,
+                onOrphanCardPositioned = { setOrphanCardCoordinates(it) }
             )
 
             val isSearchActive = searchQuery.isNotBlank()
@@ -114,30 +129,39 @@ fun ShoppingListDetailsScreen(
                 isSearchActive = isSearchActive,
                 selectedItemIds = selectedItemIds,
                 onToggleSelection = { itemId, isSelected ->
-                    selectedItemIds = if (isSelected) {
+                    setSelectedItemIds(if (isSelected) {
                         selectedItemIds - itemId
                     } else {
                         selectedItemIds + itemId
-                    }
+                    })
                 },
-                onNavigateToCompare = onNavigateToCompare
+                onNavigateToCompare = onNavigateToCompare,
+                onFirstItemPositioned = { setFirstItemCoordinates(it) }
             )
         }
 
         ShoppingListDetailsDialogs(
             showAddDialog = showAddDialog,
             showDeleteDialog = showDeleteDialog,
-            onDismissAddDialog = { showAddDialog = false },
+            onDismissAddDialog = { setShowAddDialog(false) },
             onConfirmAddDialog = { itemName ->
                 viewModel.addItem(itemName)
-                showAddDialog = false
+                setShowAddDialog(false)
             },
-            onDismissDeleteDialog = { showDeleteDialog = false },
+            onDismissDeleteDialog = { setShowDeleteDialog(false) },
             onConfirmDeleteDialog = {
                 viewModel.deleteItems(selectedItemIds)
-                selectedItemIds = emptySet()
-                showDeleteDialog = false
+                setSelectedItemIds(emptySet())
+                setShowDeleteDialog(false)
             }
+        )
+        
+        ShoppingListShowcaseOverlayHandler(
+            uiState = uiState,
+            seenFeatures = seenFeatures,
+            firstItemCoordinates = firstItemCoordinates,
+            orphanCardCoordinates = orphanCardCoordinates,
+            onMarkAsSeen = viewModel::markFeatureAsSeen
         )
     }
 }
@@ -225,7 +249,8 @@ private fun ShoppingListDetailsDialogs(
 @Composable
 private fun ShoppingListDetailsHeader(
     uiState: ShoppingListDetailsUiState,
-    onOrphanCardToggled: (Boolean) -> Unit
+    onOrphanCardToggled: (Boolean) -> Unit,
+    onOrphanCardPositioned: (LayoutCoordinates) -> Unit
 ) {
     if (uiState.totalWithOrphansA > 0 || uiState.totalWithOrphansB > 0 || uiState.hasOrphans) {
         ShoppingListBadges(
@@ -248,7 +273,9 @@ private fun ShoppingListDetailsHeader(
             ShoppingListOrphanCard(
                 totalWithOrphansA = uiState.totalWithOrphansA,
                 totalWithOrphansB = uiState.totalWithOrphansB,
-                modifier = Modifier.padding(horizontal = 16.dp),
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .onGloballyPositioned { onOrphanCardPositioned(it) },
                 onToggle = onOrphanCardToggled
             )
         }
@@ -263,7 +290,8 @@ private fun ShoppingListDetailsList(
     isSearchActive: Boolean,
     selectedItemIds: Set<Int>,
     onToggleSelection: (Int, Boolean) -> Unit,
-    onNavigateToCompare: (ShoppingListItemEntity) -> Unit
+    onNavigateToCompare: (ShoppingListItemEntity) -> Unit,
+    onFirstItemPositioned: (LayoutCoordinates) -> Unit
 ) {
     if (items.isEmpty()) {
         AppEmptyState(
@@ -279,7 +307,8 @@ private fun ShoppingListDetailsList(
             items = items,
             selectedItemIds = selectedItemIds,
             onToggleSelection = onToggleSelection,
-            onNavigateToCompare = onNavigateToCompare
+            onNavigateToCompare = onNavigateToCompare,
+            onFirstItemPositioned = onFirstItemPositioned
         )
     }
 }
@@ -289,30 +318,36 @@ private fun ShoppingListItemsColumn(
     items: List<ShoppingListItemEntity>,
     selectedItemIds: Set<Int>,
     onToggleSelection: (Int, Boolean) -> Unit,
-    onNavigateToCompare: (ShoppingListItemEntity) -> Unit
+    onNavigateToCompare: (ShoppingListItemEntity) -> Unit,
+    onFirstItemPositioned: (LayoutCoordinates) -> Unit
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxWidth(),
         contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 80.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        items(items, key = { it.id }) { item ->
+        items(items.size, key = { items[it].id }) { index ->
+            val item = items[index]
             val isSelected = selectedItemIds.contains(item.id)
-            ShoppingListItemCard(
-                item = item,
-                isSelected = isSelected,
-                isSelectionMode = selectedItemIds.isNotEmpty(),
-                onClick = {
-                    if (selectedItemIds.isNotEmpty()) {
+            Box(
+                modifier = if (index == 0) Modifier.onGloballyPositioned { onFirstItemPositioned(it) } else Modifier
+            ) {
+                ShoppingListItemCard(
+                    item = item,
+                    isSelected = isSelected,
+                    isSelectionMode = selectedItemIds.isNotEmpty(),
+                    onClick = {
+                        if (selectedItemIds.isNotEmpty()) {
+                            onToggleSelection(item.id, isSelected)
+                        } else {
+                            onNavigateToCompare(item)
+                        }
+                    },
+                    onLongClick = {
                         onToggleSelection(item.id, isSelected)
-                    } else {
-                        onNavigateToCompare(item)
                     }
-                },
-                onLongClick = {
-                    onToggleSelection(item.id, isSelected)
-                }
-            )
+                )
+            }
         }
     }
 }
@@ -376,4 +411,72 @@ private fun ShoppingListSelectionActions(
             )
         }
     }
+}
+
+@Composable
+private fun ShoppingListShowcaseOverlayHandler(
+    uiState: ShoppingListDetailsUiState,
+    seenFeatures: Set<String>,
+    firstItemCoordinates: LayoutCoordinates?,
+    orphanCardCoordinates: LayoutCoordinates?,
+    onMarkAsSeen: (String) -> Unit
+) {
+    val currentStep = remember(uiState, seenFeatures, firstItemCoordinates, orphanCardCoordinates) {
+        when {
+            uiState.items.size == 1 &&
+            !seenFeatures.contains("feature_shopping_list_add_product") &&
+            firstItemCoordinates != null -> ShoppingListShowcaseStep.ADD_PRODUCT
+
+            uiState.items.isNotEmpty() &&
+            !seenFeatures.contains("feature_shopping_list_delete_item") &&
+            firstItemCoordinates != null -> ShoppingListShowcaseStep.DELETE_ITEM
+
+            uiState.hasOrphans &&
+            !seenFeatures.contains("feature_shopping_list_orphan") &&
+            orphanCardCoordinates != null -> ShoppingListShowcaseStep.ORPHAN
+
+            else -> ShoppingListShowcaseStep.NONE
+        }
+    }
+
+    if (currentStep == ShoppingListShowcaseStep.NONE) return
+
+    val (config, targetCoordinates, onDismiss) = when (currentStep) {
+        ShoppingListShowcaseStep.ADD_PRODUCT -> Triple(
+            AppShowcaseConfig(
+                titleRes = R.string.showcase_add_product_title,
+                bodyRes = R.string.showcase_add_product_desc,
+                actionRes = R.string.home_showcase_next,
+                dialogAlignment = Alignment.Center
+            ),
+            firstItemCoordinates
+        ) { onMarkAsSeen("feature_shopping_list_add_product") }
+        ShoppingListShowcaseStep.DELETE_ITEM -> Triple(
+            AppShowcaseConfig(
+                titleRes = R.string.showcase_delete_item_title,
+                bodyRes = R.string.showcase_delete_item_desc,
+                actionRes = R.string.home_showcase_next,
+                dialogAlignment = Alignment.Center
+            ),
+            firstItemCoordinates
+        ) { onMarkAsSeen("feature_shopping_list_delete_item") }
+        ShoppingListShowcaseStep.ORPHAN -> Triple(
+            AppShowcaseConfig(
+                titleRes = R.string.showcase_orphan_title,
+                bodyRes = R.string.showcase_orphan_desc,
+                actionRes = R.string.home_showcase_finish,
+                dialogAlignment = Alignment.TopCenter,
+                topPadding = 180.dp
+            ),
+            orphanCardCoordinates
+        ) { onMarkAsSeen("feature_shopping_list_orphan") }
+        else -> return
+    }
+
+    AppShowcaseOverlay(
+        targetCoordinates = targetCoordinates,
+        config = config,
+        onNext = onDismiss,
+        onSkip = onDismiss
+    )
 }

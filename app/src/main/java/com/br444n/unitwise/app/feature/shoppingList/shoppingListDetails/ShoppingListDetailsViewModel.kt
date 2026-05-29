@@ -20,12 +20,14 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import com.br444n.unitwise.app.domain.repository.UserPreferencesRepository
 
 class ShoppingListDetailsViewModel(
     savedStateHandle: SavedStateHandle,
     private val shoppingListDao: ShoppingListDao,
     private val shoppingListItemDao: ShoppingListItemDao,
-    private val logParityToggled: LogParityToggledUseCase
+    private val logParityToggled: LogParityToggledUseCase,
+    private val userPreferencesRepository: UserPreferencesRepository
 ) : ViewModel() {
 
     private val listId: Int = checkNotNull(savedStateHandle["listId"])
@@ -88,6 +90,19 @@ class ShoppingListDetailsViewModel(
         initialValue = ShoppingListDetailsUiState(isLoading = true)
     )
 
+    val seenFeatures: StateFlow<Set<String>> = userPreferencesRepository.seenFeatures
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptySet()
+        )
+
+    fun markFeatureAsSeen(featureKey: String) {
+        viewModelScope.launch {
+            userPreferencesRepository.markFeatureAsSeen(featureKey)
+        }
+    }
+
     fun addItem(categoryName: String) {
         viewModelScope.launch {
             val newItem = ShoppingListItemEntity(
@@ -121,7 +136,8 @@ class ShoppingListDetailsViewModel(
                     savedStateHandle = savedStateHandle,
                     shoppingListDao = shoppingListDao,
                     shoppingListItemDao = shoppingListItemDao,
-                    logParityToggled = application.container.logParityToggledUseCase
+                    logParityToggled = application.container.logParityToggledUseCase,
+                    userPreferencesRepository = application.container.userPreferencesRepository
                 )
             }
         }

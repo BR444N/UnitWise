@@ -19,7 +19,6 @@ import androidx.compose.material.icons.filled.PrivacyTip
 import androidx.compose.material.icons.filled.Terminal
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -33,7 +32,6 @@ import com.br444n.unitwise.app.core.ui.components.feedback.UnitWiseTooltip
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -166,7 +164,7 @@ private fun SettingsAppearanceSection(isDarkTheme: Boolean, onToggleTheme: (Bool
 
 @Composable
 private fun SettingsPreferencesSection(selectedLanguage: String, onLanguageSelected: (String) -> Unit) {
-    var expandedLanguageDropdown by remember { mutableStateOf(false) }
+    val (expandedLanguageDropdown, setExpandedLanguageDropdown) = remember { mutableStateOf(false) }
     
     val languages = remember {
         listOf(
@@ -188,7 +186,7 @@ private fun SettingsPreferencesSection(selectedLanguage: String, onLanguageSelec
         title = stringResource(id = R.string.settings_language_title),
         subtitle = stringResource(id = R.string.settings_language_subtitle),
         icon = Icons.Default.Language,
-        onClick = { expandedLanguageDropdown = true },
+        onClick = { setExpandedLanguageDropdown(true) },
         trailingContent = {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -209,12 +207,12 @@ private fun SettingsPreferencesSection(selectedLanguage: String, onLanguageSelec
                 
                 LanguageDropdownMenu(
                     expanded = expandedLanguageDropdown,
-                    onDismissRequest = { expandedLanguageDropdown = false },
+                    onDismissRequest = { setExpandedLanguageDropdown(false) },
                     languages = languages,
                     selectedLanguage = selectedLanguage,
                     onLanguageSelected = { 
                         onLanguageSelected(it)
-                        expandedLanguageDropdown = false
+                        setExpandedLanguageDropdown(false)
                     }
                 )
             }

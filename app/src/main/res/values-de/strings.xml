@@ -179,4 +179,12 @@
 
     <!-- Feature Discovery -->
     <string name="feature_badge_new">Neu</string>
+
+    <!-- Shopping List Showcase -->
+    <string name="showcase_add_product_title">Produkte einfach vergleichen</string>
+    <string name="showcase_add_product_desc">Sie können hier 1 oder 2 Produkte hinzufügen. Wenn Sie 2 hinzufügen, sagt UnitWise Ihnen, welches das bessere Angebot ist!</string>
+    <string name="showcase_delete_item_title">Artikel entfernen</string>
+    <string name="showcase_delete_item_desc">Drücken Sie lange auf einen beliebigen Artikel, um ihn auszuwählen und aus Ihrer Liste zu löschen.</string>
+    <string name="showcase_orphan_title">Verwaiste Produkte</string>
+    <string name="showcase_orphan_desc">Wenn ein Artikel nur ein Produkt hat (kein Paar), gilt er als verwaist. Wir geben Ihnen zwei Summen: einen fairen Vergleich ohne verwaiste Artikel und die absolute Gesamtsumme mit ihnen.</string>
 </resources>

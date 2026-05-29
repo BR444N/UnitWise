@@ -179,4 +179,12 @@
 
     <!-- Feature Discovery -->
     <string name="feature_badge_new">New</string>
+
+    <!-- Shopping List Showcase -->
+    <string name="showcase_add_product_title">Compare products easily</string>
+    <string name="showcase_add_product_desc">You can add 1 or 2 products here. If you add 2, UnitWise will tell you which one is the best deal!</string>
+    <string name="showcase_delete_item_title">Remove items</string>
+    <string name="showcase_delete_item_desc">Long press any item to select it and delete it from your list.</string>
+    <string name="showcase_orphan_title">Orphan products</string>
+    <string name="showcase_orphan_desc">When an item only has one product (no pair), it\'s considered an orphan. We give you two totals: one fair comparison without orphans, and the absolute total with them.</string>
 </resources>
