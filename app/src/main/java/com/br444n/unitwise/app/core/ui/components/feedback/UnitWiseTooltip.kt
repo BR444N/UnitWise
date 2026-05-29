@@ -22,20 +22,23 @@ import com.br444n.unitwise.app.ui.theme.UnitWiseTheme
 fun UnitWiseTooltip(
     tooltipText: String,
     modifier: Modifier = Modifier,
+    isError: Boolean = false,
     content: @Composable () -> Unit
 ) {
+    val containerColor = if (isError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
+    val contentColor = if (isError) MaterialTheme.colorScheme.onError else MaterialTheme.colorScheme.onPrimary
     TooltipBox(
         positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
             positioning = TooltipAnchorPosition.Below
         ),
         tooltip = {
             PlainTooltip(
-                containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = MaterialTheme.colorScheme.onPrimary
+                containerColor = containerColor,
+                contentColor = contentColor
             ) {
                 Text(
                     text = tooltipText,
-                    color = MaterialTheme.colorScheme.onPrimary
+                    color = contentColor
                 )
             }
         },
