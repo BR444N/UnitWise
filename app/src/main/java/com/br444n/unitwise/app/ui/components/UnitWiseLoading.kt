@@ -39,7 +39,7 @@ fun UnitWiseLoading(
         LottieAnimation(
             composition = composition,
             progress = { progress },
-            modifier = Modifier.size(200.dp)
+            modifier = Modifier.size(120.dp)
         )
     }
 }
