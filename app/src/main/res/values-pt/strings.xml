@@ -176,4 +176,7 @@
     <string name="share_qr_content_description">Código QR de uma comparação compartilhada</string>
     <string name="share_qr_expiration_message">Este QR expira em 30 dias.</string>
     <string name="share_again">Compartilhar novamente</string>
+
+    <!-- Feature Discovery -->
+    <string name="feature_badge_new">Novo</string>
 </resources>

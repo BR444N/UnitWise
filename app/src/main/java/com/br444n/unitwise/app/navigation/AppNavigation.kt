@@ -19,6 +19,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.ui.Modifier
+import com.br444n.unitwise.app.ui.MainViewModel
 import com.br444n.unitwise.app.navigation.components.UnitWiseBottomNavigation
 import com.br444n.unitwise.app.feature.comparison.ComparisonScreen
 import com.br444n.unitwise.app.feature.comparison.SharedComparisonRoute
@@ -54,6 +55,9 @@ object Screen {
 fun AppNavigation(
     navController: NavHostController = rememberNavController()
 ) {
+    val mainViewModel: MainViewModel = viewModel(factory = MainViewModel.Factory)
+    val seenFeatures by mainViewModel.seenFeatures.collectAsState()
+    
     val homeViewModel: HomeViewModel = viewModel(factory = HomeViewModel.Factory)
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
@@ -75,6 +79,10 @@ fun AppNavigation(
             if (shouldShowBottomBar) {
                 UnitWiseBottomNavigation(
                     selectedIndex = selectedIndex,
+                    seenFeatures = seenFeatures,
+                    onFeatureClick = { featureKey ->
+                        mainViewModel.markFeatureAsSeen(featureKey)
+                    },
                     onNavigate = { index -> handleBottomTabNav(index, selectedIndex, navController) }
                 )
             }

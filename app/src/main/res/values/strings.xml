@@ -176,4 +176,7 @@
     <string name="share_qr_content_description">QR code for a shared comparison</string>
     <string name="share_qr_expiration_message">This QR expires in 30 days.</string>
     <string name="share_again">Share again</string>
+
+    <!-- Feature Discovery -->
+    <string name="feature_badge_new">New</string>
 </resources>

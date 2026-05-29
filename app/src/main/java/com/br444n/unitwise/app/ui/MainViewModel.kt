@@ -11,9 +11,10 @@ import com.br444n.unitwise.app.domain.repository.UserPreferencesRepository
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
 class MainViewModel(
-    userPreferencesRepository: UserPreferencesRepository
+    private val userPreferencesRepository: UserPreferencesRepository
 ) : ViewModel() {
 
     val isDarkTheme: StateFlow<Boolean?> = userPreferencesRepository.isDarkTheme
@@ -29,6 +30,19 @@ class MainViewModel(
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = null
         )
+
+    val seenFeatures: StateFlow<Set<String>> = userPreferencesRepository.seenFeatures
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptySet()
+        )
+
+    fun markFeatureAsSeen(featureKey: String) {
+        viewModelScope.launch {
+            userPreferencesRepository.markFeatureAsSeen(featureKey)
+        }
+    }
 
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {

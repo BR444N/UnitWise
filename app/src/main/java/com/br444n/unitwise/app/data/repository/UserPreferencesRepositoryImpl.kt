@@ -50,6 +50,21 @@ class UserPreferencesRepositoryImpl(
         }
     }
 
+    override val seenFeatures: Flow<Set<String>> = callbackFlow {
+        val listener = SharedPreferences.OnSharedPreferenceChangeListener { prefs, key ->
+            if (key == SEEN_FEATURES) {
+                val current = prefs.getStringSet(SEEN_FEATURES, emptySet()) ?: emptySet()
+                trySend(current)
+            }
+        }
+        sharedPreferences.registerOnSharedPreferenceChangeListener(listener)
+        val initial = sharedPreferences.getStringSet(SEEN_FEATURES, emptySet()) ?: emptySet()
+        trySend(initial)
+        awaitClose {
+            sharedPreferences.unregisterOnSharedPreferenceChangeListener(listener)
+        }
+    }
+
     override suspend fun saveThemePreference(isDarkTheme: Boolean) {
         sharedPreferences.edit { putBoolean(IS_DARK_THEME, isDarkTheme) }
     }
@@ -62,9 +77,16 @@ class UserPreferencesRepositoryImpl(
         sharedPreferences.edit { putBoolean(HOME_SHOWCASE_COMPLETED, completed) }
     }
 
+    override suspend fun markFeatureAsSeen(featureKey: String) {
+        val current = sharedPreferences.getStringSet(SEEN_FEATURES, emptySet()) ?: emptySet()
+        val newSet = current + featureKey
+        sharedPreferences.edit { putStringSet(SEEN_FEATURES, newSet) }
+    }
+
     companion object {
         private const val IS_DARK_THEME = "is_dark_theme"
         private const val SELECTED_LANGUAGE = "selected_language"
         private const val HOME_SHOWCASE_COMPLETED = "home_showcase_completed"
+        private const val SEEN_FEATURES = "seen_features"
     }
 }

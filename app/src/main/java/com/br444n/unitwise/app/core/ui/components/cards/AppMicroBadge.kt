@@ -26,9 +26,9 @@ import com.br444n.unitwise.app.ui.theme.UnitWiseTheme
 
 @Composable
 fun AppMicroBadge(
-    text: String,
-    icon: ImageVector,
     modifier: Modifier = Modifier,
+    text: String,
+    icon: ImageVector? = null,
     containerColor: Color = Badge,
     contentColor: Color = MaterialTheme.colorScheme.primary
 ) {
@@ -39,18 +39,21 @@ fun AppMicroBadge(
             .padding(horizontal = 8.dp, vertical = 4.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Icon(
-            imageVector = icon,
-            contentDescription = null, // decorative
-            tint = contentColor,
-            modifier = Modifier.size(14.dp)
-        )
-        Spacer(modifier = Modifier.width(4.dp))
+        if (icon != null) {
+            Icon(
+                imageVector = icon,
+                contentDescription = null, // decorative
+                tint = contentColor,
+                modifier = Modifier.size(14.dp)
+            )
+            Spacer(modifier = Modifier.width(4.dp))
+        }
         Text(
             text = text,
             style = MaterialTheme.typography.labelSmall,
             fontWeight = FontWeight.SemiBold,
-            color = contentColor
+            color = contentColor,
+            maxLines = 1
         )
     }
 }
