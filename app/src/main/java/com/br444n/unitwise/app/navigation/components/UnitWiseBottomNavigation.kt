@@ -14,6 +14,7 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import com.br444n.unitwise.app.core.ui.components.feedback.UnitWiseTooltip
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
@@ -67,22 +68,26 @@ fun UnitWiseBottomNavigation(
                     onNavigate(index)
                 },
                 icon = {
-                    Box(
-                        modifier = Modifier
-                            .width(64.dp)
-                            .height(32.dp)
-                            .background(
-                                color = if (index == selectedIndex) MaterialTheme.colorScheme.primary else Color.Transparent,
-                                shape = RoundedCornerShape(12.dp)
-                            ),
-                        contentAlignment = Alignment.Center
+                    UnitWiseTooltip(
+                        tooltipText = item.title
                     ) {
-                        Icon(
-                            imageVector = if (index == selectedIndex) {
-                                item.selectedIcon
-                            } else item.unselectedIcon,
-                            contentDescription = item.title
-                        )
+                        Box(
+                            modifier = Modifier
+                                .width(64.dp)
+                                .height(32.dp)
+                                .background(
+                                    color = if (index == selectedIndex) MaterialTheme.colorScheme.primary else Color.Transparent,
+                                    shape = RoundedCornerShape(12.dp)
+                                ),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                imageVector = if (index == selectedIndex) {
+                                    item.selectedIcon
+                                } else item.unselectedIcon,
+                                contentDescription = item.title
+                            )
+                        }
                     }
                 },
                 label = {
