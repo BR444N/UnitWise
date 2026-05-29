@@ -36,6 +36,13 @@ class ComparisonRepositoryImpl(
         runCatching {
             remoteDataSource.upsertComparison(encryptedRecord)
         }.onFailure {
+            val msg = it.message ?: ""
+            if (msg.contains("row-level security") || msg.contains("duplicate key") || msg.contains("violates row-level security policy")) {
+                // Deterministic share already exists. We can safely ignore this error
+                // and return the same shareLink.
+                Log.d(TAG, "Comparison already shared, ignoring exception.")
+                return shareLink
+            }
             Log.w(TAG, "Failed to publish encrypted shared comparison", it)
             throw it
         }
