@@ -1,12 +1,17 @@
 package com.br444n.unitwise.app.feature.home
 
+import com.br444n.unitwise.app.core.firebase.domain.usecase.LogListParityTypeUseCase
 import com.br444n.unitwise.app.domain.usecase.GetComparisonUseCase
 import com.br444n.unitwise.app.domain.usecase.SaveComparisonUseCase
+import com.br444n.unitwise.app.data.local.dao.ShoppingListItemDao
+import com.br444n.unitwise.app.domain.repository.UserPreferencesRepository
 import com.br444n.unitwise.util.MainDispatcherRule
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
+import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import org.junit.Rule
 import org.junit.Test
@@ -22,13 +27,24 @@ class HomeViewModelTest {
 
     private val saveComparisonUseCase = mockk<SaveComparisonUseCase>()
     private val getComparisonUseCase = mockk<GetComparisonUseCase>()
+    private val userPreferencesRepository = mockk<UserPreferencesRepository>()
+    private val shoppingListItemDao = mockk<ShoppingListItemDao>()
+    private val logListParityType = mockk<LogListParityTypeUseCase>()
 
     @Test
     fun `calculate should save and navigate after delay`() = runTest {
         // Given
         val expectedId = 42L
-        coEvery { saveComparisonUseCase(any(), any(), any()) } returns expectedId
-        val viewModel = HomeViewModel(saveComparisonUseCase, getComparisonUseCase)
+        coEvery { saveComparisonUseCase(any(), any(), any(), any()) } returns expectedId
+        every { userPreferencesRepository.isHomeShowcaseCompleted } returns flowOf(false)
+        
+        val viewModel = HomeViewModel(
+            saveComparisonUseCase = saveComparisonUseCase,
+            getComparisonUseCase = getComparisonUseCase,
+            userPreferencesRepository = userPreferencesRepository,
+            shoppingListItemDao = shoppingListItemDao,
+            logListParityType = logListParityType
+        )
         var navigatedId: Int? = null
 
         // When
