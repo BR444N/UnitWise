@@ -24,23 +24,13 @@ import androidx.compose.material.icons.filled.Calculate
 import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TooltipAnchorPosition
-import androidx.compose.material3.TooltipBox
-import androidx.compose.material3.TooltipDefaults
-import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -55,7 +45,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalFocusManager
@@ -78,22 +67,22 @@ import com.br444n.unitwise.app.core.ui.components.inputs.AppTextFieldKeyboard
 import com.br444n.unitwise.app.core.ui.components.layout.AppCard
 import com.br444n.unitwise.app.core.ui.components.messages.AppToastMessage
 import com.br444n.unitwise.app.core.ui.components.navigation.AppTopBar
+import com.br444n.unitwise.app.core.ui.components.feedback.UnitWiseTooltip
 import com.br444n.unitwise.app.domain.model.MeasurementUnit
 import com.br444n.unitwise.app.domain.model.MeasurementUnit.SUPPORTED_UNITS
+import com.br444n.unitwise.app.core.ui.components.feedback.AppShowcaseConfig
+import com.br444n.unitwise.app.core.ui.components.feedback.AppShowcaseOverlay
 import com.br444n.unitwise.app.ui.components.UnitWiseLoading
-import com.br444n.unitwise.app.ui.theme.BrandPrimary
 import com.br444n.unitwise.app.ui.theme.BrandPrimaryUnfocused
-import com.br444n.unitwise.app.ui.theme.DarkBackgroundMain
 import com.br444n.unitwise.app.ui.theme.UnitWiseTheme
-import com.joco.compose_showcaseview.ShowcaseAlignment
-import com.joco.compose_showcaseview.ShowcasePosition
-import com.joco.compose_showcaseview.ShowcaseView
-import com.joco.compose_showcaseview.highlight.ShowcaseHighlight
 import com.br444n.unitwise.app.domain.model.CONTENT_AMOUNT_MAX_LENGTH
 import com.br444n.unitwise.app.domain.model.PRICE_MAX_LENGTH
 import com.br444n.unitwise.app.domain.model.PRODUCT_NAME_MAX_LENGTH
 import com.br444n.unitwise.app.domain.model.ProductInputState
 import com.br444n.unitwise.app.domain.model.QUANTITY_MAX_LENGTH
+import com.br444n.unitwise.app.core.ui.components.inputs.AppDropdownMenuConfig
+import com.br444n.unitwise.app.core.ui.components.inputs.AppDropdownMenuActions
+import com.br444n.unitwise.app.core.ui.components.inputs.AppDropdownMenuFocusConfig
 
 private val BottomNavOverlayPadding = 16.dp
 
@@ -555,22 +544,8 @@ private fun HomeProductNameField(
             label = { Text(labelText) },
             placeholder = { Text(stringResource(id = config.hints.productNameHint)) },
             trailingIcon = {
-                TooltipBox(
-                    positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
-                        positioning = TooltipAnchorPosition.Below
-                    ),
-                    tooltip = {
-                        PlainTooltip(
-                            containerColor = MaterialTheme.colorScheme.primary,
-                            contentColor = MaterialTheme.colorScheme.onPrimary
-                        ) {
-                            Text(
-                                text = stringResource(id = R.string.scan_desc),
-                                color = MaterialTheme.colorScheme.onPrimary
-                            )
-                        }
-                    },
-                    state = rememberTooltipState()
+                UnitWiseTooltip(
+                    tooltipText = stringResource(id = R.string.scan_desc)
                 ) {
                     IconButton(
                         onClick = { onScanClick(config.scanTarget) },
@@ -642,18 +617,18 @@ private fun HomeProductContentRow(
         }
         
         AppDropdownMenu(
-            config = com.br444n.unitwise.app.core.ui.components.inputs.AppDropdownMenuConfig(
+            config = AppDropdownMenuConfig(
                 selectedItem = config.state.selectedUnit,
                 items = SUPPORTED_UNITS,
                 itemLabel = { it },
                 isItemEnabled = { it == config.state.selectedUnit || compatibleUnits.contains(it) },
                 label = stringResource(id = R.string.unit_label)
             ),
-            actions = com.br444n.unitwise.app.core.ui.components.inputs.AppDropdownMenuActions(
+            actions = AppDropdownMenuActions(
                 onItemSelected = { config.onUpdateProduct(config.state.copy(selectedUnit = it)) },
                 onDisabledItemClick = { onShowIncompatibleUnitsMessage() }
             ),
-            focusConfig = com.br444n.unitwise.app.core.ui.components.inputs.AppDropdownMenuFocusConfig(
+            focusConfig = AppDropdownMenuFocusConfig(
                 focusRequester = config.focusConfig.unit,
                 nextFocusRequester = config.focusConfig.price
             ),
@@ -812,68 +787,19 @@ private fun HomeShowcaseOverlay(
     val stepData = getShowcaseStepData(step)
     val actionRes = if (stepData.isFinishStep) R.string.home_showcase_finish else R.string.home_showcase_next
     
-    val isDarkTheme = MaterialTheme.colorScheme.background == DarkBackgroundMain
-    val nextButtonColor = if (isDarkTheme) BrandPrimary else DarkBackgroundMain
-    val nextButtonContentColor = if (isDarkTheme) DarkBackgroundMain else Color.White
-
-    ShowcaseView(
-        visible = true,
+    AppShowcaseOverlay(
         targetCoordinates = targetCoordinates,
-        position = ShowcasePosition.Default,
-        alignment = ShowcaseAlignment.CenterHorizontal,
-        highlight = ShowcaseHighlight.Rectangular(cornerRadius = 16.dp)
-    ) {
-        Spacer(modifier = Modifier.size(1.dp))
-    }
-
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 20.dp),
-        contentAlignment = stepData.dialogAlignment
-    ) {
-        Card(
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-            shape = MaterialTheme.shapes.large,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(
-                    top = stepData.topPadding,
-                    bottom = stepData.bottomPadding
-                )
-        ) {
-            Column(
-                modifier = Modifier.padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                Text(
-                    text = stringResource(id = stepData.titleRes),
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-                Text(
-                    text = stringResource(id = stepData.bodyRes),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.End
-                ) {
-                    TextButton(onClick = onSkip) {
-                        Text(text = stringResource(id = R.string.home_showcase_skip))
-                    }
-                    Button(
-                        onClick = onNext,
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = nextButtonColor,
-                            contentColor = nextButtonContentColor
-                        )
-                    ) { Text(text = stringResource(id = actionRes)) }
-                }
-            }
-        }
-    }
+        config = AppShowcaseConfig(
+            titleRes = stepData.titleRes,
+            bodyRes = stepData.bodyRes,
+            actionRes = actionRes,
+            dialogAlignment = stepData.dialogAlignment,
+            topPadding = stepData.topPadding,
+            bottomPadding = stepData.bottomPadding
+        ),
+        onNext = onNext,
+        onSkip = onSkip
+    )
 }
 
 @Preview(showBackground = true)
@@ -934,25 +860,10 @@ fun HomeScreenPreview() {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeSettingsAction(onSettingsClick: () -> Unit) {
-    TooltipBox(
-        positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
-            positioning = TooltipAnchorPosition.Below
-        ),
-        tooltip = {
-            PlainTooltip(
-                containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = MaterialTheme.colorScheme.onPrimary
-            ) {
-                Text(
-                    text = stringResource(id = R.string.settings_desc),
-                    color = MaterialTheme.colorScheme.onPrimary
-                )
-            }
-        },
-        state = rememberTooltipState()
+    UnitWiseTooltip(
+        tooltipText = stringResource(id = R.string.settings_desc)
     ) {
         IconButton(onClick = onSettingsClick) {
             Icon(

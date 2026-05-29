@@ -20,14 +20,10 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TooltipAnchorPosition
-import androidx.compose.material3.TooltipBox
-import androidx.compose.material3.TooltipDefaults
-import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
+import com.br444n.unitwise.app.core.ui.components.feedback.UnitWiseTooltip
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -315,25 +311,10 @@ fun ComparisonScreenTiePreview() {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ComparisonBackButton(contentDesc: String, onClick: () -> Unit) {
-    TooltipBox(
-        positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
-            positioning = TooltipAnchorPosition.Below
-        ),
-        tooltip = {
-            PlainTooltip(
-                containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = MaterialTheme.colorScheme.onPrimary
-            ) {
-                Text(
-                    text = contentDesc,
-                    color = MaterialTheme.colorScheme.onPrimary
-                )
-            }
-        },
-        state = rememberTooltipState()
+    UnitWiseTooltip(
+        tooltipText = contentDesc
     ) {
         IconButton(onClick = onClick) {
             Icon(
