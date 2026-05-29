@@ -6,7 +6,9 @@ interface UserPreferencesRepository {
     val isDarkTheme: Flow<Boolean>
     val selectedLanguage: Flow<String>
     val isHomeShowcaseCompleted: Flow<Boolean>
+    val seenFeatures: Flow<Set<String>>
     suspend fun saveThemePreference(isDarkTheme: Boolean)
     suspend fun saveLanguagePreference(language: String)
     suspend fun saveHomeShowcaseCompleted(completed: Boolean)
+    suspend fun markFeatureAsSeen(featureKey: String)
 }
