@@ -175,5 +175,8 @@
     <string name="share_preview_title">Escanea para abrir esta comparación en UnitWise</string>
     <string name="share_qr_content_description">Código QR de una comparación compartida</string>
     <string name="share_qr_expiration_message">Este QR caduca en 30 días.</string>
-    <string name="share_again">Compartir de nuevo</string>
+    <string name="share_again">Compartir otra vez</string>
+
+    <!-- Feature Discovery -->
+    <string name="feature_badge_new">Nuevo</string>
 </resources>
