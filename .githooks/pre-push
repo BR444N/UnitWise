@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+echo "🏗 Running Android sanity build..."
+
+./gradlew assembleDebug
+
+RESULT=$?
+
+if [ $RESULT -ne 0 ]; then
+  echo "❌ Build failed. Push blocked."
+  exit 1
+fi
+
+echo "✅ Build successful"

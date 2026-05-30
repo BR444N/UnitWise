@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+COMMIT_MSG_FILE=$1
+COMMIT_MSG=$(cat "$COMMIT_MSG_FILE")
+
+PATTERN='^(feat|fix|refactor|perf|ui|docs|build|test|release|chore): .+'
+
+if [[ ! "$COMMIT_MSG" =~ $PATTERN ]]; then
+  echo "❌ Invalid commit message"
+  echo ""
+  echo "Use conventional commits:"
+  echo "feat: add calculator screen"
+  echo "fix: solve conversion bug"
+  echo "ui: improve spacing"
+  exit 1
+fi
+
+echo "✅ Commit message valid"

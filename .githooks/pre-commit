@@ -1,0 +1,106 @@
+#!/usr/bin/env bash
+
+echo "🔍 Running paranoid security checks..."
+
+# Files staged for commit
+STAGED_FILES=$(git diff --cached --name-only)
+
+# Dangerous file patterns
+BLOCKED_PATTERNS=(
+  '\.jks$'
+  '\.keystore$'
+  '\.pem$'
+  '\.key$'
+  '\.p12$'
+  'service-account.*\.json$'
+  'play.*\.json$'
+  'keystore\.properties$'
+  'secret\.properties$'
+  '\.aab$'
+  '\.apk$'
+)
+
+# Secret detection patterns
+SECRET_PATTERNS=(
+  'password='
+  'secret='
+  'api[_-]?key'
+  'private[_-]?key'
+  'BEGIN PRIVATE KEY'
+  'AIza[0-9A-Za-z\-_]+'
+)
+
+# ------------------------
+# BLOCK DANGEROUS FILES
+# ------------------------
+for file in $STAGED_FILES; do
+
+  # Ignore Android Studio noise
+  if [[ "$file" == .idea/* ]]; then
+    continue
+  fi
+
+  # Ignore hooks folder itself
+  if [[ "$file" == .githooks/* ]]; then
+    continue
+  fi
+
+  for pattern in "${BLOCKED_PATTERNS[@]}"; do
+    if [[ "$file" =~ $pattern ]]; then
+      echo "❌ BLOCKED: Sensitive file detected -> $file"
+      exit 1
+    fi
+  done
+done
+
+# ------------------------
+# SECRET SCAN
+# ------------------------
+for file in $STAGED_FILES; do
+
+  # Ignore Android Studio noise
+  if [[ "$file" == .idea/* ]]; then
+    continue
+  fi
+
+  # Ignore hooks folder
+  if [[ "$file" == .githooks/* ]]; then
+    continue
+  fi
+
+  if [[ -f "$file" ]]; then
+    for pattern in "${SECRET_PATTERNS[@]}"; do
+      if grep -qiE "$pattern" "$file"; then
+        echo "❌ BLOCKED: Possible secret found in $file"
+        echo "⚠️  Pattern matched: $pattern"
+        exit 1
+      fi
+    done
+  fi
+done
+
+echo "✅ Security checks passed"
+exit 0
+
+# Suspicious secrets scan
+SECRET_PATTERNS=(
+  'password='
+  'secret='
+  'api[_-]?key'
+  'private[_-]?key'
+  'BEGIN PRIVATE KEY'
+)
+
+for file in $STAGED_FILES; do
+  if [[ -f "$file" ]]; then
+    for pattern in "${SECRET_PATTERNS[@]}"; do
+      if grep -qi "$pattern" "$file"; then
+        echo "❌ BLOCKED: Possible secret found in $file"
+        exit 1
+      fi
+    done
+  fi
+done
+
+echo "✅ Security checks passed"
+exit 0
