@@ -11,6 +11,7 @@
 .externalNativeBuild
 .cxx
 local.properties
+.artifacts
 
 *.kotlin/errors
 compile_log.txt
