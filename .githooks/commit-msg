@@ -3,15 +3,22 @@
 COMMIT_MSG_FILE=$1
 COMMIT_MSG=$(cat "$COMMIT_MSG_FILE")
 
-PATTERN='^(feat|fix|refactor|perf|ui|docs|build|test|release|chore): .+'
+PATTERN='^(build|chore|ci|docs|feat|fix|perf|refactor|revert|style|test)(\([a-z0-9\._-]+\))?!?: .+'
 
 if [[ ! "$COMMIT_MSG" =~ $PATTERN ]]; then
-  echo "❌ Invalid commit message"
+  echo "❌ Invalid commit message format"
   echo ""
   echo "Use conventional commits:"
-  echo "feat: add calculator screen"
-  echo "fix: solve conversion bug"
-  echo "ui: improve spacing"
+  echo "feat(ui): add calculator screen"
+  echo "fix: resolve conversion bug"
+  echo "docs: update README"
+  echo ""
+  echo "Allowed types: build, chore, ci, docs, feat, fix, perf, refactor, revert, style, test."
+  exit 1
+fi
+
+if grep -qiE "^Co-Authored-By:" "$COMMIT_MSG_FILE"; then
+  echo "❌ Co-Authored-By trailer found. AI attribution is not allowed."
   exit 1
 fi
 
