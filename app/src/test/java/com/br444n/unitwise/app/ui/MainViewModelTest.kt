@@ -22,11 +22,13 @@ class MainViewModelTest {
     private val repository = mockk<UserPreferencesRepository>()
     private val themeFlow = MutableStateFlow(false)
     private val langFlow = MutableStateFlow("en")
+    private val seenFeaturesFlow = MutableStateFlow<Set<String>>(emptySet())
 
     @Before
     fun setup() {
         every { repository.isDarkTheme } returns themeFlow
         every { repository.selectedLanguage } returns langFlow
+        every { repository.seenFeatures } returns seenFeaturesFlow
     }
 
     @Test
@@ -37,8 +39,8 @@ class MainViewModelTest {
 
             // Then
             viewModel.isDarkTheme.test {
-                // Ignore the initial null and get the current value from repository
-                assertThat(expectMostRecentItem()).isFalse()
+                // Because of UnconfinedTestDispatcher, the repository value is fetched synchronously
+                assertThat(awaitItem()).isFalse()
 
                 // Update value
                 themeFlow.value = true
@@ -56,8 +58,8 @@ class MainViewModelTest {
 
             // Then
             viewModel.selectedLanguage.test {
-                // Ignore the initial null and get the current value from repository
-                assertThat(expectMostRecentItem()).isEqualTo("en")
+                // Because of UnconfinedTestDispatcher, the repository value is fetched synchronously
+                assertThat(awaitItem()).isEqualTo("en")
 
                 // Update value
                 langFlow.value = "es"
