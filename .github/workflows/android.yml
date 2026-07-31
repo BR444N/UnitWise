@@ -22,8 +22,13 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
+      - name: Create google-services.json
+        env:
+          GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
+        run: echo "$GOOGLE_SERVICES_JSON" > app/google-services.json
+
       - name: Run lint
-        run: ./gradlew ktlintCheck # o detekt, o el linter que uses
+        run: ./gradlew ktlintCheck
 
       - name: Run unit tests
         run: ./gradlew testDebugUnitTest
