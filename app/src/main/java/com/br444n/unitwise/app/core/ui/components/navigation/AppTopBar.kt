@@ -21,27 +21,28 @@ fun AppTopBar(
     title: @Composable () -> Unit,
     modifier: Modifier = Modifier,
     navigationIcon: @Composable () -> Unit = {},
-    actions: @Composable RowScope.() -> Unit = {}
+    actions: @Composable RowScope.() -> Unit = {},
 ) {
     TopAppBar(
         title = title,
         navigationIcon = navigationIcon,
         actions = actions,
-        colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = MaterialTheme.colorScheme.surface
-        ),
-        modifier = modifier
-            .clip(
-                RoundedCornerShape(
-                    bottomStart = 24.dp,
-                    bottomEnd = 24.dp
-                )
-            )
-            .topAppBarBorder(
-                color = MaterialTheme.colorScheme.outline,
-                width = 1.dp,
-                cornerRadius = 24.dp
-            )
+        colors =
+            TopAppBarDefaults.topAppBarColors(
+                containerColor = MaterialTheme.colorScheme.surface,
+            ),
+        modifier =
+            modifier
+                .clip(
+                    RoundedCornerShape(
+                        bottomStart = 24.dp,
+                        bottomEnd = 24.dp,
+                    ),
+                ).topAppBarBorder(
+                    color = MaterialTheme.colorScheme.outline,
+                    width = 1.dp,
+                    cornerRadius = 24.dp,
+                ),
     )
 }
 
@@ -52,7 +53,7 @@ fun AppTopBarPreview() {
         AppTopBar(
             title = {
                 Text("Screen Title")
-            }
+            },
         )
     }
 }

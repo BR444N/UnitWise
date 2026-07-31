@@ -12,5 +12,5 @@ data class ShoppingListDetailsUiState(
     val totalWithOrphansA: Double = 0.0,
     val totalWithOrphansB: Double = 0.0,
     val smartTotal: Double = 0.0,
-    val hasOrphans: Boolean = false
+    val hasOrphans: Boolean = false,
 )

@@ -17,7 +17,7 @@ data class AppTextFieldConfig(
     val singleLine: Boolean = true,
     val maxLines: Int = if (singleLine) 1 else Int.MAX_VALUE,
     val minLines: Int = 1,
-    val isError: Boolean = false
+    val isError: Boolean = false,
 )
 
 data class AppTextFieldContent(
@@ -25,12 +25,12 @@ data class AppTextFieldContent(
     val placeholder: @Composable (() -> Unit)? = null,
     val supportingText: @Composable (() -> Unit)? = null,
     val trailingIcon: @Composable (() -> Unit)? = null,
-    val leadingIcon: @Composable (() -> Unit)? = null
+    val leadingIcon: @Composable (() -> Unit)? = null,
 )
 
 data class AppTextFieldKeyboard(
     val options: KeyboardOptions = KeyboardOptions.Default,
-    val actions: KeyboardActions = KeyboardActions.Default
+    val actions: KeyboardActions = KeyboardActions.Default,
 )
 
 @Composable
@@ -40,7 +40,7 @@ fun AppTextField(
     modifier: Modifier = Modifier,
     config: AppTextFieldConfig = AppTextFieldConfig(),
     content: AppTextFieldContent = AppTextFieldContent(),
-    keyboard: AppTextFieldKeyboard = AppTextFieldKeyboard()
+    keyboard: AppTextFieldKeyboard = AppTextFieldKeyboard(),
 ) {
     OutlinedTextField(
         value = value,
@@ -59,7 +59,7 @@ fun AppTextField(
         singleLine = config.singleLine,
         maxLines = config.maxLines,
         minLines = config.minLines,
-        shape = RoundedCornerShape(12.dp)
+        shape = RoundedCornerShape(12.dp),
     )
 }
 
@@ -70,10 +70,11 @@ fun AppTextFieldPreview() {
         AppTextField(
             value = "",
             onValueChange = {},
-            content = AppTextFieldContent(
-                label = { Text("Label") },
-                placeholder = { Text("Placeholder") }
-            )
+            content =
+                AppTextFieldContent(
+                    label = { Text("Label") },
+                    placeholder = { Text("Placeholder") },
+                ),
         )
     }
 }

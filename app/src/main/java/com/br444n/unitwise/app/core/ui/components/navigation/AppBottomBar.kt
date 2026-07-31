@@ -15,19 +15,20 @@ import com.br444n.unitwise.app.ui.theme.UnitWiseTheme
 @Composable
 fun AppBottomBar(
     modifier: Modifier = Modifier,
-    content: @Composable RowScope.() -> Unit
+    content: @Composable RowScope.() -> Unit,
 ) {
     NavigationBar(
-        modifier = modifier
-            .clip(RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp))
-            .bottomNavBarBorder(
-                color = MaterialTheme.colorScheme.outline,
-                width = 1.dp,
-                cornerRadius = 24.dp
-            ),
+        modifier =
+            modifier
+                .clip(RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp))
+                .bottomNavBarBorder(
+                    color = MaterialTheme.colorScheme.outline,
+                    width = 1.dp,
+                    cornerRadius = 24.dp,
+                ),
         containerColor = MaterialTheme.colorScheme.surface,
         contentColor = MaterialTheme.colorScheme.onSurface,
-        content = content
+        content = content,
     )
 }
 
@@ -35,6 +36,6 @@ fun AppBottomBar(
 @Composable
 fun AppBottomBarPreview() {
     UnitWiseTheme {
-        AppBottomBar{ }
+        AppBottomBar { }
     }
 }

@@ -15,30 +15,30 @@ object ShareImageExporter {
     suspend fun export(
         context: Context,
         bitmap: Bitmap,
-        shareId: String
-    ): Uri? {
-        return runCatching {
+        shareId: String,
+    ): Uri? =
+        runCatching {
             withContext(ShareDispatchers.io) {
                 writeBitmapToCache(
                     context = context,
                     bitmap = bitmap,
-                    shareId = shareId
+                    shareId = shareId,
                 )
             }
         }.getOrElse { throwable ->
             Log.e(TAG, "Failed to export shared comparison image", throwable)
             null
         }
-    }
 
     private fun writeBitmapToCache(
         context: Context,
         bitmap: Bitmap,
-        shareId: String
+        shareId: String,
     ): Uri {
-        val shareDirectory = File(context.cacheDir, "shared-comparisons").apply {
-            mkdirs()
-        }
+        val shareDirectory =
+            File(context.cacheDir, "shared-comparisons").apply {
+                mkdirs()
+            }
         val shareFile = File(shareDirectory, "unitwise-$shareId.png")
         FileOutputStream(shareFile).use { outputStream ->
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
@@ -46,7 +46,7 @@ object ShareImageExporter {
         return FileProvider.getUriForFile(
             context,
             "${context.packageName}.fileprovider",
-            shareFile
+            shareFile,
         )
     }
 }

@@ -7,25 +7,25 @@ import java.util.Locale
  * Products can only be compared within the same family.
  */
 object MeasurementUnit {
-
     enum class Family {
         MASS,
         VOLUME,
-        COUNT
+        COUNT,
     }
 
     data class UnitOption(
         val code: String,
-        val family: Family
+        val family: Family,
     )
 
-    private val supportedUnits = listOf(
-        UnitOption(code = "g", family = Family.MASS),
-        UnitOption(code = "kg", family = Family.MASS),
-        UnitOption(code = "ml", family = Family.VOLUME),
-        UnitOption(code = "L", family = Family.VOLUME),
-        UnitOption(code = "pcs", family = Family.COUNT)
-    )
+    private val supportedUnits =
+        listOf(
+            UnitOption(code = "g", family = Family.MASS),
+            UnitOption(code = "kg", family = Family.MASS),
+            UnitOption(code = "ml", family = Family.VOLUME),
+            UnitOption(code = "L", family = Family.VOLUME),
+            UnitOption(code = "pcs", family = Family.COUNT),
+        )
 
     val SUPPORTED_UNITS: List<String> = supportedUnits.map(UnitOption::code)
 
@@ -41,7 +41,10 @@ object MeasurementUnit {
             .map(UnitOption::code)
     }
 
-    fun areCompatible(unitA: String, unitB: String): Boolean {
+    fun areCompatible(
+        unitA: String,
+        unitB: String,
+    ): Boolean {
         val familyA = familyOf(unitA)
         val familyB = familyOf(unitB)
         return familyA != null && familyA == familyB

@@ -2,6 +2,13 @@ package com.br444n.unitwise.app.feature.scann
 
 import androidx.camera.core.ImageProxy
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
+import com.br444n.unitwise.app.UnitWiseApplication
+import com.br444n.unitwise.app.core.firebase.domain.UnitWiseEvent
+import com.br444n.unitwise.app.core.firebase.domain.usecase.LogOcrAttemptUseCase
 import com.br444n.unitwise.app.domain.model.MeasurementUnit
 import com.br444n.unitwise.app.feature.scann.components.OverlayFrameConfig
 import com.br444n.unitwise.app.feature.scann.components.OverlayTextBlock
@@ -15,26 +22,21 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import java.util.concurrent.Executors
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
-import com.br444n.unitwise.app.UnitWiseApplication
-import com.br444n.unitwise.app.core.firebase.domain.UnitWiseEvent
-import com.br444n.unitwise.app.core.firebase.domain.usecase.LogOcrAttemptUseCase
 
 class ScannViewModel(
-    private val logOcrAttempt: LogOcrAttemptUseCase
+    private val logOcrAttempt: LogOcrAttemptUseCase,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(ScannUiState())
     val uiState: StateFlow<ScannUiState> = _uiState.asStateFlow()
-    
+
     private var manualFallbackLogged = false
 
-    private val textRecognizer: TextRecognizer = TextRecognition.getClient(
-        TextRecognizerOptions.DEFAULT_OPTIONS
-    )
+    private val textRecognizer: TextRecognizer =
+        TextRecognition.getClient(
+            TextRecognizerOptions.DEFAULT_OPTIONS,
+        )
     private val mlExecutor = Executors.newSingleThreadExecutor()
+
     @Volatile private var isProcessing = false
     private var lastProcessTime = 0L
 
@@ -50,7 +52,14 @@ class ScannViewModel(
             val compatible = MeasurementUnit.compatibleUnitsFor(normalized)
             state.copy(
                 inheritedUnit = normalized,
-                selectedUnit = if (state.selectedUnit in compatible) state.selectedUnit else compatible.first()
+                selectedUnit =
+                    if (state.selectedUnit in
+                        compatible
+                    ) {
+                        state.selectedUnit
+                    } else {
+                        compatible.first()
+                    },
             )
         }
     }
@@ -62,7 +71,7 @@ class ScannViewModel(
             state.copy(
                 currentStep = step,
                 selectedText = null,
-                detectedTexts = emptyList()
+                detectedTexts = emptyList(),
             )
         }
     }
@@ -108,21 +117,24 @@ class ScannViewModel(
         manualFallbackLogged = false
         _uiState.update { state ->
             when (state.currentStep) {
-                ScanStep.NAME -> state.copy(
-                    productName = "",
-                    selectedText = null,
-                    detectedTexts = emptyList()
-                )
-                ScanStep.CONTENT -> state.copy(
-                    content = "",
-                    selectedUnit = defaultUnitForContentRescan(state),
-                    selectedText = null,
-                    detectedTexts = emptyList()
-                )
-                ScanStep.PRICE -> state.copy(
-                    selectedText = null,
-                    detectedTexts = emptyList()
-                )
+                ScanStep.NAME ->
+                    state.copy(
+                        productName = "",
+                        selectedText = null,
+                        detectedTexts = emptyList(),
+                    )
+                ScanStep.CONTENT ->
+                    state.copy(
+                        content = "",
+                        selectedUnit = defaultUnitForContentRescan(state),
+                        selectedText = null,
+                        detectedTexts = emptyList(),
+                    )
+                ScanStep.PRICE ->
+                    state.copy(
+                        selectedText = null,
+                        detectedTexts = emptyList(),
+                    )
             }
         }
     }
@@ -134,7 +146,7 @@ class ScannViewModel(
             productName = state.productName.trim(),
             content = state.content.trim(),
             selectedUnit = state.selectedUnit.trim(),
-            price = state.price.trim()
+            price = state.price.trim(),
         )
     }
 
@@ -143,9 +155,11 @@ class ScannViewModel(
         imageProxy: ImageProxy,
         previewWidth: Int,
         previewHeight: Int,
-        overlayHeight: Int
+        overlayHeight: Int,
     ) {
-        if (mlExecutor.isShutdown || !shouldProcessFrame(previewWidth, previewHeight, overlayHeight)) {
+        if (mlExecutor.isShutdown ||
+            !shouldProcessFrame(previewWidth, previewHeight, overlayHeight)
+        ) {
             imageProxy.close()
             return
         }
@@ -164,21 +178,23 @@ class ScannViewModel(
             val mediaHeight = mediaImage.height
             val image = InputImage.fromMediaImage(mediaImage, rotation)
 
-            textRecognizer.process(image)
+            textRecognizer
+                .process(image)
                 .addOnSuccessListener { visionText ->
                     if (!mlExecutor.isShutdown) {
                         try {
                             mlExecutor.execute {
                                 handleVisionTextResult(
                                     visionText = visionText,
-                                    config = OverlayFrameConfig(
-                                        mediaWidth = mediaWidth,
-                                        mediaHeight = mediaHeight,
-                                        rotation = rotation,
-                                        previewWidth = previewWidth,
-                                        previewHeight = previewHeight,
-                                        overlayHeight = overlayHeight
-                                    )
+                                    config =
+                                        OverlayFrameConfig(
+                                            mediaWidth = mediaWidth,
+                                            mediaHeight = mediaHeight,
+                                            rotation = rotation,
+                                            previewWidth = previewWidth,
+                                            previewHeight = previewHeight,
+                                            overlayHeight = overlayHeight,
+                                        ),
                                 )
                             }
                         } catch (_: java.util.concurrent.RejectedExecutionException) {
@@ -186,8 +202,7 @@ class ScannViewModel(
                             // already handled in addOnCompleteListener(imageProxy.close()).
                         }
                     }
-                }
-                .addOnCompleteListener {
+                }.addOnCompleteListener {
                     isProcessing = false
                     imageProxy.close()
                 }
@@ -197,7 +212,11 @@ class ScannViewModel(
         }
     }
 
-    private fun shouldProcessFrame(previewWidth: Int, previewHeight: Int, overlayHeight: Int): Boolean {
+    private fun shouldProcessFrame(
+        previewWidth: Int,
+        previewHeight: Int,
+        overlayHeight: Int,
+    ): Boolean {
         val state = _uiState.value
         if (isProcessing) return false
         if (state.currentStep == ScanStep.PRICE) return false
@@ -209,19 +228,21 @@ class ScannViewModel(
 
     private fun handleVisionTextResult(
         visionText: com.google.mlkit.vision.text.Text,
-        config: OverlayFrameConfig
+        config: OverlayFrameConfig,
     ) {
-        val overlayOptions = ScannOverlayTextFilter.filterToOverlay(
-            blocks = visionText.textBlocks.mapNotNull { block ->
-                val bounds = block.boundingBox ?: return@mapNotNull null
-                OverlayTextBlock(
-                    text = block.text.replace("\n", " ").trim(),
-                    centerX = bounds.centerX().toFloat(),
-                    centerY = bounds.centerY().toFloat()
-                )
-            },
-            config = config
-        )
+        val overlayOptions =
+            ScannOverlayTextFilter.filterToOverlay(
+                blocks =
+                    visionText.textBlocks.mapNotNull { block ->
+                        val bounds = block.boundingBox ?: return@mapNotNull null
+                        OverlayTextBlock(
+                            text = block.text.replace("\n", " ").trim(),
+                            centerX = bounds.centerX().toFloat(),
+                            centerY = bounds.centerY().toFloat(),
+                        )
+                    },
+                config = config,
+            )
 
         val options = filterDetectedByCurrentStep(overlayOptions).distinct()
         if (options == _uiState.value.detectedTexts) return
@@ -246,7 +267,7 @@ class ScannViewModel(
                 _uiState.update {
                     it.copy(
                         content = number,
-                        selectedUnit = normalizedUnit
+                        selectedUnit = normalizedUnit,
                     )
                 }
             }
@@ -254,13 +275,12 @@ class ScannViewModel(
         }
     }
 
-    private fun filterDetectedByCurrentStep(items: List<String>): List<String> {
-        return when (_uiState.value.currentStep) {
+    private fun filterDetectedByCurrentStep(items: List<String>): List<String> =
+        when (_uiState.value.currentStep) {
             ScanStep.NAME -> items.filter { value -> value.any(Char::isLetter) }
             ScanStep.CONTENT -> items.filter { CONTENT_PATTERN.containsMatchIn(it.lowercase()) }
             ScanStep.PRICE -> emptyList()
         }
-    }
 
     private fun normalizeUnit(unit: String): String? {
         val normalized = unit.lowercase().replace(".", "")
@@ -290,19 +310,21 @@ class ScannViewModel(
 
     companion object {
         // Uses app-supported units plus supermarket label aliases.
-        private val CONTENT_PATTERN = Regex(
-            // Keep this broad and let normalizeUnit(...) validate/standardize aliases.
-            pattern = """(\d+(?:[.,]\d+)?)\s*([a-z0-9.]{1,6})\b""",
-            option = RegexOption.IGNORE_CASE
-        )
+        private val CONTENT_PATTERN =
+            Regex(
+                // Keep this broad and let normalizeUnit(...) validate/standardize aliases.
+                pattern = """(\d+(?:[.,]\d+)?)\s*([a-z0-9.]{1,6})\b""",
+                option = RegexOption.IGNORE_CASE,
+            )
 
-        val Factory: ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                val application = (this[APPLICATION_KEY] as UnitWiseApplication)
-                ScannViewModel(
-                    logOcrAttempt = application.container.logOcrAttemptUseCase
-                )
+        val Factory: ViewModelProvider.Factory =
+            viewModelFactory {
+                initializer {
+                    val application = (this[APPLICATION_KEY] as UnitWiseApplication)
+                    ScannViewModel(
+                        logOcrAttempt = application.container.logOcrAttemptUseCase,
+                    )
+                }
             }
-        }
     }
 }

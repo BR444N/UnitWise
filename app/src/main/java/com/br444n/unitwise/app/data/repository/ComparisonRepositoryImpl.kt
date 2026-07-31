@@ -12,17 +12,17 @@ import kotlinx.coroutines.flow.Flow
 
 class ComparisonRepositoryImpl(
     private val dao: ComparisonDao,
-    private val remoteDataSource: SharedComparisonRemoteDataSource
+    private val remoteDataSource: SharedComparisonRemoteDataSource,
 ) : ComparisonRepository {
-    override suspend fun insertComparison(comparison: ComparisonEntity): Long {
-        return dao.insertComparison(comparison)
-    }
+    override suspend fun insertComparison(comparison: ComparisonEntity): Long =
+        dao.insertComparison(comparison)
 
-    override suspend fun getComparisonById(id: Int): ComparisonEntity? {
-        return dao.getComparisonById(id)
-    }
+    override suspend fun getComparisonById(id: Int): ComparisonEntity? = dao.getComparisonById(id)
 
-    override suspend fun getComparisonByShareId(shareId: String, encryptionKey: String?): ComparisonEntity? {
+    override suspend fun getComparisonByShareId(
+        shareId: String,
+        encryptionKey: String?,
+    ): ComparisonEntity? {
         if (encryptionKey.isNullOrBlank()) {
             return null
         }
@@ -31,13 +31,18 @@ class ComparisonRepositoryImpl(
         return decodeSharedComparison(record, encryptionKey)
     }
 
-    override suspend fun publishSharedComparison(comparison: ComparisonEntity): SharedComparisonLink {
+    override suspend fun publishSharedComparison(
+        comparison: ComparisonEntity,
+    ): SharedComparisonLink {
         val (shareLink, encryptedRecord) = createEncryptedSharedComparison(comparison)
         runCatching {
             remoteDataSource.upsertComparison(encryptedRecord)
         }.onFailure {
             val msg = it.message ?: ""
-            if (msg.contains("row-level security") || msg.contains("duplicate key") || msg.contains("violates row-level security policy")) {
+            if (msg.contains("row-level security") ||
+                msg.contains("duplicate key") ||
+                msg.contains("violates row-level security policy")
+            ) {
                 // Deterministic share already exists. We can safely ignore this error
                 // and return the same shareLink.
                 Log.d(TAG, "Comparison already shared, ignoring exception.")
@@ -49,9 +54,7 @@ class ComparisonRepositoryImpl(
         return shareLink
     }
 
-    override fun getAllComparisons(): Flow<List<ComparisonEntity>> {
-        return dao.getAllComparisons()
-    }
+    override fun getAllComparisons(): Flow<List<ComparisonEntity>> = dao.getAllComparisons()
 
     override suspend fun deleteAllComparisons() {
         dao.deleteAllComparisons()

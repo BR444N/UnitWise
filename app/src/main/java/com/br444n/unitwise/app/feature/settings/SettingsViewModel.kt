@@ -16,19 +16,19 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class SettingsViewModel(
-    private val userPreferencesRepository: UserPreferencesRepository
+    private val userPreferencesRepository: UserPreferencesRepository,
 ) : ViewModel() {
-
-    val uiState: StateFlow<SettingsUiState> = combine(
-        userPreferencesRepository.isDarkTheme,
-        userPreferencesRepository.selectedLanguage
-    ) { isDark, language ->
-        SettingsUiState(isDarkTheme = isDark, selectedLanguage = language)
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000),
-        initialValue = SettingsUiState()
-    )
+    val uiState: StateFlow<SettingsUiState> =
+        combine(
+            userPreferencesRepository.isDarkTheme,
+            userPreferencesRepository.selectedLanguage,
+        ) { isDark, language ->
+            SettingsUiState(isDarkTheme = isDark, selectedLanguage = language)
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = SettingsUiState(),
+        )
 
     fun toggleTheme(isDark: Boolean) {
         viewModelScope.launch {
@@ -39,18 +39,19 @@ class SettingsViewModel(
     fun updateLanguage(language: String) {
         viewModelScope.launch {
             userPreferencesRepository.saveLanguagePreference(
-                LocaleHelper.normalizeLanguageCode(language)
+                LocaleHelper.normalizeLanguageCode(language),
             )
         }
     }
 
     companion object {
-        val Factory: ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                val application = (this[APPLICATION_KEY] as UnitWiseApplication)
-                val repository = application.container.userPreferencesRepository
-                SettingsViewModel(repository)
+        val Factory: ViewModelProvider.Factory =
+            viewModelFactory {
+                initializer {
+                    val application = (this[APPLICATION_KEY] as UnitWiseApplication)
+                    val repository = application.container.userPreferencesRepository
+                    SettingsViewModel(repository)
+                }
             }
-        }
     }
 }

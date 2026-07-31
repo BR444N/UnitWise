@@ -1,6 +1,7 @@
 package com.br444n.unitwise.app.feature.shoppingList.shoppingListDetails.components
 
 import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
@@ -13,13 +14,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import com.br444n.unitwise.app.core.ui.components.layout.AppCard
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -39,6 +38,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.br444n.unitwise.R
+import com.br444n.unitwise.app.core.ui.components.layout.AppCard
 import com.br444n.unitwise.app.data.local.entity.ShoppingListItemEntity
 import com.br444n.unitwise.app.ui.theme.BrandPrimary
 import com.br444n.unitwise.app.ui.theme.BrandPrimaryUnfocused
@@ -65,33 +65,43 @@ fun ShoppingListItemCard(
     var isExpanded by remember { mutableStateOf(false) }
 
     val actualContainerColor =
-        if (isSelected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surface
+        if (isSelected) {
+            MaterialTheme.colorScheme.primaryContainer
+        } else {
+            MaterialTheme.colorScheme.surface
+        }
     val borderColor =
-        if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline
+        if (isSelected) {
+            MaterialTheme.colorScheme.primary
+        } else {
+            MaterialTheme.colorScheme.outline
+        }
     val borderWidth = if (isSelected) 2.dp else 1.dp
 
     AppCard(
-        modifier = modifier
-            .fillMaxWidth()
-            .animateContentSize()
-            .combinedClickable(
-                onClick = {
-                    when {
-                        isSelectionMode -> onClick()
-                        isExpandable -> isExpanded = !isExpanded
-                        else -> onClick()
-                    }
-                },
-                onLongClick = onLongClick
-            ),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .animateContentSize()
+                .combinedClickable(
+                    onClick = {
+                        when {
+                            isSelectionMode -> onClick()
+                            isExpandable -> isExpanded = !isExpanded
+                            else -> onClick()
+                        }
+                    },
+                    onLongClick = onLongClick,
+                ),
         containerColor = actualContainerColor,
         elevation = 0.dp,
-        border = BorderStroke(borderWidth, borderColor)
+        border = BorderStroke(borderWidth, borderColor),
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
         ) {
             val showExpanded = isExpanded && isExpandable
             if (showExpanded) {
@@ -106,17 +116,17 @@ fun ShoppingListItemCard(
 @Composable
 private fun ExpandedCardContent(
     item: ShoppingListItemEntity,
-    isCompared: Boolean
+    isCompared: Boolean,
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
+        horizontalArrangement = Arrangement.SpaceBetween,
     ) {
         Text(
             text = item.categoryName,
             style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
     }
 
@@ -127,12 +137,12 @@ private fun ExpandedCardContent(
         name = item.productAName.ifBlank { stringResource(R.string.product_a_title) },
         price = item.productAPrice.ifBlank { "$0.00" },
         isWinner = item.isProductAWinner == true,
-        isTie = item.isTie == true
+        isTie = item.isTie == true,
     )
 
     HorizontalDivider(
         modifier = Modifier.padding(vertical = 8.dp),
-        color = MaterialTheme.colorScheme.outlineVariant
+        color = MaterialTheme.colorScheme.outlineVariant,
     )
 
     // Product B Row
@@ -140,7 +150,7 @@ private fun ExpandedCardContent(
         name = item.productBName.ifBlank { stringResource(R.string.product_b_title) },
         price = item.productBPrice.ifBlank { "$0.00" },
         isWinner = item.isProductAWinner == false && isCompared,
-        isTie = item.isTie == true
+        isTie = item.isTie == true,
     )
 }
 
@@ -150,26 +160,27 @@ private fun CollapsedCardContent(
     isExpandable: Boolean,
     isCompared: Boolean,
     isOrphan: Boolean,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(IntrinsicSize.Min),
-        verticalAlignment = Alignment.CenterVertically
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .height(IntrinsicSize.Min),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         CollapsedCardTitleSection(
             item = item,
             isExpandable = isExpandable,
             isCompared = isCompared,
             isOrphan = isOrphan,
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(1f),
         )
 
         CollapsedCardTrailingSection(
             item = item,
             isCompared = isCompared,
-            onClick = onClick
+            onClick = onClick,
         )
     }
 }
@@ -180,7 +191,7 @@ private fun CollapsedCardTitleSection(
     isExpandable: Boolean,
     isCompared: Boolean,
     isOrphan: Boolean,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier) {
         Text(
@@ -188,7 +199,7 @@ private fun CollapsedCardTitleSection(
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             maxLines = 1,
-            overflow = TextOverflow.Ellipsis
+            overflow = TextOverflow.Ellipsis,
         )
 
         Spacer(modifier = Modifier.height(4.dp))
@@ -201,14 +212,14 @@ private fun CollapsedCardTitleSection(
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 maxLines = 1,
-                overflow = TextOverflow.Ellipsis
+                overflow = TextOverflow.Ellipsis,
             )
             if (isOrphan && !isCompared) {
                 Text(
                     text = stringResource(id = R.string.complete_comparison_optional),
                     style = MaterialTheme.typography.labelSmall,
                     color = BrandPrimaryUnfocused,
-                    modifier = Modifier.padding(top = 2.dp)
+                    modifier = Modifier.padding(top = 2.dp),
                 )
             }
         } else {
@@ -217,7 +228,7 @@ private fun CollapsedCardTitleSection(
                 style = MaterialTheme.typography.titleMedium,
                 color = BrandPrimary,
                 maxLines = 1,
-                overflow = TextOverflow.Ellipsis
+                overflow = TextOverflow.Ellipsis,
             )
         }
     }
@@ -227,7 +238,7 @@ private fun CollapsedCardTitleSection(
 private fun CollapsedCardTrailingSection(
     item: ShoppingListItemEntity,
     isCompared: Boolean,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     if (isCompared) {
         Spacer(modifier = Modifier.width(16.dp))
@@ -240,12 +251,12 @@ private fun CollapsedCardTrailingSection(
             isWinner = isAWinner,
             isTie = item.isTie == true,
             winnerColor = MaterialTheme.colorScheme.primary,
-            loserColor = TextSecondary
+            loserColor = TextSecondary,
         )
 
         VerticalDivider(
             modifier = Modifier.padding(horizontal = 12.dp),
-            color = MaterialTheme.colorScheme.outlineVariant
+            color = MaterialTheme.colorScheme.outlineVariant,
         )
 
         PriceDisplay(
@@ -253,7 +264,7 @@ private fun CollapsedCardTrailingSection(
             isWinner = isBWinner,
             isTie = item.isTie == true,
             winnerColor = MaterialTheme.colorScheme.primary,
-            loserColor = TextSecondary
+            loserColor = TextSecondary,
         )
     } else {
         Spacer(modifier = Modifier.width(8.dp))
@@ -261,19 +272,18 @@ private fun CollapsedCardTrailingSection(
             Icon(
                 imageVector = Icons.Default.ChevronRight,
                 contentDescription = stringResource(id = R.string.complete_comparison_desc),
-                tint = MaterialTheme.colorScheme.onSurfaceVariant
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
     }
 }
-
 
 @Composable
 private fun ExpandedProductRow(
     name: String,
     price: String,
     isWinner: Boolean,
-    isTie: Boolean
+    isTie: Boolean,
 ) {
     val textColor = if (isWinner || isTie) MaterialTheme.colorScheme.onSurface else TextSecondary
     val priceColor = if (isWinner) MaterialTheme.colorScheme.primary else TextSecondary
@@ -282,16 +292,17 @@ private fun ExpandedProductRow(
 
     Row(
         modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         if (isWinner) {
             Icon(
                 imageVector = Icons.Default.CheckCircle,
                 contentDescription = stringResource(id = R.string.winner_desc),
                 tint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier
-                    .size(20.dp)
-                    .padding(end = 4.dp)
+                modifier =
+                    Modifier
+                        .size(20.dp)
+                        .padding(end = 4.dp),
             )
         } else {
             Spacer(modifier = Modifier.width(20.dp))
@@ -303,7 +314,7 @@ private fun ExpandedProductRow(
             color = textColor,
             modifier = Modifier.weight(1f),
             maxLines = 1,
-            overflow = TextOverflow.Ellipsis
+            overflow = TextOverflow.Ellipsis,
         )
 
         Spacer(modifier = Modifier.width(8.dp))
@@ -313,7 +324,7 @@ private fun ExpandedProductRow(
             style = MaterialTheme.typography.bodyLarge,
             fontWeight = weight,
             color = priceColor,
-            textDecoration = decoration
+            textDecoration = decoration,
         )
     }
 }
@@ -325,7 +336,7 @@ private fun PriceDisplay(
     isTie: Boolean,
     winnerColor: Color,
     loserColor: Color,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val decoration = if (!isWinner && !isTie) TextDecoration.LineThrough else null
     val textColor = if (isWinner) winnerColor else loserColor
@@ -336,9 +347,10 @@ private fun PriceDisplay(
                 imageVector = Icons.Default.CheckCircle,
                 contentDescription = stringResource(id = R.string.winner_desc),
                 tint = winnerColor,
-                modifier = Modifier
-                    .size(16.dp)
-                    .padding(end = 4.dp)
+                modifier =
+                    Modifier
+                        .size(16.dp)
+                        .padding(end = 4.dp),
             )
         }
         Text(
@@ -346,7 +358,7 @@ private fun PriceDisplay(
             style = MaterialTheme.typography.bodyLarge,
             fontWeight = if (isWinner) FontWeight.Bold else FontWeight.Normal,
             color = textColor,
-            textDecoration = decoration
+            textDecoration = decoration,
         )
     }
 }
@@ -356,11 +368,12 @@ private fun PriceDisplay(
 fun ShoppingListItemCardPendingPreview() {
     UnitWiseTheme {
         ShoppingListItemCard(
-            item = ShoppingListItemEntity(
-                listId = 1,
-                categoryName = "Leche"
-            ),
-            onClick = {}
+            item =
+                ShoppingListItemEntity(
+                    listId = 1,
+                    categoryName = "Leche",
+                ),
+            onClick = {},
         )
     }
 }
@@ -370,17 +383,18 @@ fun ShoppingListItemCardPendingPreview() {
 fun ShoppingListItemCardComparedPreview() {
     UnitWiseTheme {
         ShoppingListItemCard(
-            item = ShoppingListItemEntity(
-                listId = 1,
-                categoryName = "Leche",
-                productAName = "Leche Santa Clara 1L",
-                productAPrice = "$25.00",
-                productBName = "Leche Alpura 1.5L",
-                productBPrice = "$35.00",
-                isProductAWinner = true,
-                isTie = false
-            ),
-            onClick = {}
+            item =
+                ShoppingListItemEntity(
+                    listId = 1,
+                    categoryName = "Leche",
+                    productAName = "Leche Santa Clara 1L",
+                    productAPrice = "$25.00",
+                    productBName = "Leche Alpura 1.5L",
+                    productBPrice = "$35.00",
+                    isProductAWinner = true,
+                    isTie = false,
+                ),
+            onClick = {},
         )
     }
 }

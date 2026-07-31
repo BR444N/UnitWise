@@ -14,29 +14,31 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class MainViewModel(
-    private val userPreferencesRepository: UserPreferencesRepository
+    private val userPreferencesRepository: UserPreferencesRepository,
 ) : ViewModel() {
+    val isDarkTheme: StateFlow<Boolean?> =
+        userPreferencesRepository.isDarkTheme
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5000),
+                initialValue = null,
+            )
 
-    val isDarkTheme: StateFlow<Boolean?> = userPreferencesRepository.isDarkTheme
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = null
-        )
+    val selectedLanguage: StateFlow<String?> =
+        userPreferencesRepository.selectedLanguage
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5000),
+                initialValue = null,
+            )
 
-    val selectedLanguage: StateFlow<String?> = userPreferencesRepository.selectedLanguage
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = null
-        )
-
-    val seenFeatures: StateFlow<Set<String>> = userPreferencesRepository.seenFeatures
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = emptySet()
-        )
+    val seenFeatures: StateFlow<Set<String>> =
+        userPreferencesRepository.seenFeatures
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5000),
+                initialValue = emptySet(),
+            )
 
     fun markFeatureAsSeen(featureKey: String) {
         viewModelScope.launch {
@@ -45,12 +47,13 @@ class MainViewModel(
     }
 
     companion object {
-        val Factory: ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                val application = (this[APPLICATION_KEY] as UnitWiseApplication)
-                val repository = application.container.userPreferencesRepository
-                MainViewModel(repository)
+        val Factory: ViewModelProvider.Factory =
+            viewModelFactory {
+                initializer {
+                    val application = (this[APPLICATION_KEY] as UnitWiseApplication)
+                    val repository = application.container.userPreferencesRepository
+                    MainViewModel(repository)
+                }
             }
-        }
     }
 }

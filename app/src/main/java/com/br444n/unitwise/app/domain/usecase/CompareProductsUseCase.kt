@@ -13,14 +13,16 @@ data class ComparisonResult(
     val savingsPerStandardUnit: String,
     val standardUnitDesc: String,
     val unitPriceA: String,
-    val unitPriceB: String
+    val unitPriceB: String,
 )
 
 class IncompatibleMeasurementUnitsException : IllegalArgumentException()
 
 class CompareProductsUseCase {
-
-    operator fun invoke(productA: ProductInputState, productB: ProductInputState): ComparisonResult {
+    operator fun invoke(
+        productA: ProductInputState,
+        productB: ProductInputState,
+    ): ComparisonResult {
         if (!MeasurementUnit.areCompatible(productA.selectedUnit, productB.selectedUnit)) {
             throw IncompatibleMeasurementUnitsException()
         }
@@ -40,10 +42,10 @@ class CompareProductsUseCase {
         require(qtyB > 0)
         require(priceA >= 0)
         require(priceB >= 0)
-        
+
         val multiplierA = getUnitMultiplier(productA.selectedUnit)
         val multiplierB = getUnitMultiplier(productB.selectedUnit)
-        
+
         val normalizedContentA = contentA * multiplierA
         val normalizedContentB = contentB * multiplierB
 
@@ -60,15 +62,16 @@ class CompareProductsUseCase {
         // 3. Determine Winner
         // Improved precision: 0.0001 instead of 0.01 to handle price per ml/g
         val isTie = abs(ppuA - ppuB) < 0.0001
-        val isProductAWinner = when {
-            isTie -> false
-            else -> ppuA < ppuB
-        }
+        val isProductAWinner =
+            when {
+                isTie -> false
+                else -> ppuA < ppuB
+            }
 
         // 4. Calculate Savings
         val winnerPPU = if (isProductAWinner) ppuA else ppuB
         val loserPPU = if (isProductAWinner) ppuB else ppuA
-        
+
         val winnerTotalContent = if (isProductAWinner) totalContentA else totalContentB
         val winnerTotalPrice = if (isProductAWinner) totalPriceA else totalPriceB
 
@@ -119,15 +122,14 @@ class CompareProductsUseCase {
             savingsPerStandardUnit = String.format(Locale.US, "%.2f", savingsPerStandard),
             standardUnitDesc = standardUnitDesc,
             unitPriceA = String.format(Locale.US, "%.2f", unitPriceAValue),
-            unitPriceB = String.format(Locale.US, "%.2f", unitPriceBValue)
+            unitPriceB = String.format(Locale.US, "%.2f", unitPriceBValue),
         )
     }
 
-    private fun getUnitMultiplier(unit: String): Double {
-        return when (unit.lowercase(Locale.US)) {
+    private fun getUnitMultiplier(unit: String): Double =
+        when (unit.lowercase(Locale.US)) {
             "kg" -> 1000.0
             "l", "lts" -> 1000.0
             else -> 1.0 // g, ml, pcs
         }
-    }
 }

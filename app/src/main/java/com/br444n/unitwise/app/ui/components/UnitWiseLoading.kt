@@ -22,33 +22,34 @@ import com.br444n.unitwise.app.ui.theme.UnitWiseTheme
 @Composable
 fun UnitWiseLoading(
     modifier: Modifier = Modifier,
-    animationResId: Int = R.raw.loading
+    animationResId: Int = R.raw.loading,
 ) {
     val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(animationResId))
     val progress by animateLottieCompositionAsState(
         composition = composition,
-        iterations = LottieConstants.IterateForever
+        iterations = LottieConstants.IterateForever,
     )
 
     Box(
-        modifier = modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background.copy(alpha = 0.8f)),
-        contentAlignment = Alignment.Center
+        modifier =
+            modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background.copy(alpha = 0.8f)),
+        contentAlignment = Alignment.Center,
     ) {
         LottieAnimation(
             composition = composition,
             progress = { progress },
-            modifier = Modifier.size(120.dp)
+            modifier = Modifier.size(120.dp),
         )
     }
 }
 
 @Preview(showBackground = true)
 @Composable
-fun PreviewLoading(){
+fun PreviewLoading() {
     UnitWiseTheme(
-        darkTheme = true
+        darkTheme = true,
     ) {
         UnitWiseLoading()
     }

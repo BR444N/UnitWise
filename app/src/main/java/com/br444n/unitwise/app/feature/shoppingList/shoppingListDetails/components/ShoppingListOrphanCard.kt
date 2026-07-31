@@ -30,19 +30,19 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.br444n.unitwise.R
+import com.br444n.unitwise.app.core.ui.components.cards.AppBadgeCard
 import com.br444n.unitwise.app.core.utils.PriceUtils
 import com.br444n.unitwise.app.ui.theme.Badge
 import com.br444n.unitwise.app.ui.theme.BlueColor
 import com.br444n.unitwise.app.ui.theme.BrandPrimary
 import com.br444n.unitwise.app.ui.theme.UnitWiseTheme
-import com.br444n.unitwise.app.core.ui.components.cards.AppBadgeCard
 
 @Composable
 fun ShoppingListOrphanCard(
     modifier: Modifier = Modifier,
     totalWithOrphansA: Double,
     totalWithOrphansB: Double,
-    onToggle: (Boolean) -> Unit = {}
+    onToggle: (Boolean) -> Unit = {},
 ) {
     var expanded by remember { mutableStateOf(false) }
 
@@ -50,70 +50,77 @@ fun ShoppingListOrphanCard(
         title = stringResource(id = R.string.orphan_items_impact),
         subtitle = "",
         icon = Icons.Default.Info,
-        colors = com.br444n.unitwise.app.core.ui.components.cards.AppBadgeCardDefaults.colors(
-            containerColor = Badge,
-            borderColor = BrandPrimary,
-            iconTint = MaterialTheme.colorScheme.primary
-        ),
-        modifier = modifier.clickable { 
-            expanded = !expanded 
-            onToggle(expanded)
-        },
+        colors =
+            com.br444n.unitwise.app.core.ui.components.cards.AppBadgeCardDefaults.colors(
+                containerColor = Badge,
+                borderColor = BrandPrimary,
+                iconTint = MaterialTheme.colorScheme.primary,
+            ),
+        modifier =
+            modifier.clickable {
+                expanded = !expanded
+                onToggle(expanded)
+            },
         trailingContent = {
             Icon(
-                imageVector = if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+                imageVector =
+                    if (expanded) {
+                        Icons.Default.KeyboardArrowUp
+                    } else {
+                        Icons.Default.KeyboardArrowDown
+                    },
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
             )
-        }
+        },
     ) {
         AnimatedVisibility(
             visible = expanded,
             enter = fadeIn() + expandVertically(animationSpec = tween(300)),
-            exit = fadeOut() + shrinkVertically(animationSpec = tween(300))
+            exit = fadeOut() + shrinkVertically(animationSpec = tween(300)),
         ) {
             Column(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
-                modifier = Modifier.padding(top = 16.dp)
+                modifier = Modifier.padding(top = 16.dp),
             ) {
                 Text(
                     text = stringResource(id = R.string.orphan_items_explanation),
                     style = MaterialTheme.typography.bodyMedium,
-                    color = BlueColor
+                    color = BlueColor,
                 )
-                
+
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
+                    horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
                     Text(
                         text = stringResource(id = R.string.list_a_absolute_total),
                         style = MaterialTheme.typography.bodyMedium,
                         fontWeight = FontWeight.SemiBold,
-                        color = BlueColor
+                        color = BlueColor,
                     )
                     Text(
                         text = PriceUtils.formatPrice(totalWithOrphansA),
                         style = MaterialTheme.typography.bodyMedium,
                         fontWeight = FontWeight.Bold,
-                        color = BlueColor
+                        color = BlueColor,
                     )
                 }
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
+                    horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
                     Text(
                         text = stringResource(id = R.string.list_b_absolute_total),
                         style = MaterialTheme.typography.bodyMedium,
                         fontWeight = FontWeight.SemiBold,
-                        color = BlueColor
+                        color = BlueColor,
                     )
                     Text(
                         text = PriceUtils.formatPrice(totalWithOrphansB),
                         style = MaterialTheme.typography.bodyMedium,
                         fontWeight = FontWeight.Bold,
-                        color = BlueColor
+                        color = BlueColor,
                     )
                 }
             }
@@ -128,7 +135,7 @@ fun ShoppingListOrphanCardPreview() {
         ShoppingListOrphanCard(
             totalWithOrphansA = 150.50,
             totalWithOrphansB = 160.00,
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier.padding(16.dp),
         )
     }
 }

@@ -22,55 +22,61 @@ import com.br444n.unitwise.app.ui.theme.UnitWiseTheme
 
 @Composable
 fun AppSearchBar(
+    modifier: Modifier = Modifier,
     query: String,
     onQueryChange: (String) -> Unit,
     hint: String,
-    modifier: Modifier = Modifier
 ) {
     OutlinedTextField(
         value = query,
         onValueChange = onQueryChange,
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp)
-            .shadow(elevation = 2.dp, shape = RoundedCornerShape(24.dp)),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
+                .shadow(elevation = 2.dp, shape = RoundedCornerShape(24.dp)),
         placeholder = {
             Text(
                 text = hint,
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         },
         leadingIcon = {
             Icon(
                 imageVector = Icons.Default.Search,
                 contentDescription = null, // decorative
-                tint = MaterialTheme.colorScheme.onSurfaceVariant
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         },
         singleLine = true,
         shape = RoundedCornerShape(24.dp),
         textStyle = MaterialTheme.typography.bodyMedium,
-        colors = OutlinedTextFieldDefaults.colors(
-            focusedBorderColor = MaterialTheme.colorScheme.onSurfaceVariant,
-            unfocusedBorderColor = Transparent,
-            disabledBorderColor = Transparent,
-            unfocusedContainerColor = MaterialTheme.colorScheme.surface,
-            focusedContainerColor = MaterialTheme.colorScheme.surface
-        )
+        colors =
+            OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                unfocusedBorderColor = Transparent,
+                disabledBorderColor = Transparent,
+                unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                focusedContainerColor = MaterialTheme.colorScheme.surface,
+            ),
     )
 }
 
 @Preview(name = "Light Mode - Empty", showBackground = true)
-@Preview(name = "Dark Mode - Empty", showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(
+    name = "Dark Mode - Empty",
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+)
 @Composable
 fun AppSearchBarEmptyPreview() {
     UnitWiseTheme {
         AppSearchBar(
             query = "",
             onQueryChange = {},
-            hint = "Search for items..."
+            hint = "Search for items...",
         )
     }
 }
@@ -82,7 +88,7 @@ fun AppSearchBarFilledPreview() {
         AppSearchBar(
             query = "Kilograms",
             onQueryChange = {},
-            hint = "Search for items..."
+            hint = "Search for items...",
         )
     }
 }

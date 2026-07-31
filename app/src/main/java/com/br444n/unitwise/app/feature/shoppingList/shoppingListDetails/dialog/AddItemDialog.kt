@@ -25,18 +25,18 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.br444n.unitwise.R
-import com.br444n.unitwise.app.ui.theme.UnitWiseTheme
+import com.br444n.unitwise.app.core.ui.components.buttons.AppPrimaryButton
+import com.br444n.unitwise.app.core.ui.components.buttons.AppSecondaryButton
 import com.br444n.unitwise.app.core.ui.components.dialogs.AppDialog
 import com.br444n.unitwise.app.core.ui.components.inputs.AppTextField
 import com.br444n.unitwise.app.core.ui.components.inputs.AppTextFieldContent
 import com.br444n.unitwise.app.core.ui.components.inputs.AppTextFieldKeyboard
-import com.br444n.unitwise.app.core.ui.components.buttons.AppPrimaryButton
-import com.br444n.unitwise.app.core.ui.components.buttons.AppSecondaryButton
+import com.br444n.unitwise.app.ui.theme.UnitWiseTheme
 
 @Composable
 fun AddItemDialog(
     onDismiss: () -> Unit,
-    onAdd: (name: String) -> Unit
+    onAdd: (name: String) -> Unit,
 ) {
     var itemName by remember { mutableStateOf("") }
     val focusRequester = remember { FocusRequester() }
@@ -50,43 +50,47 @@ fun AddItemDialog(
             text = stringResource(id = R.string.add_category_dialog_title),
             style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onSurface
+            color = MaterialTheme.colorScheme.onSurface,
         )
-        
+
         Spacer(modifier = Modifier.height(16.dp))
 
         AppTextField(
             value = itemName,
             onValueChange = { if (it.length <= 40) itemName = it },
-            modifier = Modifier
-                .fillMaxWidth()
-                .focusRequester(focusRequester),
-            content = AppTextFieldContent(
-                label = { Text(stringResource(id = R.string.category_name_hint)) }
-            ),
-            keyboard = AppTextFieldKeyboard(
-                options = KeyboardOptions(
-                    capitalization = KeyboardCapitalization.Sentences,
-                    imeAction = ImeAction.Done
-                )
-            )
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .focusRequester(focusRequester),
+            content =
+                AppTextFieldContent(
+                    label = { Text(stringResource(id = R.string.category_name_hint)) },
+                ),
+            keyboard =
+                AppTextFieldKeyboard(
+                    options =
+                        KeyboardOptions(
+                            capitalization = KeyboardCapitalization.Sentences,
+                            imeAction = ImeAction.Done,
+                        ),
+                ),
         )
 
         Spacer(modifier = Modifier.height(32.dp))
 
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.End
+            horizontalArrangement = Arrangement.End,
         ) {
             AppSecondaryButton(
                 text = stringResource(id = R.string.cancel),
-                onClick = onDismiss
+                onClick = onDismiss,
             )
             Spacer(modifier = Modifier.width(8.dp))
             AppPrimaryButton(
                 text = stringResource(id = R.string.add_category_button),
                 onClick = { onAdd(itemName.trim()) },
-                enabled = itemName.isNotBlank()
+                enabled = itemName.isNotBlank(),
             )
         }
     }
@@ -98,7 +102,7 @@ fun AddItemDialogPreview() {
     UnitWiseTheme {
         AddItemDialog(
             onDismiss = {},
-            onAdd = {}
+            onAdd = {},
         )
     }
 }

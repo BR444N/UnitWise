@@ -16,13 +16,13 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
-import com.br444n.unitwise.app.core.ui.components.feedback.UnitWiseTooltip
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.br444n.unitwise.R
+import com.br444n.unitwise.app.core.ui.components.feedback.UnitWiseTooltip
 import com.br444n.unitwise.app.ui.theme.UnitWiseTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -31,46 +31,46 @@ fun ScannTopAppBar(
     modifier: Modifier = Modifier,
     isFlashOn: Boolean = false,
     onBackClick: () -> Unit = {},
-    onFlashClick: () -> Unit = {}
+    onFlashClick: () -> Unit = {},
 ) {
     Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .background(Color.Transparent)
-            .statusBarsPadding()
-            .padding(horizontal = 16.dp, vertical = 16.dp),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .background(Color.Transparent)
+                .statusBarsPadding()
+                .padding(horizontal = 16.dp, vertical = 16.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         // Back Button with Shadow + Tooltip
         UnitWiseTooltip(
-            tooltipText = stringResource(id = R.string.navigate_up)
+            tooltipText = stringResource(id = R.string.navigate_up),
         ) {
             IconButton(
                 onClick = onBackClick,
-                modifier = Modifier.background(Color.Black.copy(alpha = 0.5f), shape = CircleShape)
+                modifier = Modifier.background(Color.Black.copy(alpha = 0.5f), shape = CircleShape),
             ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = stringResource(id = R.string.navigate_up),
-                    tint = Color.White
+                    tint = Color.White,
                 )
             }
         }
 
-
         // Flash Button with Shadow + Tooltip
         UnitWiseTooltip(
-            tooltipText = stringResource(id = R.string.toggle_flash)
+            tooltipText = stringResource(id = R.string.toggle_flash),
         ) {
             IconButton(
                 onClick = onFlashClick,
-                modifier = Modifier.background(Color.Black.copy(alpha = 0.5f), shape = CircleShape)
+                modifier = Modifier.background(Color.Black.copy(alpha = 0.5f), shape = CircleShape),
             ) {
                 Icon(
                     imageVector = if (isFlashOn) Icons.Default.FlashOn else Icons.Default.FlashOff,
                     contentDescription = stringResource(id = R.string.toggle_flash),
-                    tint = Color.White
+                    tint = Color.White,
                 )
             }
         }

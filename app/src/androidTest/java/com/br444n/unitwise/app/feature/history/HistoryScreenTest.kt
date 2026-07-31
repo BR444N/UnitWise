@@ -14,7 +14,6 @@ import org.junit.Test
  * Instrumentation tests for [HistoryScreen].
  */
 class HistoryScreenTest {
-
     @get:Rule
     val composeTestRule = createComposeRule()
 
@@ -23,20 +22,21 @@ class HistoryScreenTest {
     @Test
     fun historyEmptyState_isDisplayed_whenComparisonsAreEmpty() {
         // Given
-        val uiState = HistoryUiState(
-            comparisons = emptyList(),
-            isLoading = false
-        )
+        val uiState =
+            HistoryUiState(
+                comparisons = emptyList(),
+                isLoading = false,
+            )
 
         // When
         composeTestRule.setContent {
             UnitWiseTheme {
                 HistoryContent(
                     uiState = uiState,
-                    onNavigate = {},
                     onViewDetails = {},
-                    onShareClick = {},
-                    onClearAllClick = {}
+                    onClearAllClick = {},
+                    onEditComparison = {},
+                    onShareComparison = {},
                 )
             }
         }
@@ -49,39 +49,43 @@ class HistoryScreenTest {
     @Test
     fun historyList_isDisplayed_whenComparisonsArePresent() {
         // Given
-        val comparisons = listOf(
-            HistoryItemUiModel(
-                entity = ComparisonEntity(
-                    id = 1,
-                    productAName = "Product A",
-                    productBName = "Product B",
-                    productAContent = "100",
-                    productBContent = "200",
-                    productAUnit = "g",
-                    productBUnit = "g",
-                    productAPrice = "10.0",
-                    productBPrice = "15.0",
-                    productAQuantity = "1",
-                    productBQuantity = "1",
-                    timestamp = System.currentTimeMillis()
+        val comparisons =
+            listOf(
+                HistoryItemUiModel(
+                    entity =
+                        ComparisonEntity(
+                            id = 1,
+                            shareId = "test_share_id",
+                            productAName = "Product A",
+                            productBName = "Product B",
+                            productAContent = "100",
+                            productBContent = "200",
+                            productAUnit = "g",
+                            productBUnit = "g",
+                            productAPrice = "10.0",
+                            productBPrice = "15.0",
+                            productAQuantity = "1",
+                            productBQuantity = "1",
+                            timestamp = System.currentTimeMillis(),
+                        ),
+                    winnerName = "Product B",
                 ),
-                winnerName = "Product B"
             )
-        )
-        val uiState = HistoryUiState(
-            comparisons = comparisons,
-            isLoading = false
-        )
+        val uiState =
+            HistoryUiState(
+                comparisons = comparisons,
+                isLoading = false,
+            )
 
         // When
         composeTestRule.setContent {
             UnitWiseTheme {
                 HistoryContent(
                     uiState = uiState,
-                    onNavigate = {},
                     onViewDetails = {},
-                    onShareClick = {},
-                    onClearAllClick = {}
+                    onClearAllClick = {},
+                    onEditComparison = {},
+                    onShareComparison = {},
                 )
             }
         }

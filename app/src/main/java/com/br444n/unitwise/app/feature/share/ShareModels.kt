@@ -5,14 +5,14 @@ import com.br444n.unitwise.app.domain.model.ProductInputState
 data class SharedComparisonData(
     val shareId: String,
     val productA: ProductInputState,
-    val productB: ProductInputState
+    val productB: ProductInputState,
 )
 
 data class SharedComparisonLink(
     val shareId: String,
     val encryptionKey: String,
     val url: String,
-    val shareText: String
+    val shareText: String,
 )
 
 data class SharedComparisonRecord(
@@ -20,5 +20,5 @@ data class SharedComparisonRecord(
     val ciphertext: String,
     val iv: String,
     val expiresAt: Long,
-    val createdAt: Long
+    val createdAt: Long,
 )

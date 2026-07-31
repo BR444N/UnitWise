@@ -3,7 +3,7 @@ package com.br444n.unitwise.app.feature.scann.components
 data class OverlayTextBlock(
     val text: String,
     val centerX: Float,
-    val centerY: Float
+    val centerY: Float,
 )
 
 data class OverlayFrameConfig(
@@ -12,13 +12,13 @@ data class OverlayFrameConfig(
     val rotation: Int,
     val previewWidth: Int,
     val previewHeight: Int,
-    val overlayHeight: Int
+    val overlayHeight: Int,
 )
 
 object ScannOverlayTextFilter {
     fun filterToOverlay(
         blocks: List<OverlayTextBlock>,
-        config: OverlayFrameConfig
+        config: OverlayFrameConfig,
     ): List<String> {
         if (
             config.mediaWidth <= 0 ||
@@ -30,21 +30,24 @@ object ScannOverlayTextFilter {
             return emptyList()
         }
 
-        val imageWidth = if (config.rotation == 90 || config.rotation == 270) {
-            config.mediaHeight
-        } else {
-            config.mediaWidth
-        }
-        val imageHeight = if (config.rotation == 90 || config.rotation == 270) {
-            config.mediaWidth
-        } else {
-            config.mediaHeight
-        }
+        val imageWidth =
+            if (config.rotation == 90 || config.rotation == 270) {
+                config.mediaHeight
+            } else {
+                config.mediaWidth
+            }
+        val imageHeight =
+            if (config.rotation == 90 || config.rotation == 270) {
+                config.mediaWidth
+            } else {
+                config.mediaHeight
+            }
 
-        val scale = maxOf(
-            config.previewWidth.toFloat() / imageWidth,
-            config.previewHeight.toFloat() / imageHeight
-        )
+        val scale =
+            maxOf(
+                config.previewWidth.toFloat() / imageWidth,
+                config.previewHeight.toFloat() / imageHeight,
+            )
         val offsetX = (imageWidth * scale - config.previewWidth) / 2f
         val offsetY = (imageHeight * scale - config.previewHeight) / 2f
 
@@ -60,8 +63,7 @@ object ScannOverlayTextFilter {
                 val mappedCenterX = block.centerX * scale - offsetX
                 val mappedCenterY = block.centerY * scale - offsetY
                 mappedCenterX in targetLeft..targetRight && mappedCenterY in targetTop..targetBottom
-            }
-            .map { it.text.trim() }
+            }.map { it.text.trim() }
             .filter { it.isNotBlank() }
     }
 }

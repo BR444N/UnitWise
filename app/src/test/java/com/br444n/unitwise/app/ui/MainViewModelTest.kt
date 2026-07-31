@@ -16,7 +16,6 @@ import org.junit.Test
  * Unit tests for [MainViewModel].
  */
 class MainViewModelTest {
-
     @get:Rule
     val mainDispatcherRule = MainDispatcherRule()
 
@@ -31,38 +30,40 @@ class MainViewModelTest {
     }
 
     @Test
-    fun `isDarkTheme should reflect repository value`() = runTest {
-        // Given
-        val viewModel = MainViewModel(repository)
+    fun `isDarkTheme should reflect repository value`() =
+        runTest {
+            // Given
+            val viewModel = MainViewModel(repository)
 
-        // Then
-        viewModel.isDarkTheme.test {
-            // Ignore the initial null and get the current value from repository
-            assertThat(expectMostRecentItem()).isFalse()
-            
-            // Update value
-            themeFlow.value = true
-            assertThat(awaitItem()).isTrue()
-            
-            cancelAndIgnoreRemainingEvents()
+            // Then
+            viewModel.isDarkTheme.test {
+                // Ignore the initial null and get the current value from repository
+                assertThat(expectMostRecentItem()).isFalse()
+
+                // Update value
+                themeFlow.value = true
+                assertThat(awaitItem()).isTrue()
+
+                cancelAndIgnoreRemainingEvents()
+            }
         }
-    }
 
     @Test
-    fun `selectedLanguage should reflect repository value`() = runTest {
-        // Given
-        val viewModel = MainViewModel(repository)
+    fun `selectedLanguage should reflect repository value`() =
+        runTest {
+            // Given
+            val viewModel = MainViewModel(repository)
 
-        // Then
-        viewModel.selectedLanguage.test {
-            // Ignore the initial null and get the current value from repository
-            assertThat(expectMostRecentItem()).isEqualTo("en")
-            
-            // Update value
-            langFlow.value = "es"
-            assertThat(awaitItem()).isEqualTo("es")
-            
-            cancelAndIgnoreRemainingEvents()
+            // Then
+            viewModel.selectedLanguage.test {
+                // Ignore the initial null and get the current value from repository
+                assertThat(expectMostRecentItem()).isEqualTo("en")
+
+                // Update value
+                langFlow.value = "es"
+                assertThat(awaitItem()).isEqualTo("es")
+
+                cancelAndIgnoreRemainingEvents()
+            }
         }
-    }
 }

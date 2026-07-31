@@ -11,5 +11,5 @@ data class ShoppingListEntity(
     val colorBadge: Int,
     val timestamp: Long,
     val supermarketAName: String = "Súper A",
-    val supermarketBName: String = "Súper B"
+    val supermarketBName: String = "Súper B",
 )

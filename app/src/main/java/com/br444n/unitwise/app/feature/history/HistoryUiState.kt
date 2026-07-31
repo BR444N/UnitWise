@@ -4,10 +4,10 @@ import com.br444n.unitwise.app.data.local.entity.ComparisonEntity
 
 data class HistoryItemUiModel(
     val entity: ComparisonEntity,
-    val winnerName: String?
+    val winnerName: String?,
 )
 
 data class HistoryUiState(
     val comparisons: List<HistoryItemUiModel> = emptyList(),
-    val isLoading: Boolean = true
+    val isLoading: Boolean = true,
 )

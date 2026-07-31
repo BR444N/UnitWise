@@ -21,35 +21,37 @@ fun AppFloatingActionButton(
     icon: ImageVector,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    enabled: Boolean = true
+    enabled: Boolean = true,
 ) {
     ExtendedFloatingActionButton(
         onClick = { if (enabled) onClick() },
         modifier = modifier,
         expanded = enabled,
-        icon = { 
+        icon = {
             Icon(
-                imageVector = icon, 
-                contentDescription = null 
-            ) 
+                imageVector = icon,
+                contentDescription = null,
+            )
         },
-        text = { 
+        text = {
             Text(
                 text = text,
                 style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.SemiBold
-            ) 
+                fontWeight = FontWeight.SemiBold,
+            )
         },
-        containerColor = if (enabled) {
-            MaterialTheme.colorScheme.primary
-        } else {
-            MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
-        },
-        contentColor = if (enabled) {
-            MaterialTheme.colorScheme.onPrimary
-        } else {
-            MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.38f)
-        },
+        containerColor =
+            if (enabled) {
+                MaterialTheme.colorScheme.primary
+            } else {
+                MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+            },
+        contentColor =
+            if (enabled) {
+                MaterialTheme.colorScheme.onPrimary
+            } else {
+                MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.38f)
+            },
     )
 }
 
@@ -62,7 +64,7 @@ fun AppFloatingActionButtonPreview() {
             icon = Icons.Default.Add,
             modifier = Modifier.padding(16.dp),
             onClick = {},
-            enabled = true
+            enabled = true,
         )
     }
 }

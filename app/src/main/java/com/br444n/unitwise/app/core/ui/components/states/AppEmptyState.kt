@@ -2,6 +2,7 @@ package com.br444n.unitwise.app.core.ui.components.states
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -20,7 +21,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.br444n.unitwise.R
 import com.br444n.unitwise.app.ui.theme.UnitWiseTheme
-import androidx.compose.foundation.layout.ColumnScope
 
 @Composable
 fun AppEmptyState(
@@ -28,40 +28,41 @@ fun AppEmptyState(
     subtitle: String,
     iconResId: Int,
     modifier: Modifier = Modifier,
-    content: @Composable ColumnScope.() -> Unit = {}
+    content: @Composable ColumnScope.() -> Unit = {},
 ) {
     Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(32.dp),
+        modifier =
+            modifier
+                .fillMaxSize()
+                .padding(32.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Center,
     ) {
         Icon(
             painter = painterResource(id = iconResId),
             contentDescription = null,
             modifier = Modifier.size(240.dp),
-            tint = Color.Unspecified
+            tint = Color.Unspecified,
         )
-        
+
         Spacer(modifier = Modifier.height(24.dp))
-        
+
         Text(
             text = title,
             style = MaterialTheme.typography.titleLarge,
             textAlign = TextAlign.Center,
-            color = MaterialTheme.colorScheme.onBackground
+            color = MaterialTheme.colorScheme.onBackground,
         )
-        
+
         Spacer(modifier = Modifier.height(12.dp))
-        
+
         Text(
             text = subtitle,
             style = MaterialTheme.typography.bodyMedium,
             textAlign = TextAlign.Center,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
-        
+
         content()
     }
 }
@@ -73,7 +74,7 @@ fun AppEmptyStatePreview() {
         AppEmptyState(
             title = "No Items Found",
             subtitle = "Try searching for something else.",
-            iconResId = R.drawable.no_comparisons
+            iconResId = R.drawable.no_comparisons,
         )
     }
 }

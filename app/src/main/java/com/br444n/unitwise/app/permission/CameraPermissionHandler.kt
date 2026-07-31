@@ -12,22 +12,23 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
 
 @Composable
-fun rememberCameraPermissionHandler(
-    onPermissionGranted: (String) -> Unit
-): (String) -> Unit {
+fun rememberCameraPermissionHandler(onPermissionGranted: (String) -> Unit): (String) -> Unit {
     val context = LocalContext.current
     var pendingTarget by remember { mutableStateOf<String?>(null) }
-    
-    val launcher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission()
-    ) { isGranted ->
-        if (isGranted) {
-            pendingTarget?.let { onPermissionGranted(it) }
+
+    val launcher =
+        rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.RequestPermission(),
+        ) { isGranted ->
+            if (isGranted) {
+                pendingTarget?.let { onPermissionGranted(it) }
+            }
         }
-    }
 
     return { target ->
-        if (ContextCompat.checkSelfPermission(context, android.Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(context, android.Manifest.permission.CAMERA) ==
+            PackageManager.PERMISSION_GRANTED
+        ) {
             onPermissionGranted(target)
         } else {
             pendingTarget = target

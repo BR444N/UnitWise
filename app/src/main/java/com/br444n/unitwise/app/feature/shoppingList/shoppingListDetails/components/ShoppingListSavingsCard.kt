@@ -14,8 +14,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Savings
-import com.br444n.unitwise.app.core.ui.components.layout.AppCard
-import com.br444n.unitwise.app.core.ui.components.lists.AppListDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -28,6 +26,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.br444n.unitwise.R
+import com.br444n.unitwise.app.core.ui.components.layout.AppCard
+import com.br444n.unitwise.app.core.ui.components.lists.AppListDivider
 import com.br444n.unitwise.app.core.utils.PriceUtils
 import com.br444n.unitwise.app.ui.theme.Badge
 import com.br444n.unitwise.app.ui.theme.BlueColor
@@ -38,103 +38,124 @@ fun ShoppingListSavingsCard(
     totalA: Double,
     totalB: Double,
     smartTotal: Double,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     if (totalA == 0.0 && totalB == 0.0) return
 
     val winnerTotal = if (totalA < totalB) totalA else totalB
     val loserTotal = if (totalA > totalB) totalA else totalB
-    val winnerName = if (totalA < totalB) stringResource(id = R.string.list_a) else stringResource(id = R.string.list_b)
-    
+    val winnerName =
+        if (totalA <
+            totalB
+        ) {
+            stringResource(id = R.string.list_a)
+        } else {
+            stringResource(id = R.string.list_b)
+        }
+
     // Calculate savings by using the smart choices vs the worst case list
-    val savings = if (smartTotal > 0 && smartTotal < loserTotal) loserTotal - smartTotal else loserTotal - winnerTotal
+    val savings =
+        if (smartTotal > 0 &&
+            smartTotal < loserTotal
+        ) {
+            loserTotal - smartTotal
+        } else {
+            loserTotal - winnerTotal
+        }
     val percentage = if (loserTotal > 0) (savings / loserTotal) * 100 else 0.0
 
     AppCard(
         modifier = modifier.fillMaxWidth(),
         containerColor = BlueColor,
-        elevation = 0.dp
+        elevation = 0.dp,
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(20.dp)
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(20.dp),
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 Column(horizontalAlignment = Alignment.Start) {
                     Text(
                         text = stringResource(id = R.string.total_list_a),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        textAlign = TextAlign.Center
+                        textAlign = TextAlign.Center,
                     )
                     Text(
                         text = PriceUtils.formatPrice(totalA),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.primary
+                        color = MaterialTheme.colorScheme.primary,
                     )
                 }
-                
+
                 Column(horizontalAlignment = Alignment.End) {
                     Text(
                         text = stringResource(id = R.string.total_list_b),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        textAlign = TextAlign.Center
+                        textAlign = TextAlign.Center,
                     )
                     Text(
                         text = PriceUtils.formatPrice(totalB),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.primary
+                        color = MaterialTheme.colorScheme.primary,
                     )
                 }
             }
 
             AppListDivider(modifier = Modifier.padding(vertical = 4.dp))
-            
+
             if (savings > 0) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Box(
-                        modifier = Modifier
-                            .background(
-                                color = Badge,
-                                shape = RoundedCornerShape(12.dp)
-                            )
-                            .padding(12.dp),
-                        contentAlignment = Alignment.Center
+                        modifier =
+                            Modifier
+                                .background(
+                                    color = Badge,
+                                    shape = RoundedCornerShape(12.dp),
+                                ).padding(12.dp),
+                        contentAlignment = Alignment.Center,
                     ) {
                         Icon(
                             imageVector = Icons.Default.Savings,
                             contentDescription = stringResource(id = R.string.savings_desc),
                             tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.size(32.dp)
+                            modifier = Modifier.size(32.dp),
                         )
                     }
-                    
+
                     Spacer(modifier = Modifier.width(16.dp))
-                    
+
                     Column {
                         Text(
                             text = stringResource(id = R.string.total_savings_with, winnerName),
                             style = MaterialTheme.typography.titleMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
-                        
+
                         Spacer(modifier = Modifier.height(4.dp))
-                        
+
                         Text(
-                            text = "${PriceUtils.formatPrice(savings)} (${String.format(java.util.Locale.getDefault(), "%.1f", percentage)}%)",
+                            text = "${PriceUtils.formatPrice(
+                                savings,
+                            )} (${String.format(
+                                java.util.Locale.getDefault(),
+                                "%.1f",
+                                percentage,
+                            )}%)",
                             style = MaterialTheme.typography.headlineMedium,
                             fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.primary
+                            color = MaterialTheme.colorScheme.primary,
                         )
                     }
                 }
@@ -143,7 +164,7 @@ fun ShoppingListSavingsCard(
                     text = stringResource(id = R.string.no_savings_differences),
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                    modifier = Modifier.align(Alignment.CenterHorizontally),
                 )
             }
         }
@@ -158,7 +179,7 @@ fun ShoppingListSavingsCardPreview() {
             totalA = 24.50,
             totalB = 28.15,
             smartTotal = 20.00,
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier.padding(16.dp),
         )
     }
 }

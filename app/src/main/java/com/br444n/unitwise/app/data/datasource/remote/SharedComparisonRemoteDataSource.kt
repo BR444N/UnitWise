@@ -12,35 +12,32 @@ class SharedComparisonRemoteDataSource {
         }
     }
 
-    suspend fun getComparisonByShareId(shareId: String): SharedComparisonRecord? {
-        return client.from("shared_comparisons")
+    suspend fun getComparisonByShareId(shareId: String): SharedComparisonRecord? =
+        client
+            .from("shared_comparisons")
             .select {
                 filter {
                     eq("share_id", shareId)
                 }
-            }
-            .decodeList<SharedComparisonDto>()
+            }.decodeList<SharedComparisonDto>()
             .firstOrNull()
             ?.toRecord()
-    }
 }
 
-private fun SharedComparisonRecord.toDto(): SharedComparisonDto {
-    return SharedComparisonDto(
+private fun SharedComparisonRecord.toDto(): SharedComparisonDto =
+    SharedComparisonDto(
         shareId = shareId,
         ciphertext = ciphertext,
         iv = iv,
         expiresAt = expiresAt,
-        createdAt = createdAt
+        createdAt = createdAt,
     )
-}
 
-private fun SharedComparisonDto.toRecord(): SharedComparisonRecord {
-    return SharedComparisonRecord(
+private fun SharedComparisonDto.toRecord(): SharedComparisonRecord =
+    SharedComparisonRecord(
         shareId = shareId,
         ciphertext = ciphertext,
         iv = iv,
         expiresAt = expiresAt,
-        createdAt = createdAt
+        createdAt = createdAt,
     )
-}

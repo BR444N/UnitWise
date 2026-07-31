@@ -20,10 +20,9 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.br444n.unitwise.app.ui.theme.Badge
-
-import androidx.compose.ui.tooling.preview.Preview
 import com.br444n.unitwise.app.ui.theme.UnitWiseTheme
 
 data class AppDropdownMenuConfig<T>(
@@ -32,17 +31,17 @@ data class AppDropdownMenuConfig<T>(
     val itemLabel: (T) -> String = { it.toString() },
     val isItemEnabled: (T) -> Boolean = { true },
     val isReadOnly: Boolean = false,
-    val label: String? = null
+    val label: String? = null,
 )
 
 data class AppDropdownMenuActions<T>(
     val onItemSelected: (T) -> Unit,
-    val onDisabledItemClick: (T) -> Unit = {}
+    val onDisabledItemClick: (T) -> Unit = {},
 )
 
 data class AppDropdownMenuFocusConfig(
     val focusRequester: FocusRequester? = null,
-    val nextFocusRequester: FocusRequester? = null
+    val nextFocusRequester: FocusRequester? = null,
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -51,53 +50,59 @@ fun <T> AppDropdownMenu(
     config: AppDropdownMenuConfig<T>,
     actions: AppDropdownMenuActions<T>,
     modifier: Modifier = Modifier,
-    focusConfig: AppDropdownMenuFocusConfig = AppDropdownMenuFocusConfig()
+    focusConfig: AppDropdownMenuFocusConfig = AppDropdownMenuFocusConfig(),
 ) {
     var expanded by remember { mutableStateOf(false) }
 
     ExposedDropdownMenuBox(
         expanded = expanded && !config.isReadOnly,
         onExpandedChange = { if (!config.isReadOnly) expanded = !expanded },
-        modifier = modifier
+        modifier = modifier,
     ) {
-        var fieldModifier = Modifier.menuAnchor(type = ExposedDropdownMenuAnchorType.PrimaryNotEditable)
+        var fieldModifier =
+            Modifier.menuAnchor(
+                type = ExposedDropdownMenuAnchorType.PrimaryNotEditable,
+            )
         if (focusConfig.focusRequester != null) {
             fieldModifier = fieldModifier.focusRequester(focusConfig.focusRequester)
         }
-        fieldModifier = fieldModifier.onFocusChanged {
-            if (it.isFocused && !config.isReadOnly) {
-                expanded = true
+        fieldModifier =
+            fieldModifier.onFocusChanged {
+                if (it.isFocused && !config.isReadOnly) {
+                    expanded = true
+                }
             }
-        }
 
         AppTextField(
             value = config.itemLabel(config.selectedItem),
             onValueChange = {},
             modifier = fieldModifier,
-            config = AppTextFieldConfig(
-                readOnly = true,
-                enabled = !config.isReadOnly
-            ),
-            content = AppTextFieldContent(
-                label = config.label?.let { { Text(it) } },
-                trailingIcon = { 
-                    if (!config.isReadOnly) {
-                        ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) 
-                    }
-                }
-            )
+            config =
+                AppTextFieldConfig(
+                    readOnly = true,
+                    enabled = !config.isReadOnly,
+                ),
+            content =
+                AppTextFieldContent(
+                    label = config.label?.let { { Text(it) } },
+                    trailingIcon = {
+                        if (!config.isReadOnly) {
+                            ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
+                        }
+                    },
+                ),
         )
         ExposedDropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false },
             shape = RoundedCornerShape(16.dp),
-            containerColor = MaterialTheme.colorScheme.surface
+            containerColor = MaterialTheme.colorScheme.surface,
         ) {
             AppDropdownMenuItems(
                 config = config,
                 actions = actions,
                 onDismissRequest = { expanded = false },
-                nextFocusRequester = focusConfig.nextFocusRequester
+                nextFocusRequester = focusConfig.nextFocusRequester,
             )
         }
     }
@@ -108,23 +113,24 @@ private fun <T> AppDropdownMenuItems(
     config: AppDropdownMenuConfig<T>,
     actions: AppDropdownMenuActions<T>,
     onDismissRequest: () -> Unit,
-    nextFocusRequester: FocusRequester?
+    nextFocusRequester: FocusRequester?,
 ) {
     config.items.forEachIndexed { index, item ->
         val isSelected = item == config.selectedItem
         val isEnabled = config.isItemEnabled(item)
-        
+
         DropdownMenuItem(
-            text = { 
+            text = {
                 Text(
                     text = config.itemLabel(item),
-                    color = when {
-                        isSelected -> MaterialTheme.colorScheme.primary
-                        isEnabled -> MaterialTheme.colorScheme.onSurface
-                        else -> MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.45f)
-                    },
-                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
-                ) 
+                    color =
+                        when {
+                            isSelected -> MaterialTheme.colorScheme.primary
+                            isEnabled -> MaterialTheme.colorScheme.onSurface
+                            else -> MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.45f)
+                        },
+                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
+                )
             },
             onClick = {
                 if (isEnabled) {
@@ -135,14 +141,14 @@ private fun <T> AppDropdownMenuItems(
                     actions.onDisabledItemClick(item)
                 }
             },
-            enabled = true
+            enabled = true,
         )
-        
+
         if (index < config.items.size - 1) {
             HorizontalDivider(
                 modifier = Modifier.padding(horizontal = 12.dp),
                 color = Badge.copy(alpha = 0.5f),
-                thickness = 0.5.dp
+                thickness = 0.5.dp,
             )
         }
     }
@@ -153,15 +159,17 @@ private fun <T> AppDropdownMenuItems(
 private fun AppDropdownMenuPreview() {
     UnitWiseTheme {
         AppDropdownMenu(
-            config = AppDropdownMenuConfig(
-                selectedItem = "Option 1",
-                items = listOf("Option 1", "Option 2", "Option 3"),
-                label = "Select an option"
-            ),
-            actions = AppDropdownMenuActions(
-                onItemSelected = {}
-            ),
-            modifier = Modifier.padding(16.dp)
+            config =
+                AppDropdownMenuConfig(
+                    selectedItem = "Option 1",
+                    items = listOf("Option 1", "Option 2", "Option 3"),
+                    label = "Select an option",
+                ),
+            actions =
+                AppDropdownMenuActions(
+                    onItemSelected = {},
+                ),
+            modifier = Modifier.padding(16.dp),
         )
     }
 }

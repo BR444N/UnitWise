@@ -8,26 +8,27 @@ import org.junit.Test
  * Unit tests for [CompareProductsUseCase].
  */
 class CompareProductsUseCaseTest {
-
     private val useCase = CompareProductsUseCase()
 
     @Test
     fun `product A is cheaper than product B`() {
         // Given
-        val productA = ProductInputState(
-            productName = "Product A",
-            contentAmount = "1000",
-            selectedUnit = "g",
-            price = "10.0",
-            quantity = "1"
-        ) // PPU = 0.01 per g
-        val productB = ProductInputState(
-            productName = "Product B",
-            contentAmount = "500",
-            selectedUnit = "g",
-            price = "6.0",
-            quantity = "1"
-        ) // PPU = 0.012 per g
+        val productA =
+            ProductInputState(
+                productName = "Product A",
+                contentAmount = "1000",
+                selectedUnit = "g",
+                price = "10.0",
+                quantity = "1",
+            ) // PPU = 0.01 per g
+        val productB =
+            ProductInputState(
+                productName = "Product B",
+                contentAmount = "500",
+                selectedUnit = "g",
+                price = "6.0",
+                quantity = "1",
+            ) // PPU = 0.012 per g
 
         // When
         val result = useCase(productA, productB)
@@ -42,20 +43,22 @@ class CompareProductsUseCaseTest {
     @Test
     fun `product B is cheaper than product A when weights are different types`() {
         // Given
-        val productA = ProductInputState(
-            productName = "Product A",
-            contentAmount = "1",
-            selectedUnit = "kg",
-            price = "20.0",
-            quantity = "1"
-        ) // 1000g, PPU = 0.02 per g
-        val productB = ProductInputState(
-            productName = "Product B",
-            contentAmount = "2000",
-            selectedUnit = "g",
-            price = "30.0",
-            quantity = "1"
-        ) // 2000g, PPU = 0.015 per g
+        val productA =
+            ProductInputState(
+                productName = "Product A",
+                contentAmount = "1",
+                selectedUnit = "kg",
+                price = "20.0",
+                quantity = "1",
+            ) // 1000g, PPU = 0.02 per g
+        val productB =
+            ProductInputState(
+                productName = "Product B",
+                contentAmount = "2000",
+                selectedUnit = "g",
+                price = "30.0",
+                quantity = "1",
+            ) // 2000g, PPU = 0.015 per g
 
         // When
         val result = useCase(productA, productB)
@@ -72,20 +75,22 @@ class CompareProductsUseCaseTest {
     @Test
     fun `it is a tie when prices per unit are equal`() {
         // Given
-        val productA = ProductInputState(
-            productName = "Product A",
-            contentAmount = "100",
-            selectedUnit = "g",
-            price = "1.0",
-            quantity = "1"
-        ) // 0.01 per g
-        val productB = ProductInputState(
-            productName = "Product B",
-            contentAmount = "500",
-            selectedUnit = "g",
-            price = "5.0",
-            quantity = "1"
-        ) // 0.01 per g
+        val productA =
+            ProductInputState(
+                productName = "Product A",
+                contentAmount = "100",
+                selectedUnit = "g",
+                price = "1.0",
+                quantity = "1",
+            ) // 0.01 per g
+        val productB =
+            ProductInputState(
+                productName = "Product B",
+                contentAmount = "500",
+                selectedUnit = "g",
+                price = "5.0",
+                quantity = "1",
+            ) // 0.01 per g
 
         // When
         val result = useCase(productA, productB)

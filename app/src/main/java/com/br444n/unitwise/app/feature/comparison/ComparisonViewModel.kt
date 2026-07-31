@@ -7,10 +7,10 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.br444n.unitwise.app.UnitWiseApplication
+import com.br444n.unitwise.app.domain.model.ProductInputState
 import com.br444n.unitwise.app.domain.usecase.CompareProductsUseCase
 import com.br444n.unitwise.app.domain.usecase.GetComparisonByShareIdUseCase
 import com.br444n.unitwise.app.domain.usecase.GetComparisonUseCase
-import com.br444n.unitwise.app.domain.model.ProductInputState
 import com.br444n.unitwise.app.feature.share.SharedComparisonData
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -21,9 +21,8 @@ import kotlinx.coroutines.launch
 class ComparisonViewModel(
     private val getComparisonUseCase: GetComparisonUseCase,
     private val getComparisonByShareIdUseCase: GetComparisonByShareIdUseCase,
-    private val compareProductsUseCase: CompareProductsUseCase = CompareProductsUseCase()
+    private val compareProductsUseCase: CompareProductsUseCase = CompareProductsUseCase(),
 ) : ViewModel() {
-    
     private val _uiState = MutableStateFlow(ComparisonUiState())
     val uiState: StateFlow<ComparisonUiState> = _uiState.asStateFlow()
 
@@ -31,42 +30,49 @@ class ComparisonViewModel(
         viewModelScope.launch {
             val entity = getComparisonUseCase(id) ?: return@launch
             showComparison(
-                productA = ProductInputState(
-                    productName = entity.productAName,
-                    contentAmount = entity.productAContent,
-                    selectedUnit = entity.productAUnit,
-                    price = entity.productAPrice,
-                    quantity = entity.productAQuantity
-                ),
-                productB = ProductInputState(
-                    productName = entity.productBName,
-                    contentAmount = entity.productBContent,
-                    selectedUnit = entity.productBUnit,
-                    price = entity.productBPrice,
-                    quantity = entity.productBQuantity
-                )
+                productA =
+                    ProductInputState(
+                        productName = entity.productAName,
+                        contentAmount = entity.productAContent,
+                        selectedUnit = entity.productAUnit,
+                        price = entity.productAPrice,
+                        quantity = entity.productAQuantity,
+                    ),
+                productB =
+                    ProductInputState(
+                        productName = entity.productBName,
+                        contentAmount = entity.productBContent,
+                        selectedUnit = entity.productBUnit,
+                        price = entity.productBPrice,
+                        quantity = entity.productBQuantity,
+                    ),
             )
         }
     }
 
-    fun loadComparisonByShareId(shareId: String, encryptionKey: String?) {
+    fun loadComparisonByShareId(
+        shareId: String,
+        encryptionKey: String?,
+    ) {
         viewModelScope.launch {
             val entity = getComparisonByShareIdUseCase(shareId, encryptionKey) ?: return@launch
             showComparison(
-                productA = ProductInputState(
-                    productName = entity.productAName,
-                    contentAmount = entity.productAContent,
-                    selectedUnit = entity.productAUnit,
-                    price = entity.productAPrice,
-                    quantity = entity.productAQuantity
-                ),
-                productB = ProductInputState(
-                    productName = entity.productBName,
-                    contentAmount = entity.productBContent,
-                    selectedUnit = entity.productBUnit,
-                    price = entity.productBPrice,
-                    quantity = entity.productBQuantity
-                )
+                productA =
+                    ProductInputState(
+                        productName = entity.productAName,
+                        contentAmount = entity.productAContent,
+                        selectedUnit = entity.productAUnit,
+                        price = entity.productAPrice,
+                        quantity = entity.productAQuantity,
+                    ),
+                productB =
+                    ProductInputState(
+                        productName = entity.productBName,
+                        contentAmount = entity.productBContent,
+                        selectedUnit = entity.productBUnit,
+                        price = entity.productBPrice,
+                        quantity = entity.productBQuantity,
+                    ),
             )
         }
     }
@@ -74,13 +80,13 @@ class ComparisonViewModel(
     fun loadSharedComparison(sharedComparisonData: SharedComparisonData) {
         showComparison(
             productA = sharedComparisonData.productA,
-            productB = sharedComparisonData.productB
+            productB = sharedComparisonData.productB,
         )
     }
 
     private fun showComparison(
         productA: ProductInputState,
-        productB: ProductInputState
+        productB: ProductInputState,
     ) {
         val result = compareProductsUseCase(productA, productB)
 
@@ -95,21 +101,22 @@ class ComparisonViewModel(
                 savingsPerStandardUnit = result.savingsPerStandardUnit,
                 standardUnitDesc = result.standardUnitDesc,
                 unitPriceA = result.unitPriceA,
-                unitPriceB = result.unitPriceB
+                unitPriceB = result.unitPriceB,
             )
         }
     }
 
     companion object {
-        val Factory: ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                val application = (this[APPLICATION_KEY] as UnitWiseApplication)
-                val repository = application.container.comparisonRepository
-                ComparisonViewModel(
-                    getComparisonUseCase = GetComparisonUseCase(repository),
-                    getComparisonByShareIdUseCase = GetComparisonByShareIdUseCase(repository)
-                )
+        val Factory: ViewModelProvider.Factory =
+            viewModelFactory {
+                initializer {
+                    val application = (this[APPLICATION_KEY] as UnitWiseApplication)
+                    val repository = application.container.comparisonRepository
+                    ComparisonViewModel(
+                        getComparisonUseCase = GetComparisonUseCase(repository),
+                        getComparisonByShareIdUseCase = GetComparisonByShareIdUseCase(repository),
+                    )
+                }
             }
-        }
     }
 }

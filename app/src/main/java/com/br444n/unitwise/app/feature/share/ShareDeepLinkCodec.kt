@@ -1,10 +1,10 @@
 package com.br444n.unitwise.app.feature.share
 
 import android.net.Uri
+import androidx.core.net.toUri
 import com.br444n.unitwise.app.data.local.entity.ComparisonEntity
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
-import androidx.core.net.toUri
 
 private object ShareDeepLinkCodec {
     private const val SCHEME = "https"
@@ -15,72 +15,84 @@ private object ShareDeepLinkCodec {
     private const val SHARE_ID_LENGTH = 6
     private const val SHARE_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"
 
-    private val json = Json {
-        encodeDefaults = true
-        ignoreUnknownKeys = true
-    }
+    private val json =
+        Json {
+            encodeDefaults = true
+            ignoreUnknownKeys = true
+        }
 
-    fun createEncryptedShare(comparison: ComparisonEntity): Pair<SharedComparisonLink, SharedComparisonRecord> {
-        val payload = SharedComparisonPayload(
-            productAName = comparison.productAName,
-            productAContent = comparison.productAContent,
-            productAUnit = comparison.productAUnit,
-            productAPrice = comparison.productAPrice,
-            productAQuantity = comparison.productAQuantity,
-            productBName = comparison.productBName,
-            productBContent = comparison.productBContent,
-            productBUnit = comparison.productBUnit,
-            productBPrice = comparison.productBPrice,
-            productBQuantity = comparison.productBQuantity
-        )
+    fun createEncryptedShare(
+        comparison: ComparisonEntity,
+    ): Pair<SharedComparisonLink, SharedComparisonRecord> {
+        val payload =
+            SharedComparisonPayload(
+                productAName = comparison.productAName,
+                productAContent = comparison.productAContent,
+                productAUnit = comparison.productAUnit,
+                productAPrice = comparison.productAPrice,
+                productAQuantity = comparison.productAQuantity,
+                productBName = comparison.productBName,
+                productBContent = comparison.productBContent,
+                productBUnit = comparison.productBUnit,
+                productBPrice = comparison.productBPrice,
+                productBQuantity = comparison.productBQuantity,
+            )
         val payloadJson = json.encodeToString(payload)
-        
+
         val (encryptionKey, iv, extraBytes) = ShareCrypto.deriveDeterministicMaterial(payloadJson)
         val shareId = generateDeterministicShareId(extraBytes)
-        
+
         val now = System.currentTimeMillis()
         val expiresAt = now + SHARE_TTL_MILLIS
-        val cipherText = ShareCrypto.encrypt(
-            plainText = payloadJson,
-            encodedKey = encryptionKey,
-            encodedIv = iv
-        )
-        val url = Uri.Builder()
-            .scheme(SCHEME)
-            .authority(HOST)
-            .appendPath(PATH_PREFIX)
-            .appendPath(shareId)
-            .encodedFragment("$KEY_FRAGMENT_PARAM=$encryptionKey")
-            .build()
-            .toString()
+        val cipherText =
+            ShareCrypto.encrypt(
+                plainText = payloadJson,
+                encodedKey = encryptionKey,
+                encodedIv = iv,
+            )
+        val url =
+            Uri
+                .Builder()
+                .scheme(SCHEME)
+                .authority(HOST)
+                .appendPath(PATH_PREFIX)
+                .appendPath(shareId)
+                .encodedFragment("$KEY_FRAGMENT_PARAM=$encryptionKey")
+                .build()
+                .toString()
 
         return SharedComparisonLink(
             shareId = shareId,
             encryptionKey = encryptionKey,
             url = url,
-            shareText = "Compare this result in UnitWise: $url"
-        ) to SharedComparisonRecord(
-            shareId = shareId,
-            ciphertext = cipherText,
-            iv = iv,
-            expiresAt = expiresAt,
-            createdAt = now
-        )
+            shareText = "Compare this result in UnitWise: $url",
+        ) to
+            SharedComparisonRecord(
+                shareId = shareId,
+                ciphertext = cipherText,
+                iv = iv,
+                expiresAt = expiresAt,
+                createdAt = now,
+            )
     }
 
-    fun decodeComparison(record: SharedComparisonRecord, encryptionKey: String): ComparisonEntity? {
+    fun decodeComparison(
+        record: SharedComparisonRecord,
+        encryptionKey: String,
+    ): ComparisonEntity? {
         if (record.expiresAt <= System.currentTimeMillis()) {
             return null
         }
 
         return runCatching {
-            val payload = json.decodeFromString<SharedComparisonPayload>(
-                ShareCrypto.decrypt(
-                    cipherText = record.ciphertext,
-                    encodedKey = encryptionKey,
-                    encodedIv = record.iv
+            val payload =
+                json.decodeFromString<SharedComparisonPayload>(
+                    ShareCrypto.decrypt(
+                        cipherText = record.ciphertext,
+                        encodedKey = encryptionKey,
+                        encodedIv = record.iv,
+                    ),
                 )
-            )
             ComparisonEntity(
                 shareId = record.shareId,
                 productAName = payload.productAName,
@@ -92,38 +104,39 @@ private object ShareDeepLinkCodec {
                 productBContent = payload.productBContent,
                 productBUnit = payload.productBUnit,
                 productBPrice = payload.productBPrice,
-                productBQuantity = payload.productBQuantity
+                productBQuantity = payload.productBQuantity,
             )
         }.getOrNull()
     }
 
     fun extractEncryptionKey(uri: Uri?): String? {
         val fragment = uri?.fragment ?: return null
-        return "https://unitwise-app.vercel.app/?$fragment".toUri().getQueryParameter(KEY_FRAGMENT_PARAM)
+        return "https://unitwise-app.vercel.app/?$fragment".toUri().getQueryParameter(
+            KEY_FRAGMENT_PARAM,
+        )
     }
 
-    private fun generateDeterministicShareId(extraBytes: ByteArray): String {
-        return buildString(SHARE_ID_LENGTH) {
+    private fun generateDeterministicShareId(extraBytes: ByteArray): String =
+        buildString(SHARE_ID_LENGTH) {
             for (i in 0 until SHARE_ID_LENGTH) {
                 // Map a deterministic byte to a valid alphabet character
                 val byteVal = extraBytes[i].toInt() and 0xFF
                 append(SHARE_ALPHABET[byteVal % SHARE_ALPHABET.length])
             }
         }
-    }
 }
 
-fun createEncryptedSharedComparison(comparison: ComparisonEntity): Pair<SharedComparisonLink, SharedComparisonRecord> {
-    return ShareDeepLinkCodec.createEncryptedShare(comparison)
-}
+fun createEncryptedSharedComparison(
+    comparison: ComparisonEntity,
+): Pair<SharedComparisonLink, SharedComparisonRecord> =
+    ShareDeepLinkCodec.createEncryptedShare(comparison)
 
-fun decodeSharedComparison(record: SharedComparisonRecord, encryptionKey: String): ComparisonEntity? {
-    return ShareDeepLinkCodec.decodeComparison(record, encryptionKey)
-}
+fun decodeSharedComparison(
+    record: SharedComparisonRecord,
+    encryptionKey: String,
+): ComparisonEntity? = ShareDeepLinkCodec.decodeComparison(record, encryptionKey)
 
-fun extractSharedComparisonKey(uri: Uri?): String? {
-    return ShareDeepLinkCodec.extractEncryptionKey(uri)
-}
+fun extractSharedComparisonKey(uri: Uri?): String? = ShareDeepLinkCodec.extractEncryptionKey(uri)
 
 @Serializable
 private data class SharedComparisonPayload(
@@ -136,5 +149,5 @@ private data class SharedComparisonPayload(
     val productBContent: String,
     val productBUnit: String,
     val productBPrice: String,
-    val productBQuantity: String
+    val productBQuantity: String,
 )

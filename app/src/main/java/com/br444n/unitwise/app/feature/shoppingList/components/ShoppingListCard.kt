@@ -19,7 +19,6 @@ import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import com.br444n.unitwise.app.core.ui.components.layout.AppCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -32,6 +31,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.br444n.unitwise.R
+import com.br444n.unitwise.app.core.ui.components.layout.AppCard
 import com.br444n.unitwise.app.ui.theme.UnitWiseTheme
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -42,7 +42,7 @@ data class ShoppingListCardState(
     val timestamp: Long,
     val productCount: Int,
     val colorArgb: Int,
-    val isSelected: Boolean = false
+    val isSelected: Boolean = false,
 )
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -58,79 +58,92 @@ fun ShoppingListCard(
     val containerColor = baseColor.copy(alpha = 0.12f)
     val iconContainerColor = baseColor.copy(alpha = 0.2f)
 
-    val actualContainerColor = if (state.isSelected) MaterialTheme.colorScheme.primaryContainer else containerColor
+    val actualContainerColor =
+        if (state.isSelected) {
+            MaterialTheme.colorScheme.primaryContainer
+        } else {
+            containerColor
+        }
     val borderColor = if (state.isSelected) MaterialTheme.colorScheme.primary else Color.Transparent
 
     AppCard(
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(16.dp))
-            .combinedClickable(
-                onClick = onClick,
-                onLongClick = onLongClick
-            )
-            .border(2.dp, borderColor, RoundedCornerShape(16.dp)),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(16.dp))
+                .combinedClickable(
+                    onClick = onClick,
+                    onLongClick = onLongClick,
+                ).border(2.dp, borderColor, RoundedCornerShape(16.dp)),
         containerColor = actualContainerColor,
-        elevation = 0.dp
+        elevation = 0.dp,
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Box(
-                modifier = Modifier
-                    .size(48.dp)
-                    .clip(CircleShape)
-                    .background(if (state.isSelected) MaterialTheme.colorScheme.primary else iconContainerColor),
-                contentAlignment = Alignment.Center
+                modifier =
+                    Modifier
+                        .size(48.dp)
+                        .clip(CircleShape)
+                        .background(
+                            if (state.isSelected) {
+                                MaterialTheme.colorScheme.primary
+                            } else {
+                                iconContainerColor
+                            },
+                        ),
+                contentAlignment = Alignment.Center,
             ) {
                 if (state.isSelected) {
                     Icon(
                         imageVector = Icons.Default.CheckCircle,
                         contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onPrimary
+                        tint = MaterialTheme.colorScheme.onPrimary,
                     )
                 } else {
                     Icon(
                         imageVector = Icons.Default.ShoppingCart,
                         contentDescription = null,
-                        tint = baseColor
+                        tint = baseColor,
                     )
                 }
             }
-            
+
             Spacer(modifier = Modifier.width(16.dp))
-            
+
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = state.name,
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface,
-                    maxLines = 1
+                    maxLines = 1,
                 )
                 Text(
                     text = formatTimestamp(state.timestamp),
                     style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
-            
+
             Spacer(modifier = Modifier.width(16.dp))
-            
+
             Column(horizontalAlignment = Alignment.End) {
                 Text(
                     text = "${state.productCount}",
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
-                    color = baseColor
+                    color = baseColor,
                 )
                 Text(
                     text = stringResource(id = R.string.products_count),
                     style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
         }
@@ -147,15 +160,16 @@ private fun formatTimestamp(timestamp: Long): String {
 fun ShoppingListCardPreview() {
     UnitWiseTheme {
         ShoppingListCard(
-            state = ShoppingListCardState(
-                name = "Súper de la Quincena",
-                timestamp = System.currentTimeMillis(),
-                productCount = 12,
-                colorArgb = Color(0xFF4CAF50).toArgb(), // Verde por defecto
-                isSelected = false
-            ),
+            state =
+                ShoppingListCardState(
+                    name = "Súper de la Quincena",
+                    timestamp = System.currentTimeMillis(),
+                    productCount = 12,
+                    colorArgb = Color(0xFF4CAF50).toArgb(), // Verde por defecto
+                    isSelected = false,
+                ),
             onClick = {},
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier.padding(16.dp),
         )
     }
 }

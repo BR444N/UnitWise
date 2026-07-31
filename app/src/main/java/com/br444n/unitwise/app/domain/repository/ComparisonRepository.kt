@@ -6,9 +6,17 @@ import kotlinx.coroutines.flow.Flow
 
 interface ComparisonRepository {
     suspend fun insertComparison(comparison: ComparisonEntity): Long
+
     suspend fun getComparisonById(id: Int): ComparisonEntity?
-    suspend fun getComparisonByShareId(shareId: String, encryptionKey: String? = null): ComparisonEntity?
+
+    suspend fun getComparisonByShareId(
+        shareId: String,
+        encryptionKey: String? = null,
+    ): ComparisonEntity?
+
     suspend fun publishSharedComparison(comparison: ComparisonEntity): SharedComparisonLink
+
     fun getAllComparisons(): Flow<List<ComparisonEntity>>
+
     suspend fun deleteAllComparisons()
 }

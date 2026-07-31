@@ -1,10 +1,10 @@
 package com.br444n.unitwise.app.feature.home
 
 import com.br444n.unitwise.app.core.firebase.domain.usecase.LogListParityTypeUseCase
-import com.br444n.unitwise.app.domain.usecase.GetComparisonUseCase
-import com.br444n.unitwise.app.domain.usecase.SaveComparisonUseCase
 import com.br444n.unitwise.app.data.local.dao.ShoppingListItemDao
 import com.br444n.unitwise.app.domain.repository.UserPreferencesRepository
+import com.br444n.unitwise.app.domain.usecase.GetComparisonUseCase
+import com.br444n.unitwise.app.domain.usecase.SaveComparisonUseCase
 import com.br444n.unitwise.util.MainDispatcherRule
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
@@ -21,7 +21,6 @@ import org.junit.Test
  */
 @OptIn(ExperimentalCoroutinesApi::class)
 class HomeViewModelTest {
-
     @get:Rule
     val mainDispatcherRule = MainDispatcherRule()
 
@@ -32,38 +31,40 @@ class HomeViewModelTest {
     private val logListParityType = mockk<LogListParityTypeUseCase>()
 
     @Test
-    fun `calculate should save and navigate after delay`() = runTest {
-        // Given
-        val expectedId = 42L
-        coEvery { saveComparisonUseCase(any(), any(), any(), any()) } returns expectedId
-        every { userPreferencesRepository.isHomeShowcaseCompleted } returns flowOf(false)
-        
-        val viewModel = HomeViewModel(
-            saveComparisonUseCase = saveComparisonUseCase,
-            getComparisonUseCase = getComparisonUseCase,
-            userPreferencesRepository = userPreferencesRepository,
-            shoppingListItemDao = shoppingListItemDao,
-            logListParityType = logListParityType
-        )
-        var navigatedId: Int? = null
+    fun `calculate should save and navigate after delay`() =
+        runTest {
+            // Given
+            val expectedId = 42L
+            coEvery { saveComparisonUseCase(any(), any(), any(), any()) } returns expectedId
+            every { userPreferencesRepository.isHomeShowcaseCompleted } returns flowOf(false)
 
-        // When
-        viewModel.calculate { id -> navigatedId = id }
+            val viewModel =
+                HomeViewModel(
+                    saveComparisonUseCase = saveComparisonUseCase,
+                    getComparisonUseCase = getComparisonUseCase,
+                    userPreferencesRepository = userPreferencesRepository,
+                    shoppingListItemDao = shoppingListItemDao,
+                    logListParityType = logListParityType,
+                )
+            var navigatedId: Int? = null
 
-        // Then - Initial loading state
-        assertThat(viewModel.uiState.value.isLoading).isTrue()
+            // When
+            viewModel.calculate { id -> navigatedId = id }
 
-        // Advance time by the calculation delay (1500ms)
-        testScheduler.advanceTimeBy(1600)
+            // Then - Initial loading state
+            assertThat(viewModel.uiState.value.isLoading).isTrue()
 
-        // Then - Final state
-        assertThat(viewModel.uiState.value.isLoading).isFalse()
-        assertThat(navigatedId).isEqualTo(expectedId.toInt())
-        
-        // Verify products are reset to default state
-        assertThat(viewModel.uiState.value.productA.productName).isEmpty()
-        assertThat(viewModel.uiState.value.productB.productName).isEmpty()
-        assertThat(viewModel.uiState.value.productA.selectedUnit).isEqualTo("g")
-        assertThat(viewModel.uiState.value.productA.quantity).isEqualTo("1")
-    }
+            // Advance time by the calculation delay (1500ms)
+            testScheduler.advanceTimeBy(1600)
+
+            // Then - Final state
+            assertThat(viewModel.uiState.value.isLoading).isFalse()
+            assertThat(navigatedId).isEqualTo(expectedId.toInt())
+
+            // Verify products are reset to default state
+            assertThat(viewModel.uiState.value.productA.productName).isEmpty()
+            assertThat(viewModel.uiState.value.productB.productName).isEmpty()
+            assertThat(viewModel.uiState.value.productA.selectedUnit).isEqualTo("g")
+            assertThat(viewModel.uiState.value.productA.quantity).isEqualTo("1")
+        }
 }

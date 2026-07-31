@@ -16,14 +16,14 @@ import com.br444n.unitwise.app.ui.theme.UnitWiseTheme
 @Composable
 fun AppListSectionTitle(
     text: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier.padding(horizontal = 16.dp)) {
         Text(
             text = text,
             style = MaterialTheme.typography.titleSmall,
             fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.primary
+            color = MaterialTheme.colorScheme.primary,
         )
         Spacer(modifier = Modifier.height(8.dp))
     }
@@ -34,7 +34,7 @@ fun AppListSectionTitle(
 fun AppListSectionTitlePreview() {
     UnitWiseTheme {
         AppListSectionTitle(
-            text = "Section Title"
+            text = "Section Title",
         )
     }
 }

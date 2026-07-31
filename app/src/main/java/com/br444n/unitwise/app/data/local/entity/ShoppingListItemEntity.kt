@@ -12,10 +12,10 @@ import androidx.room.PrimaryKey
             entity = ShoppingListEntity::class,
             parentColumns = ["id"],
             childColumns = ["listId"],
-            onDelete = ForeignKey.CASCADE
-        )
+            onDelete = ForeignKey.CASCADE,
+        ),
     ],
-    indices = [Index(value = ["listId"])]
+    indices = [Index(value = ["listId"])],
 )
 data class ShoppingListItemEntity(
     @PrimaryKey(autoGenerate = true)
@@ -33,5 +33,5 @@ data class ShoppingListItemEntity(
     val productBUnit: String = "",
     val productBQuantity: String = "",
     val isProductAWinner: Boolean? = null,
-    val isTie: Boolean? = null
+    val isTie: Boolean? = null,
 )

@@ -27,29 +27,30 @@ fun AppPrimaryButton(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     icon: ImageVector? = null,
-    containerColor: Color = MaterialTheme.colorScheme.primary
+    containerColor: Color = MaterialTheme.colorScheme.primary,
 ) {
     Button(
         onClick = onClick,
         modifier = modifier,
         enabled = enabled,
         shape = RoundedCornerShape(12.dp),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = containerColor
-        )
+        colors =
+            ButtonDefaults.buttonColors(
+                containerColor = containerColor,
+            ),
     ) {
         if (icon != null) {
             Icon(
                 imageVector = icon,
                 contentDescription = null,
-                modifier = Modifier.size(16.dp)
+                modifier = Modifier.size(16.dp),
             )
             Spacer(modifier = Modifier.width(6.dp))
         }
         Text(
             text = text,
             style = MaterialTheme.typography.labelLarge,
-            fontWeight = FontWeight.SemiBold
+            fontWeight = FontWeight.SemiBold,
         )
     }
 }
@@ -61,7 +62,7 @@ fun AppPrimaryButtonPreview() {
         AppPrimaryButton(
             text = "View Details",
             icon = Icons.AutoMirrored.Filled.ArrowForward,
-            onClick = {}
+            onClick = {},
         )
     }
 }

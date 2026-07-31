@@ -22,8 +22,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.br444n.unitwise.app.ui.theme.UnitWiseTheme
 import com.google.common.util.concurrent.ListenableFuture
 
@@ -32,7 +32,7 @@ fun CameraPreviewView(
     modifier: Modifier = Modifier,
     isFlashOn: Boolean = false,
     cameraSelector: CameraSelector = CameraSelector.DEFAULT_BACK_CAMERA,
-    imageAnalyzer: UseCase? = null
+    imageAnalyzer: UseCase? = null,
 ) {
     if (LocalInspectionMode.current) {
         PreviewPlaceholder(modifier)
@@ -41,7 +41,8 @@ fun CameraPreviewView(
 
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
-    val cameraProviderFuture = remember { ProcessCameraProvider.getInstance(context.applicationContext) }
+    val cameraProviderFuture =
+        remember { ProcessCameraProvider.getInstance(context.applicationContext) }
     var previewView by remember { mutableStateOf<PreviewView?>(null) }
     var boundCamera by remember { mutableStateOf<Camera?>(null) }
 
@@ -49,17 +50,19 @@ fun CameraPreviewView(
         AndroidView(
             modifier = Modifier.fillMaxSize(),
             factory = { ctx ->
-                PreviewView(ctx).apply {
-                    layoutParams = ViewGroup.LayoutParams(
-                        ViewGroup.LayoutParams.MATCH_PARENT,
-                        ViewGroup.LayoutParams.MATCH_PARENT
-                    )
-                    implementationMode = PreviewView.ImplementationMode.PERFORMANCE
-                    scaleType = PreviewView.ScaleType.FILL_CENTER
-                }.also { 
-                    previewView = it 
-                }
-            }
+                PreviewView(ctx)
+                    .apply {
+                        layoutParams =
+                            ViewGroup.LayoutParams(
+                                ViewGroup.LayoutParams.MATCH_PARENT,
+                                ViewGroup.LayoutParams.MATCH_PARENT,
+                            )
+                        implementationMode = PreviewView.ImplementationMode.PERFORMANCE
+                        scaleType = PreviewView.ScaleType.FILL_CENTER
+                    }.also {
+                        previewView = it
+                    }
+            },
         )
     }
 
@@ -68,23 +71,25 @@ fun CameraPreviewView(
         lifecycleOwner,
         cameraSelector,
         imageAnalyzer,
-        previewView
+        previewView,
     ) {
         val currentPreviewView = previewView
         if (currentPreviewView == null) {
             onDispose { }
         } else {
             val executor = ContextCompat.getMainExecutor(context)
-            val listener = Runnable {
-                boundCamera = bindCameraUseCases(
-                    cameraProviderFuture = cameraProviderFuture,
-                    lifecycleOwner = lifecycleOwner,
-                    cameraSelector = cameraSelector,
-                    previewView = currentPreviewView,
-                    imageAnalyzer = imageAnalyzer,
-                    isFlashOn = isFlashOn
-                )
-            }
+            val listener =
+                Runnable {
+                    boundCamera =
+                        bindCameraUseCases(
+                            cameraProviderFuture = cameraProviderFuture,
+                            lifecycleOwner = lifecycleOwner,
+                            cameraSelector = cameraSelector,
+                            previewView = currentPreviewView,
+                            imageAnalyzer = imageAnalyzer,
+                            isFlashOn = isFlashOn,
+                        )
+                }
 
             cameraProviderFuture.addListener(listener, executor)
 
@@ -108,9 +113,10 @@ fun CameraPreviewView(
 @Composable
 private fun PreviewPlaceholder(modifier: Modifier) {
     Box(
-        modifier = modifier
-            .fillMaxSize()
-            .background(Color.DarkGray)
+        modifier =
+            modifier
+                .fillMaxSize()
+                .background(Color.DarkGray),
     )
 }
 
@@ -120,7 +126,7 @@ private fun bindCameraUseCases(
     cameraSelector: CameraSelector,
     previewView: PreviewView,
     imageAnalyzer: UseCase?,
-    isFlashOn: Boolean
+    isFlashOn: Boolean,
 ): Camera? {
     return try {
         val cameraProvider = cameraProviderFuture.get()
@@ -130,26 +136,28 @@ private fun bindCameraUseCases(
             return null
         }
 
-        val preview = Preview.Builder().build().also {
-            it.surfaceProvider = previewView.surfaceProvider
-        }
+        val preview =
+            Preview.Builder().build().also {
+                it.surfaceProvider = previewView.surfaceProvider
+            }
 
-        val useCases = buildList {
-            add(preview)
-            imageAnalyzer?.let(::add)
-        }
+        val useCases =
+            buildList {
+                add(preview)
+                imageAnalyzer?.let(::add)
+            }
 
         cameraProvider.unbindAll()
-        cameraProvider.bindToLifecycle(
-            lifecycleOwner,
-            cameraSelector,
-            *useCases.toTypedArray()
-        ).also { camera ->
-            camera.cameraControl.enableTorch(isFlashOn)
-        }
+        cameraProvider
+            .bindToLifecycle(
+                lifecycleOwner,
+                cameraSelector,
+                *useCases.toTypedArray(),
+            ).also { camera ->
+                camera.cameraControl.enableTorch(isFlashOn)
+            }
     } catch (exc: Exception) {
-        exc.printStackTrace(
-        )
+        exc.printStackTrace()
         null
     }
 }

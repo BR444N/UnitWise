@@ -59,7 +59,13 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.br444n.unitwise.R
 import com.br444n.unitwise.app.core.ui.components.buttons.AppFloatingActionButton
+import com.br444n.unitwise.app.core.ui.components.feedback.AppShowcaseConfig
+import com.br444n.unitwise.app.core.ui.components.feedback.AppShowcaseOverlay
+import com.br444n.unitwise.app.core.ui.components.feedback.UnitWiseTooltip
 import com.br444n.unitwise.app.core.ui.components.inputs.AppDropdownMenu
+import com.br444n.unitwise.app.core.ui.components.inputs.AppDropdownMenuActions
+import com.br444n.unitwise.app.core.ui.components.inputs.AppDropdownMenuConfig
+import com.br444n.unitwise.app.core.ui.components.inputs.AppDropdownMenuFocusConfig
 import com.br444n.unitwise.app.core.ui.components.inputs.AppTextField
 import com.br444n.unitwise.app.core.ui.components.inputs.AppTextFieldConfig
 import com.br444n.unitwise.app.core.ui.components.inputs.AppTextFieldContent
@@ -67,35 +73,29 @@ import com.br444n.unitwise.app.core.ui.components.inputs.AppTextFieldKeyboard
 import com.br444n.unitwise.app.core.ui.components.layout.AppCard
 import com.br444n.unitwise.app.core.ui.components.messages.AppToastMessage
 import com.br444n.unitwise.app.core.ui.components.navigation.AppTopBar
-import com.br444n.unitwise.app.core.ui.components.feedback.UnitWiseTooltip
+import com.br444n.unitwise.app.domain.model.CONTENT_AMOUNT_MAX_LENGTH
 import com.br444n.unitwise.app.domain.model.MeasurementUnit
 import com.br444n.unitwise.app.domain.model.MeasurementUnit.SUPPORTED_UNITS
-import com.br444n.unitwise.app.core.ui.components.feedback.AppShowcaseConfig
-import com.br444n.unitwise.app.core.ui.components.feedback.AppShowcaseOverlay
-import com.br444n.unitwise.app.ui.components.UnitWiseLoading
-import com.br444n.unitwise.app.ui.theme.BrandPrimaryUnfocused
-import com.br444n.unitwise.app.ui.theme.UnitWiseTheme
-import com.br444n.unitwise.app.domain.model.CONTENT_AMOUNT_MAX_LENGTH
 import com.br444n.unitwise.app.domain.model.PRICE_MAX_LENGTH
 import com.br444n.unitwise.app.domain.model.PRODUCT_NAME_MAX_LENGTH
 import com.br444n.unitwise.app.domain.model.ProductInputState
 import com.br444n.unitwise.app.domain.model.QUANTITY_MAX_LENGTH
-import com.br444n.unitwise.app.core.ui.components.inputs.AppDropdownMenuConfig
-import com.br444n.unitwise.app.core.ui.components.inputs.AppDropdownMenuActions
-import com.br444n.unitwise.app.core.ui.components.inputs.AppDropdownMenuFocusConfig
+import com.br444n.unitwise.app.ui.components.UnitWiseLoading
+import com.br444n.unitwise.app.ui.theme.BrandPrimaryUnfocused
+import com.br444n.unitwise.app.ui.theme.UnitWiseTheme
 
 private val BottomNavOverlayPadding = 16.dp
 
 private enum class HomeShowcaseStep {
     SCAN_BUTTON,
     PRODUCT_A_CARD,
-    PRODUCT_B_CARD
+    PRODUCT_B_CARD,
 }
 
 data class ProductInputHints(
     val productNameHint: Int = R.string.scan_hint,
     val contentAmountHint: Int = R.string.content_label,
-    val priceHint: Int = R.string.price_label
+    val priceHint: Int = R.string.price_label,
 )
 
 data class ProductInputFocusConfig(
@@ -104,33 +104,33 @@ data class ProductInputFocusConfig(
     val unit: FocusRequester,
     val price: FocusRequester,
     val quantity: FocusRequester,
-    val nextProductName: FocusRequester? = null
+    val nextProductName: FocusRequester? = null,
 )
 
+private fun sanitizeProductNameInput(input: String): String = input.take(PRODUCT_NAME_MAX_LENGTH)
 
-private fun sanitizeProductNameInput(input: String): String {
-    return input.take(PRODUCT_NAME_MAX_LENGTH)
-}
-
-private fun sanitizeDecimalInput(input: String, maxLength: Int): String {
-    val normalized = buildString(input.length) {
-        var hasDecimalSeparator = false
-        input.forEach { char ->
-            when {
-                char.isDigit() -> append(char)
-                (char == '.' || char == ',') && !hasDecimalSeparator -> {
-                    append('.')
-                    hasDecimalSeparator = true
+private fun sanitizeDecimalInput(
+    input: String,
+    maxLength: Int,
+): String {
+    val normalized =
+        buildString(input.length) {
+            var hasDecimalSeparator = false
+            input.forEach { char ->
+                when {
+                    char.isDigit() -> append(char)
+                    (char == '.' || char == ',') && !hasDecimalSeparator -> {
+                        append('.')
+                        hasDecimalSeparator = true
+                    }
                 }
             }
         }
-    }
     return normalized.take(maxLength)
 }
 
-private fun sanitizeQuantityInput(input: String): String {
-    return input.filter(Char::isDigit).take(QUANTITY_MAX_LENGTH)
-}
+private fun sanitizeQuantityInput(input: String): String =
+    input.filter(Char::isDigit).take(QUANTITY_MAX_LENGTH)
 
 private data class HomeContentCallbacks(
     val onNavigateToComparison: (Int) -> Unit,
@@ -146,12 +146,12 @@ private data class HomeContentCallbacks(
     val onCancelInlineComparison: () -> Unit,
     val onCompleteHomeOnboarding: () -> Unit,
     val onPopBackStack: () -> Unit,
-    val onResetNavigation: () -> Unit
+    val onResetNavigation: () -> Unit,
 )
 
 private data class HomeFocusConfigs(
     val productA: ProductInputFocusConfig,
-    val productB: ProductInputFocusConfig
+    val productB: ProductInputFocusConfig,
 )
 
 private data class ProductCardContentConfig(
@@ -163,15 +163,13 @@ private data class ProductCardContentConfig(
     val focusConfig: ProductInputFocusConfig,
     val hints: ProductInputHints = ProductInputHints(),
     val cardModifier: Modifier = Modifier,
-    val scanButtonModifier: Modifier = Modifier
+    val scanButtonModifier: Modifier = Modifier,
 )
 
 private fun HomeUiState.otherSelectedUnitFor(
     driver: UnitSelectionDriver,
-    otherUnit: String
-): String? {
-    return if (unitSelectionDriver == driver) otherUnit else null
-}
+    otherUnit: String,
+): String? = if (unitSelectionDriver == driver) otherUnit else null
 
 data class HomeNavigationActions(
     val onNavigateToComparison: (Int) -> Unit = {},
@@ -180,14 +178,14 @@ data class HomeNavigationActions(
     val onNavigateToScann: (String) -> Unit = {},
     val onNavigateToSettings: () -> Unit = {},
     val onPopBackStack: () -> Unit = {},
-    val onResetNavigation: () -> Unit = {}
+    val onResetNavigation: () -> Unit = {},
 )
 
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
     navigationActions: HomeNavigationActions,
-    viewModel: HomeViewModel = viewModel(factory = HomeViewModel.Factory)
+    viewModel: HomeViewModel = viewModel(factory = HomeViewModel.Factory),
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val productANameFocus = remember { FocusRequester() }
@@ -204,42 +202,46 @@ fun HomeScreen(
     HomeContent(
         modifier = modifier,
         uiState = uiState,
-        callbacks = HomeContentCallbacks(
-            onNavigateToComparison = navigationActions.onNavigateToComparison,
-            onNavigateToHistory = navigationActions.onNavigateToHistory,
-            onNavigateToShoppingList = navigationActions.onNavigateToShoppingList,
-            onNavigateToSettings = navigationActions.onNavigateToSettings,
-            handleScanClick = navigationActions.onNavigateToScann,
-            onUpdateProductA = viewModel::updateProductA,
-            onUpdateProductB = viewModel::updateProductB,
-            onShowIncompatibleUnitsMessage = viewModel::showIncompatibleUnitsMessage,
-            onCalculate = viewModel::calculate,
-            onCalculateInline = viewModel::calculateInline,
-            onCancelInlineComparison = {
-                viewModel.cancelInlineComparison()
-                navigationActions.onResetNavigation()
-            },
-            onCompleteHomeOnboarding = viewModel::completeHomeOnboarding,
-            onPopBackStack = navigationActions.onPopBackStack,
-            onResetNavigation = navigationActions.onResetNavigation
-        ),
-        focusConfigs = HomeFocusConfigs(
-            productA = ProductInputFocusConfig(
-                productName = productANameFocus,
-                contentAmount = productAContentFocus,
-                unit = productAUnitFocus,
-                price = productAPriceFocus,
-                quantity = productAQuantityFocus,
-                nextProductName = productBNameFocus
+        callbacks =
+            HomeContentCallbacks(
+                onNavigateToComparison = navigationActions.onNavigateToComparison,
+                onNavigateToHistory = navigationActions.onNavigateToHistory,
+                onNavigateToShoppingList = navigationActions.onNavigateToShoppingList,
+                onNavigateToSettings = navigationActions.onNavigateToSettings,
+                handleScanClick = navigationActions.onNavigateToScann,
+                onUpdateProductA = viewModel::updateProductA,
+                onUpdateProductB = viewModel::updateProductB,
+                onShowIncompatibleUnitsMessage = viewModel::showIncompatibleUnitsMessage,
+                onCalculate = viewModel::calculate,
+                onCalculateInline = viewModel::calculateInline,
+                onCancelInlineComparison = {
+                    viewModel.cancelInlineComparison()
+                    navigationActions.onResetNavigation()
+                },
+                onCompleteHomeOnboarding = viewModel::completeHomeOnboarding,
+                onPopBackStack = navigationActions.onPopBackStack,
+                onResetNavigation = navigationActions.onResetNavigation,
             ),
-            productB = ProductInputFocusConfig(
-                productName = productBNameFocus,
-                contentAmount = productBContentFocus,
-                unit = productBUnitFocus,
-                price = productBPriceFocus,
-                quantity = productBQuantityFocus
-            )
-        )
+        focusConfigs =
+            HomeFocusConfigs(
+                productA =
+                    ProductInputFocusConfig(
+                        productName = productANameFocus,
+                        contentAmount = productAContentFocus,
+                        unit = productAUnitFocus,
+                        price = productAPriceFocus,
+                        quantity = productAQuantityFocus,
+                        nextProductName = productBNameFocus,
+                    ),
+                productB =
+                    ProductInputFocusConfig(
+                        productName = productBNameFocus,
+                        contentAmount = productBContentFocus,
+                        unit = productBUnitFocus,
+                        price = productBPriceFocus,
+                        quantity = productBQuantityFocus,
+                    ),
+            ),
     )
 }
 
@@ -248,7 +250,7 @@ private fun HomeContent(
     modifier: Modifier = Modifier,
     uiState: HomeUiState,
     callbacks: HomeContentCallbacks,
-    focusConfigs: HomeFocusConfigs
+    focusConfigs: HomeFocusConfigs,
 ) {
     val scrollState = rememberScrollState()
     var scanButtonCoordinates by remember { mutableStateOf<LayoutCoordinates?>(null) }
@@ -271,23 +273,25 @@ private fun HomeContent(
                             Image(
                                 painter = painterResource(id = R.drawable.ic_logo),
                                 contentDescription = stringResource(id = R.string.logo_desc),
-                                modifier = Modifier
-                                    .size(40.dp)
-                                    .clip(CircleShape)
+                                modifier =
+                                    Modifier
+                                        .size(40.dp)
+                                        .clip(CircleShape),
                             )
                             Spacer(modifier = Modifier.width(12.dp))
                             Text(
                                 text = stringResource(id = R.string.app_name),
-                                style = MaterialTheme.typography.titleLarge.copy(
-                                    fontWeight = FontWeight.Bold
-                                ),
-                                color = MaterialTheme.colorScheme.onBackground
+                                style =
+                                    MaterialTheme.typography.titleLarge.copy(
+                                        fontWeight = FontWeight.Bold,
+                                    ),
+                                color = MaterialTheme.colorScheme.onBackground,
                             )
                         }
                     },
                     actions = {
                         HomeSettingsAction(onSettingsClick = callbacks.onNavigateToSettings)
-                    }
+                    },
                 )
             },
             floatingActionButton = {
@@ -295,83 +299,92 @@ private fun HomeContent(
                     inlineComparisonItemId = uiState.inlineComparisonItemId,
                     isCalculateEnabled = uiState.isCalculateEnabled,
                     isLoading = uiState.isLoading,
-                    callbacks = callbacks
+                    callbacks = callbacks,
                 )
             },
             floatingActionButtonPosition = FabPosition.End,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
         ) { innerPadding ->
             Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding)
-                    .padding(horizontal = 16.dp)
-                    .padding(bottom = BottomNavOverlayPadding)
-                    .verticalScroll(scrollState),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding)
+                        .padding(horizontal = 16.dp)
+                        .padding(bottom = BottomNavOverlayPadding)
+                        .verticalScroll(scrollState),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
                 // Header Text inlined
                 Column(
-                    modifier = Modifier.fillMaxWidth().padding(top = 16.dp)
+                    modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
                 ) {
                     Text(
                         text = stringResource(id = R.string.home_header_title),
                         style = MaterialTheme.typography.titleLarge,
-                        color = MaterialTheme.colorScheme.onBackground
+                        color = MaterialTheme.colorScheme.onBackground,
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
                         text = stringResource(id = R.string.home_header_subtitle),
                         style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
 
                 HomeProductInputCard(
-                    config = ProductCardContentConfig(
-                        titleResId = R.string.product_a_title,
-                        state = uiState.productA,
-                        otherSelectedUnit = uiState.otherSelectedUnitFor(
-                            driver = UnitSelectionDriver.PRODUCT_B,
-                            otherUnit = uiState.productB.selectedUnit
+                    config =
+                        ProductCardContentConfig(
+                            titleResId = R.string.product_a_title,
+                            state = uiState.productA,
+                            otherSelectedUnit =
+                                uiState.otherSelectedUnitFor(
+                                    driver = UnitSelectionDriver.PRODUCT_B,
+                                    otherUnit = uiState.productB.selectedUnit,
+                                ),
+                            onUpdateProduct = callbacks.onUpdateProductA,
+                            scanTarget = "A",
+                            focusConfig = focusConfigs.productA,
+                            hints = ProductInputHints(),
+                            cardModifier =
+                                Modifier.onGloballyPositioned {
+                                    productACardCoordinates = it
+                                },
+                            scanButtonModifier =
+                                Modifier.onGloballyPositioned {
+                                    scanButtonCoordinates = it
+                                },
                         ),
-                        onUpdateProduct = callbacks.onUpdateProductA,
-                        scanTarget = "A",
-                        focusConfig = focusConfigs.productA,
-                        hints = ProductInputHints(),
-                        cardModifier = Modifier.onGloballyPositioned {
-                            productACardCoordinates = it
-                        },
-                        scanButtonModifier = Modifier.onGloballyPositioned {
-                            scanButtonCoordinates = it
-                        }
-                    ),
                     onShowIncompatibleUnitsMessage = callbacks.onShowIncompatibleUnitsMessage,
-                    onScanClick = callbacks.handleScanClick
+                    onScanClick = callbacks.handleScanClick,
                 )
 
                 HomeProductInputCard(
-                    config = ProductCardContentConfig(
-                        titleResId = R.string.product_b_title,
-                        state = uiState.productB,
-                        otherSelectedUnit = uiState.otherSelectedUnitFor(
-                            driver = UnitSelectionDriver.PRODUCT_A,
-                            otherUnit = uiState.productA.selectedUnit
+                    config =
+                        ProductCardContentConfig(
+                            titleResId = R.string.product_b_title,
+                            state = uiState.productB,
+                            otherSelectedUnit =
+                                uiState.otherSelectedUnitFor(
+                                    driver = UnitSelectionDriver.PRODUCT_A,
+                                    otherUnit = uiState.productA.selectedUnit,
+                                ),
+                            onUpdateProduct = callbacks.onUpdateProductB,
+                            scanTarget = "B",
+                            focusConfig = focusConfigs.productB,
+                            hints =
+                                ProductInputHints(
+                                    productNameHint = R.string.scan_hint_b,
+                                    contentAmountHint = R.string.content_label_b,
+                                    priceHint = R.string.price_label_b,
+                                ),
+                            cardModifier =
+                                Modifier.onGloballyPositioned {
+                                    productBCardCoordinates = it
+                                },
                         ),
-                        onUpdateProduct = callbacks.onUpdateProductB,
-                        scanTarget = "B",
-                        focusConfig = focusConfigs.productB,
-                        hints = ProductInputHints(
-                            productNameHint = R.string.scan_hint_b,
-                            contentAmountHint = R.string.content_label_b,
-                            priceHint = R.string.price_label_b
-                        ),
-                        cardModifier = Modifier.onGloballyPositioned {
-                            productBCardCoordinates = it
-                        }
-                    ),
                     onShowIncompatibleUnitsMessage = callbacks.onShowIncompatibleUnitsMessage,
-                    onScanClick = callbacks.handleScanClick
+                    onScanClick = callbacks.handleScanClick,
                 )
             }
         } // End Scaffold
@@ -379,9 +392,10 @@ private fun HomeContent(
         AppToastMessage(
             eventKey = uiState.incompatibleUnitsToastEvent,
             messageResId = R.string.units_cannot_be_compared,
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(bottom = BottomNavOverlayPadding + 16.dp)
+            modifier =
+                Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = BottomNavOverlayPadding + 16.dp),
         )
 
         if (uiState.isLoading) {
@@ -397,7 +411,7 @@ private fun HomeContent(
             onNext = {
                 showcaseStep = getNextShowcaseStep(showcaseStep, callbacks.onCompleteHomeOnboarding)
             },
-            onSkip = callbacks.onCompleteHomeOnboarding
+            onSkip = callbacks.onCompleteHomeOnboarding,
         )
     } // End Box
 } // End HomeScreen
@@ -407,10 +421,17 @@ private fun HomeFloatingActionButton(
     inlineComparisonItemId: Int?,
     isCalculateEnabled: Boolean,
     isLoading: Boolean,
-    callbacks: HomeContentCallbacks
+    callbacks: HomeContentCallbacks,
 ) {
     AppFloatingActionButton(
-        text = if (inlineComparisonItemId != null) stringResource(id = R.string.save_to_list) else "Calculate",
+        text =
+            if (inlineComparisonItemId !=
+                null
+            ) {
+                stringResource(id = R.string.save_to_list)
+            } else {
+                "Calculate"
+            },
         icon = if (inlineComparisonItemId != null) Icons.Default.Save else Icons.Default.Calculate,
         onClick = {
             if (inlineComparisonItemId != null) {
@@ -422,12 +443,15 @@ private fun HomeFloatingActionButton(
             }
         },
         enabled = isCalculateEnabled && !isLoading,
-        modifier = Modifier.padding(bottom = BottomNavOverlayPadding)
+        modifier = Modifier.padding(bottom = BottomNavOverlayPadding),
     )
 }
 
-private fun getNextShowcaseStep(current: HomeShowcaseStep, onComplete: () -> Unit): HomeShowcaseStep {
-    return when (current) {
+private fun getNextShowcaseStep(
+    current: HomeShowcaseStep,
+    onComplete: () -> Unit,
+): HomeShowcaseStep =
+    when (current) {
         HomeShowcaseStep.SCAN_BUTTON -> HomeShowcaseStep.PRODUCT_A_CARD
         HomeShowcaseStep.PRODUCT_A_CARD -> HomeShowcaseStep.PRODUCT_B_CARD
         HomeShowcaseStep.PRODUCT_B_CARD -> {
@@ -435,71 +459,75 @@ private fun getNextShowcaseStep(current: HomeShowcaseStep, onComplete: () -> Uni
             HomeShowcaseStep.PRODUCT_B_CARD
         }
     }
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun HomeProductInputCard(
     config: ProductCardContentConfig,
     onShowIncompatibleUnitsMessage: () -> Unit,
-    onScanClick: (String) -> Unit
+    onScanClick: (String) -> Unit,
 ) {
     var isFocused by remember { mutableStateOf(false) }
     val onFocusChange: (Boolean) -> Unit = { focused -> if (focused) isFocused = true }
 
     AppCard(
-        modifier = config.cardModifier.fillMaxWidth()
+        modifier = config.cardModifier.fillMaxWidth(),
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
         ) {
             // Header (Title & Dot)
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Box(
-                    modifier = Modifier
-                        .height(24.dp)
-                        .width(4.dp)
-                        .clip(RoundedCornerShape(2.dp))
-                        .background(
-                            when {
-                                config.state.isValid() -> MaterialTheme.colorScheme.primary
-                                isFocused -> BrandPrimaryUnfocused
-                                else -> MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.3f)
-                            }
-                        )
+                    modifier =
+                        Modifier
+                            .height(24.dp)
+                            .width(4.dp)
+                            .clip(RoundedCornerShape(2.dp))
+                            .background(
+                                when {
+                                    config.state.isValid() -> MaterialTheme.colorScheme.primary
+                                    isFocused -> BrandPrimaryUnfocused
+                                    else ->
+                                        MaterialTheme.colorScheme.onSurfaceVariant.copy(
+                                            alpha = 0.3f,
+                                        )
+                                },
+                            ),
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     text = stringResource(id = config.titleResId),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.SemiBold,
-                    color = MaterialTheme.colorScheme.onSurface
+                    color = MaterialTheme.colorScheme.onSurface,
                 )
             }
             Spacer(modifier = Modifier.height(16.dp))
-            
+
             // Product Name Row
             HomeProductNameField(
                 config = config,
                 onFocusChange = onFocusChange,
-                onScanClick = onScanClick
+                onScanClick = onScanClick,
             )
             Spacer(modifier = Modifier.height(12.dp))
-            
+
             // Content Amount & Unit Row
             HomeProductContentRow(
                 config = config,
                 onFocusChange = onFocusChange,
-                onShowIncompatibleUnitsMessage = onShowIncompatibleUnitsMessage
+                onShowIncompatibleUnitsMessage = onShowIncompatibleUnitsMessage,
             )
             Spacer(modifier = Modifier.height(12.dp))
-            
+
             // Price & Quantity Row
             HomeProductPriceQuantityRow(
                 config = config,
-                onFocusChange = onFocusChange
+                onFocusChange = onFocusChange,
             )
         }
     }
@@ -510,56 +538,60 @@ private fun HomeProductInputCard(
 private fun HomeProductNameField(
     config: ProductCardContentConfig,
     onFocusChange: (Boolean) -> Unit,
-    onScanClick: (String) -> Unit
+    onScanClick: (String) -> Unit,
 ) {
     var isFieldFocused by remember { mutableStateOf(false) }
 
-    val productNameModifier = Modifier
-        .fillMaxWidth()
-        .onFocusChanged { 
-            isFieldFocused = it.isFocused
-            onFocusChange(it.isFocused) 
+    val productNameModifier =
+        Modifier
+            .fillMaxWidth()
+            .onFocusChanged {
+                isFieldFocused = it.isFocused
+                onFocusChange(it.isFocused)
+            }.focusRequester(config.focusConfig.productName)
+
+    val labelText =
+        if (isFieldFocused || config.state.productName.isNotEmpty()) {
+            stringResource(id = R.string.product_name_label)
+        } else {
+            stringResource(id = config.hints.productNameHint)
         }
-        .focusRequester(config.focusConfig.productName)
-        
-    val labelText = if (isFieldFocused || config.state.productName.isNotEmpty()) {
-        stringResource(id = R.string.product_name_label)
-    } else {
-        stringResource(id = config.hints.productNameHint)
-    }
 
     AppTextField(
         value = config.state.productName,
-        onValueChange = { 
-            config.onUpdateProduct(config.state.copy(productName = sanitizeProductNameInput(it))) 
+        onValueChange = {
+            config.onUpdateProduct(config.state.copy(productName = sanitizeProductNameInput(it)))
         },
         modifier = productNameModifier,
-        keyboard = AppTextFieldKeyboard(
-            options = KeyboardOptions(imeAction = ImeAction.Next),
-            actions = KeyboardActions(
-                onNext = { config.focusConfig.contentAmount.requestFocus() }
-            )
-        ),
-        content = AppTextFieldContent(
-            label = { Text(labelText) },
-            placeholder = { Text(stringResource(id = config.hints.productNameHint)) },
-            trailingIcon = {
-                UnitWiseTooltip(
-                    tooltipText = stringResource(id = R.string.scan_desc)
-                ) {
-                    IconButton(
-                        onClick = { onScanClick(config.scanTarget) },
-                        modifier = config.scanButtonModifier
+        keyboard =
+            AppTextFieldKeyboard(
+                options = KeyboardOptions(imeAction = ImeAction.Next),
+                actions =
+                    KeyboardActions(
+                        onNext = { config.focusConfig.contentAmount.requestFocus() },
+                    ),
+            ),
+        content =
+            AppTextFieldContent(
+                label = { Text(labelText) },
+                placeholder = { Text(stringResource(id = config.hints.productNameHint)) },
+                trailingIcon = {
+                    UnitWiseTooltip(
+                        tooltipText = stringResource(id = R.string.scan_desc),
                     ) {
-                        Icon(
-                            imageVector = Icons.Default.QrCodeScanner,
-                            contentDescription = stringResource(id = R.string.scan_desc),
-                            tint = MaterialTheme.colorScheme.primary
-                        )
+                        IconButton(
+                            onClick = { onScanClick(config.scanTarget) },
+                            modifier = config.scanButtonModifier,
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.QrCodeScanner,
+                                contentDescription = stringResource(id = R.string.scan_desc),
+                                tint = MaterialTheme.colorScheme.primary,
+                            )
+                        }
                     }
-                }
-            }
-        )
+                },
+            ),
     )
 }
 
@@ -567,72 +599,92 @@ private fun HomeProductNameField(
 private fun HomeProductContentRow(
     config: ProductCardContentConfig,
     onFocusChange: (Boolean) -> Unit,
-    onShowIncompatibleUnitsMessage: () -> Unit
+    onShowIncompatibleUnitsMessage: () -> Unit,
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
 
     var isFieldFocused by remember { mutableStateOf(false) }
 
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-        val contentModifier = Modifier
-            .weight(1f)
-            .onFocusChanged { 
-                isFieldFocused = it.isFocused
-                onFocusChange(it.isFocused) 
+        val contentModifier =
+            Modifier
+                .weight(1f)
+                .onFocusChanged {
+                    isFieldFocused = it.isFocused
+                    onFocusChange(it.isFocused)
+                }.focusRequester(config.focusConfig.contentAmount)
+
+        val labelText =
+            if (isFieldFocused || config.state.contentAmount.isNotEmpty()) {
+                stringResource(id = R.string.label_content)
+            } else {
+                stringResource(id = config.hints.contentAmountHint)
             }
-            .focusRequester(config.focusConfig.contentAmount)
-            
-        val labelText = if (isFieldFocused || config.state.contentAmount.isNotEmpty()) {
-            stringResource(id = R.string.label_content)
-        } else {
-            stringResource(id = config.hints.contentAmountHint)
-        }
-        
+
         AppTextField(
             value = config.state.contentAmount,
-            onValueChange = { 
-                config.onUpdateProduct(config.state.copy(contentAmount = sanitizeDecimalInput(it, CONTENT_AMOUNT_MAX_LENGTH))) 
+            onValueChange = {
+                config.onUpdateProduct(
+                    config.state.copy(
+                        contentAmount = sanitizeDecimalInput(it, CONTENT_AMOUNT_MAX_LENGTH),
+                    ),
+                )
             },
             modifier = contentModifier,
-            keyboard = AppTextFieldKeyboard(
-                options = KeyboardOptions(
-                    keyboardType = KeyboardType.Decimal,
-                    imeAction = ImeAction.Next
+            keyboard =
+                AppTextFieldKeyboard(
+                    options =
+                        KeyboardOptions(
+                            keyboardType = KeyboardType.Decimal,
+                            imeAction = ImeAction.Next,
+                        ),
+                    actions =
+                        KeyboardActions(
+                            onNext = {
+                                keyboardController?.hide()
+                                config.focusConfig.unit.requestFocus()
+                            },
+                        ),
                 ),
-                actions = KeyboardActions(
-                    onNext = {
-                        keyboardController?.hide()
-                        config.focusConfig.unit.requestFocus()
-                    }
-                )
-            ),
-            content = AppTextFieldContent(
-                label = { Text(labelText) },
-                placeholder = { Text(stringResource(id = config.hints.contentAmountHint)) }
-            )
+            content =
+                AppTextFieldContent(
+                    label = { Text(labelText) },
+                    placeholder = { Text(stringResource(id = config.hints.contentAmountHint)) },
+                ),
         )
-        
-        val compatibleUnits = remember(config.otherSelectedUnit) {
-            MeasurementUnit.compatibleUnitsFor(config.otherSelectedUnit)
-        }
-        
+
+        val compatibleUnits =
+            remember(config.otherSelectedUnit) {
+                MeasurementUnit.compatibleUnitsFor(config.otherSelectedUnit)
+            }
+
         AppDropdownMenu(
-            config = AppDropdownMenuConfig(
-                selectedItem = config.state.selectedUnit,
-                items = SUPPORTED_UNITS,
-                itemLabel = { it },
-                isItemEnabled = { it == config.state.selectedUnit || compatibleUnits.contains(it) },
-                label = stringResource(id = R.string.unit_label)
-            ),
-            actions = AppDropdownMenuActions(
-                onItemSelected = { config.onUpdateProduct(config.state.copy(selectedUnit = it)) },
-                onDisabledItemClick = { onShowIncompatibleUnitsMessage() }
-            ),
-            focusConfig = AppDropdownMenuFocusConfig(
-                focusRequester = config.focusConfig.unit,
-                nextFocusRequester = config.focusConfig.price
-            ),
-            modifier = Modifier.weight(1f)
+            config =
+                AppDropdownMenuConfig(
+                    selectedItem = config.state.selectedUnit,
+                    items = SUPPORTED_UNITS,
+                    itemLabel = { it },
+                    isItemEnabled = {
+                        it == config.state.selectedUnit ||
+                            compatibleUnits.contains(it)
+                    },
+                    label = stringResource(id = R.string.unit_label),
+                ),
+            actions =
+                AppDropdownMenuActions(
+                    onItemSelected = {
+                        config.onUpdateProduct(
+                            config.state.copy(selectedUnit = it),
+                        )
+                    },
+                    onDisabledItemClick = { onShowIncompatibleUnitsMessage() },
+                ),
+            focusConfig =
+                AppDropdownMenuFocusConfig(
+                    focusRequester = config.focusConfig.unit,
+                    nextFocusRequester = config.focusConfig.price,
+                ),
+            modifier = Modifier.weight(1f),
         )
     }
 }
@@ -640,7 +692,7 @@ private fun HomeProductContentRow(
 @Composable
 private fun HomeProductPriceQuantityRow(
     config: ProductCardContentConfig,
-    onFocusChange: (Boolean) -> Unit
+    onFocusChange: (Boolean) -> Unit,
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
@@ -648,80 +700,100 @@ private fun HomeProductPriceQuantityRow(
     var isPriceFocused by remember { mutableStateOf(false) }
 
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-        val priceModifier = Modifier
-            .weight(1f)
-            .onFocusChanged { 
-                isPriceFocused = it.isFocused
-                onFocusChange(it.isFocused) 
-            }
-            .focusRequester(config.focusConfig.price)
+        val priceModifier =
+            Modifier
+                .weight(1f)
+                .onFocusChanged {
+                    isPriceFocused = it.isFocused
+                    onFocusChange(it.isFocused)
+                }.focusRequester(config.focusConfig.price)
 
-        val priceLabel = if (isPriceFocused || config.state.price.isNotEmpty()) {
-            stringResource(id = R.string.label_price)
-        } else {
-            stringResource(id = config.hints.priceHint)
-        }
+        val priceLabel =
+            if (isPriceFocused || config.state.price.isNotEmpty()) {
+                stringResource(id = R.string.label_price)
+            } else {
+                stringResource(id = config.hints.priceHint)
+            }
 
         AppTextField(
             value = config.state.price,
-            onValueChange = { 
-                config.onUpdateProduct(config.state.copy(price = sanitizeDecimalInput(it, PRICE_MAX_LENGTH))) 
+            onValueChange = {
+                config.onUpdateProduct(
+                    config.state.copy(price = sanitizeDecimalInput(it, PRICE_MAX_LENGTH)),
+                )
             },
             modifier = priceModifier,
-            keyboard = AppTextFieldKeyboard(
-                options = KeyboardOptions(
-                    keyboardType = KeyboardType.Decimal,
-                    imeAction = ImeAction.Next
+            keyboard =
+                AppTextFieldKeyboard(
+                    options =
+                        KeyboardOptions(
+                            keyboardType = KeyboardType.Decimal,
+                            imeAction = ImeAction.Next,
+                        ),
+                    actions =
+                        KeyboardActions(
+                            onNext = { config.focusConfig.quantity.requestFocus() },
+                        ),
                 ),
-                actions = KeyboardActions(
-                    onNext = { config.focusConfig.quantity.requestFocus() }
-                )
-            ),
-            content = AppTextFieldContent(
-                label = { Text(priceLabel) },
-                leadingIcon = { Text("$ ") },
-                placeholder = { Text(stringResource(id = config.hints.priceHint)) }
-            )
+            content =
+                AppTextFieldContent(
+                    label = { Text(priceLabel) },
+                    leadingIcon = { Text("$ ") },
+                    placeholder = { Text(stringResource(id = config.hints.priceHint)) },
+                ),
         )
-        
-        val quantityModifier = Modifier
-            .weight(1f)
-            .onFocusChanged { onFocusChange(it.isFocused) }
-            .focusRequester(config.focusConfig.quantity)
-        
+
+        val quantityModifier =
+            Modifier
+                .weight(1f)
+                .onFocusChanged { onFocusChange(it.isFocused) }
+                .focusRequester(config.focusConfig.quantity)
+
         val isQuantityZero = config.state.quantity.toIntOrNull() == 0
-        
+
         AppTextField(
             value = config.state.quantity,
-            onValueChange = { 
-                config.onUpdateProduct(config.state.copy(quantity = sanitizeQuantityInput(it))) 
+            onValueChange = {
+                config.onUpdateProduct(config.state.copy(quantity = sanitizeQuantityInput(it)))
             },
             modifier = quantityModifier,
-            config = AppTextFieldConfig(
-                isError = isQuantityZero
-            ),
-            keyboard = AppTextFieldKeyboard(
-                options = KeyboardOptions(
-                    keyboardType = KeyboardType.Number,
-                    imeAction = if (config.focusConfig.nextProductName != null) ImeAction.Next else ImeAction.Done
+            config =
+                AppTextFieldConfig(
+                    isError = isQuantityZero,
                 ),
-                actions = KeyboardActions(
-                    onNext = { config.focusConfig.nextProductName?.requestFocus() },
-                    onDone = {
-                        keyboardController?.hide()
-                        focusManager.clearFocus()
-                    }
-                )
-            ),
-            content = AppTextFieldContent(
-                label = { Text(stringResource(id = R.string.quantity_label)) },
-                placeholder = { Text("1") },
-                supportingText = {
-                    if (isQuantityZero) {
-                        Text(text = stringResource(id = R.string.quantity_min_error))
-                    }
-                }
-            )
+            keyboard =
+                AppTextFieldKeyboard(
+                    options =
+                        KeyboardOptions(
+                            keyboardType = KeyboardType.Number,
+                            imeAction =
+                                if (config.focusConfig.nextProductName !=
+                                    null
+                                ) {
+                                    ImeAction.Next
+                                } else {
+                                    ImeAction.Done
+                                },
+                        ),
+                    actions =
+                        KeyboardActions(
+                            onNext = { config.focusConfig.nextProductName?.requestFocus() },
+                            onDone = {
+                                keyboardController?.hide()
+                                focusManager.clearFocus()
+                            },
+                        ),
+                ),
+            content =
+                AppTextFieldContent(
+                    label = { Text(stringResource(id = R.string.quantity_label)) },
+                    placeholder = { Text("1") },
+                    supportingText = {
+                        if (isQuantityZero) {
+                            Text(text = stringResource(id = R.string.quantity_min_error))
+                        }
+                    },
+                ),
         )
     }
 }
@@ -732,37 +804,39 @@ private data class ShowcaseStepData(
     val dialogAlignment: Alignment,
     val isFinishStep: Boolean,
     val topPadding: androidx.compose.ui.unit.Dp,
-    val bottomPadding: androidx.compose.ui.unit.Dp
+    val bottomPadding: androidx.compose.ui.unit.Dp,
 )
 
-private fun getShowcaseStepData(step: HomeShowcaseStep): ShowcaseStepData {
-    return when (step) {
-        HomeShowcaseStep.SCAN_BUTTON -> ShowcaseStepData(
-            titleRes = R.string.home_showcase_scan_title,
-            bodyRes = R.string.home_showcase_scan_body,
-            dialogAlignment = Alignment.Center,
-            isFinishStep = false,
-            topPadding = 0.dp,
-            bottomPadding = 0.dp
-        )
-        HomeShowcaseStep.PRODUCT_A_CARD -> ShowcaseStepData(
-            titleRes = R.string.home_showcase_product_a_title,
-            bodyRes = R.string.home_showcase_product_a_body,
-            dialogAlignment = Alignment.BottomCenter,
-            isFinishStep = false,
-            topPadding = 0.dp,
-            bottomPadding = 32.dp
-        )
-        HomeShowcaseStep.PRODUCT_B_CARD -> ShowcaseStepData(
-            titleRes = R.string.home_showcase_product_b_title,
-            bodyRes = R.string.home_showcase_product_b_body,
-            dialogAlignment = Alignment.TopCenter,
-            isFinishStep = true,
-            topPadding = 96.dp,
-            bottomPadding = 0.dp
-        )
+private fun getShowcaseStepData(step: HomeShowcaseStep): ShowcaseStepData =
+    when (step) {
+        HomeShowcaseStep.SCAN_BUTTON ->
+            ShowcaseStepData(
+                titleRes = R.string.home_showcase_scan_title,
+                bodyRes = R.string.home_showcase_scan_body,
+                dialogAlignment = Alignment.Center,
+                isFinishStep = false,
+                topPadding = 0.dp,
+                bottomPadding = 0.dp,
+            )
+        HomeShowcaseStep.PRODUCT_A_CARD ->
+            ShowcaseStepData(
+                titleRes = R.string.home_showcase_product_a_title,
+                bodyRes = R.string.home_showcase_product_a_body,
+                dialogAlignment = Alignment.BottomCenter,
+                isFinishStep = false,
+                topPadding = 0.dp,
+                bottomPadding = 32.dp,
+            )
+        HomeShowcaseStep.PRODUCT_B_CARD ->
+            ShowcaseStepData(
+                titleRes = R.string.home_showcase_product_b_title,
+                bodyRes = R.string.home_showcase_product_b_body,
+                dialogAlignment = Alignment.TopCenter,
+                isFinishStep = true,
+                topPadding = 96.dp,
+                bottomPadding = 0.dp,
+            )
     }
-}
 
 @Composable
 private fun HomeShowcaseOverlay(
@@ -772,33 +846,40 @@ private fun HomeShowcaseOverlay(
     productACardCoordinates: LayoutCoordinates?,
     productBCardCoordinates: LayoutCoordinates?,
     onNext: () -> Unit,
-    onSkip: () -> Unit
+    onSkip: () -> Unit,
 ) {
     if (!shouldShowOnboarding) return
 
-    val targetCoordinates = when (step) {
-        HomeShowcaseStep.SCAN_BUTTON -> scanButtonCoordinates
-        HomeShowcaseStep.PRODUCT_A_CARD -> productACardCoordinates
-        HomeShowcaseStep.PRODUCT_B_CARD -> productBCardCoordinates
-    } ?: return
+    val targetCoordinates =
+        when (step) {
+            HomeShowcaseStep.SCAN_BUTTON -> scanButtonCoordinates
+            HomeShowcaseStep.PRODUCT_A_CARD -> productACardCoordinates
+            HomeShowcaseStep.PRODUCT_B_CARD -> productBCardCoordinates
+        } ?: return
 
     if (!targetCoordinates.isAttached) return
 
     val stepData = getShowcaseStepData(step)
-    val actionRes = if (stepData.isFinishStep) R.string.home_showcase_finish else R.string.home_showcase_next
-    
+    val actionRes =
+        if (stepData.isFinishStep) {
+            R.string.home_showcase_finish
+        } else {
+            R.string.home_showcase_next
+        }
+
     AppShowcaseOverlay(
         targetCoordinates = targetCoordinates,
-        config = AppShowcaseConfig(
-            titleRes = stepData.titleRes,
-            bodyRes = stepData.bodyRes,
-            actionRes = actionRes,
-            dialogAlignment = stepData.dialogAlignment,
-            topPadding = stepData.topPadding,
-            bottomPadding = stepData.bottomPadding
-        ),
+        config =
+            AppShowcaseConfig(
+                titleRes = stepData.titleRes,
+                bodyRes = stepData.bodyRes,
+                actionRes = actionRes,
+                dialogAlignment = stepData.dialogAlignment,
+                topPadding = stepData.topPadding,
+                bottomPadding = stepData.bottomPadding,
+            ),
         onNext = onNext,
-        onSkip = onSkip
+        onSkip = onSkip,
     )
 }
 
@@ -807,55 +888,62 @@ private fun HomeShowcaseOverlay(
 fun HomeScreenPreview() {
     UnitWiseTheme {
         HomeContent(
-            uiState = HomeUiState(
-                productA = ProductInputState(
-                    productName = "Greek Yogurt",
-                    contentAmount = "500",
-                    selectedUnit = "g",
-                    price = "24.50",
-                    quantity = "2"
+            uiState =
+                HomeUiState(
+                    productA =
+                        ProductInputState(
+                            productName = "Greek Yogurt",
+                            contentAmount = "500",
+                            selectedUnit = "g",
+                            price = "24.50",
+                            quantity = "2",
+                        ),
+                    productB =
+                        ProductInputState(
+                            productName = "Natural Yogurt",
+                            contentAmount = "1.25",
+                            selectedUnit = "kg",
+                            price = "56.90",
+                            quantity = "1",
+                        ),
                 ),
-                productB = ProductInputState(
-                    productName = "Natural Yogurt",
-                    contentAmount = "1.25",
-                    selectedUnit = "kg",
-                    price = "56.90",
-                    quantity = "1"
-                )
-            ),
-            callbacks = HomeContentCallbacks(
-                onNavigateToComparison = {},
-                onNavigateToHistory = {},
-                onNavigateToShoppingList = {},
-                onNavigateToSettings = {},
-                handleScanClick = {},
-                onUpdateProductA = {},
-                onUpdateProductB = {},
-                onShowIncompatibleUnitsMessage = {},
-                onCalculate = {},
-                onCalculateInline = { _, _ -> },
-                onCancelInlineComparison = {},
-                onCompleteHomeOnboarding = {},
-                onPopBackStack = {},
-                onResetNavigation = {}
-            ),
-            focusConfigs = HomeFocusConfigs(
-                productA = ProductInputFocusConfig(
-                    productName = remember { FocusRequester() },
-                    contentAmount = remember { FocusRequester() },
-                    unit = remember { FocusRequester() },
-                    price = remember { FocusRequester() },
-                    quantity = remember { FocusRequester() },
-                    nextProductName = remember { FocusRequester() }
+            callbacks =
+                HomeContentCallbacks(
+                    onNavigateToComparison = {},
+                    onNavigateToHistory = {},
+                    onNavigateToShoppingList = {},
+                    onNavigateToSettings = {},
+                    handleScanClick = {},
+                    onUpdateProductA = {},
+                    onUpdateProductB = {},
+                    onShowIncompatibleUnitsMessage = {},
+                    onCalculate = {},
+                    onCalculateInline = { _, _ -> },
+                    onCancelInlineComparison = {},
+                    onCompleteHomeOnboarding = {},
+                    onPopBackStack = {},
+                    onResetNavigation = {},
                 ),
-                productB = ProductInputFocusConfig(
-                    productName = remember { FocusRequester() },
-                    contentAmount = remember { FocusRequester() },
-                    unit = remember { FocusRequester() },
-                    price = remember { FocusRequester() },
-                    quantity = remember { FocusRequester() }
-                )
-            )
+            focusConfigs =
+                HomeFocusConfigs(
+                    productA =
+                        ProductInputFocusConfig(
+                            productName = remember { FocusRequester() },
+                            contentAmount = remember { FocusRequester() },
+                            unit = remember { FocusRequester() },
+                            price = remember { FocusRequester() },
+                            quantity = remember { FocusRequester() },
+                            nextProductName = remember { FocusRequester() },
+                        ),
+                    productB =
+                        ProductInputFocusConfig(
+                            productName = remember { FocusRequester() },
+                            contentAmount = remember { FocusRequester() },
+                            unit = remember { FocusRequester() },
+                            price = remember { FocusRequester() },
+                            quantity = remember { FocusRequester() },
+                        ),
+                ),
         )
     }
 }
@@ -863,13 +951,13 @@ fun HomeScreenPreview() {
 @Composable
 fun HomeSettingsAction(onSettingsClick: () -> Unit) {
     UnitWiseTooltip(
-        tooltipText = stringResource(id = R.string.settings_desc)
+        tooltipText = stringResource(id = R.string.settings_desc),
     ) {
         IconButton(onClick = onSettingsClick) {
             Icon(
                 imageVector = Icons.Default.Settings,
                 contentDescription = stringResource(id = R.string.settings_desc),
-                tint = MaterialTheme.colorScheme.onBackground
+                tint = MaterialTheme.colorScheme.onBackground,
             )
         }
     }

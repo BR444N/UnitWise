@@ -51,13 +51,13 @@ private enum class CameraPermissionUiState {
     Requesting,
     Granted,
     Denied,
-    PermanentlyDenied
+    PermanentlyDenied,
 }
 
 private data class PreviewMetrics(
     val width: Int,
     val height: Int,
-    val overlayHeight: Int
+    val overlayHeight: Int,
 )
 
 data class ScannContentActions(
@@ -71,77 +71,97 @@ data class ScannContentActions(
     val onTextSelected: (String) -> Unit,
     val onConfirmClick: () -> Unit,
     val onScanAgainClick: () -> Unit,
-    val onProcessImage: (ImageProxy, Int, Int, Int) -> Unit
+    val onProcessImage: (ImageProxy, Int, Int, Int) -> Unit,
 )
 
 @Composable
 fun ScannScreen(
     onBackClick: () -> Unit,
     onResultClick: (ScannResult) -> Unit,
-    inheritedUnit: String? = null
+    inheritedUnit: String? = null,
 ) {
     val context = LocalContext.current
     var permissionState by rememberSaveable {
         mutableStateOf(
-            if (context.hasCameraPermission()) CameraPermissionUiState.Granted else CameraPermissionUiState.Requesting
+            if (context.hasCameraPermission()) {
+                CameraPermissionUiState.Granted
+            } else {
+                CameraPermissionUiState.Requesting
+            },
         )
     }
-    val permissionLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission()
-    ) { isGranted ->
-        permissionState = when {
-            isGranted -> CameraPermissionUiState.Granted
-            ActivityCompat.shouldShowRequestPermissionRationale(
-                context.findActivity(),
-                Manifest.permission.CAMERA
-            ) -> CameraPermissionUiState.Denied
-            else -> CameraPermissionUiState.PermanentlyDenied
+    val permissionLauncher =
+        rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.RequestPermission(),
+        ) { isGranted ->
+            permissionState =
+                when {
+                    isGranted -> CameraPermissionUiState.Granted
+                    ActivityCompat.shouldShowRequestPermissionRationale(
+                        context.findActivity(),
+                        Manifest.permission.CAMERA,
+                    ) -> CameraPermissionUiState.Denied
+                    else -> CameraPermissionUiState.PermanentlyDenied
+                }
         }
-    }
 
     LaunchedEffect(permissionState) {
-        if (permissionState == CameraPermissionUiState.Requesting && !context.hasCameraPermission()) {
+        if (permissionState == CameraPermissionUiState.Requesting &&
+            !context.hasCameraPermission()
+        ) {
             permissionLauncher.launch(Manifest.permission.CAMERA)
         }
     }
 
     val lifecycleOwner = LocalLifecycleOwner.current
     DisposableEffect(lifecycleOwner) {
-        val observer = LifecycleEventObserver { _, event ->
-            if (event == Lifecycle.Event.ON_RESUME &&
-                permissionState == CameraPermissionUiState.PermanentlyDenied &&
-                context.hasCameraPermission()
-            ) {
-                permissionState = CameraPermissionUiState.Granted
+        val observer =
+            LifecycleEventObserver { _, event ->
+                if (event == Lifecycle.Event.ON_RESUME &&
+                    permissionState == CameraPermissionUiState.PermanentlyDenied &&
+                    context.hasCameraPermission()
+                ) {
+                    permissionState = CameraPermissionUiState.Granted
+                }
             }
-        }
         lifecycleOwner.lifecycle.addObserver(observer)
         onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
     }
 
     when (permissionState) {
-        CameraPermissionUiState.Granted -> GrantedScannRoute(onBackClick, onResultClick, inheritedUnit)
-        CameraPermissionUiState.Requesting -> ScannPermissionContent(
-            onBackClick = onBackClick,
-            title = stringResource(id = R.string.camera_permission_loading_title),
-            description = stringResource(id = R.string.camera_permission_loading_description),
-            actionLabel = null,
-            onActionClick = null
-        )
-        CameraPermissionUiState.Denied -> ScannPermissionContent(
-            onBackClick = onBackClick,
-            title = stringResource(id = R.string.camera_permission_denied_title),
-            description = stringResource(id = R.string.camera_permission_denied_description),
-            actionLabel = stringResource(id = R.string.camera_permission_retry),
-            onActionClick = { permissionState = CameraPermissionUiState.Requesting }
-        )
-        CameraPermissionUiState.PermanentlyDenied -> ScannPermissionContent(
-            onBackClick = onBackClick,
-            title = stringResource(id = R.string.camera_permission_denied_title),
-            description = stringResource(id = R.string.camera_permission_permanently_denied_description),
-            actionLabel = stringResource(id = R.string.camera_permission_open_settings),
-            onActionClick = { context.openAppSettings() }
-        )
+        CameraPermissionUiState.Granted ->
+            GrantedScannRoute(
+                onBackClick,
+                onResultClick,
+                inheritedUnit,
+            )
+        CameraPermissionUiState.Requesting ->
+            ScannPermissionContent(
+                onBackClick = onBackClick,
+                title = stringResource(id = R.string.camera_permission_loading_title),
+                description = stringResource(id = R.string.camera_permission_loading_description),
+                actionLabel = null,
+                onActionClick = null,
+            )
+        CameraPermissionUiState.Denied ->
+            ScannPermissionContent(
+                onBackClick = onBackClick,
+                title = stringResource(id = R.string.camera_permission_denied_title),
+                description = stringResource(id = R.string.camera_permission_denied_description),
+                actionLabel = stringResource(id = R.string.camera_permission_retry),
+                onActionClick = { permissionState = CameraPermissionUiState.Requesting },
+            )
+        CameraPermissionUiState.PermanentlyDenied ->
+            ScannPermissionContent(
+                onBackClick = onBackClick,
+                title = stringResource(id = R.string.camera_permission_denied_title),
+                description =
+                    stringResource(
+                        id = R.string.camera_permission_permanently_denied_description,
+                    ),
+                actionLabel = stringResource(id = R.string.camera_permission_open_settings),
+                onActionClick = { context.openAppSettings() },
+            )
     }
 }
 
@@ -149,7 +169,7 @@ fun ScannScreen(
 private fun GrantedScannRoute(
     onBackClick: () -> Unit,
     onResultClick: (ScannResult) -> Unit,
-    inheritedUnit: String?
+    inheritedUnit: String?,
 ) {
     val viewModel: ScannViewModel = viewModel(factory = ScannViewModel.Factory)
     val state by viewModel.uiState.collectAsState()
@@ -160,40 +180,43 @@ private fun GrantedScannRoute(
 
     ScannContent(
         state = state,
-        actions = ScannContentActions(
-            onFlashClick = viewModel::toggleFlash,
-            onBackClick = onBackClick,
-            onStepChanged = viewModel::onStepChanged,
-            onNameChanged = viewModel::onNameChanged,
-            onContentChanged = viewModel::onContentChanged,
-            onUnitChanged = viewModel::onUnitChanged,
-            onPriceChanged = viewModel::onPriceChanged,
-            onTextSelected = viewModel::selectText,
-            onScanAgainClick = viewModel::scanAgain,
-            onConfirmClick = { viewModel.buildResultOrNull()?.let(onResultClick) },
-            onProcessImage = viewModel::processImageProxy
-        )
+        actions =
+            ScannContentActions(
+                onFlashClick = viewModel::toggleFlash,
+                onBackClick = onBackClick,
+                onStepChanged = viewModel::onStepChanged,
+                onNameChanged = viewModel::onNameChanged,
+                onContentChanged = viewModel::onContentChanged,
+                onUnitChanged = viewModel::onUnitChanged,
+                onPriceChanged = viewModel::onPriceChanged,
+                onTextSelected = viewModel::selectText,
+                onScanAgainClick = viewModel::scanAgain,
+                onConfirmClick = { viewModel.buildResultOrNull()?.let(onResultClick) },
+                onProcessImage = viewModel::processImageProxy,
+            ),
     )
 }
 
 @Composable
 fun ScannContent(
     state: ScannUiState,
-    actions: ScannContentActions
+    actions: ScannContentActions,
 ) {
     val isCameraActive = state.currentStep != ScanStep.PRICE
     var previewWidth by remember { mutableIntStateOf(0) }
     var previewHeight by remember { mutableIntStateOf(0) }
     var overlayHeight by remember { mutableIntStateOf(0) }
     val overlayGuideText = guideTextForStep(state.currentStep)
-    val previewMetrics = remember(previewWidth, previewHeight, overlayHeight) {
-        PreviewMetrics(previewWidth, previewHeight, overlayHeight)
-    }
+    val previewMetrics =
+        remember(previewWidth, previewHeight, overlayHeight) {
+            PreviewMetrics(previewWidth, previewHeight, overlayHeight)
+        }
 
-    val imageAnalyzer = rememberImageAnalyzer(
-        previewMetrics = previewMetrics,
-        onProcessImage = actions.onProcessImage
-    )
+    val imageAnalyzer =
+        rememberImageAnalyzer(
+            previewMetrics = previewMetrics,
+            onProcessImage = actions.onProcessImage,
+        )
 
     Box(modifier = Modifier.fillMaxSize().background(Color.Black)) {
         ScannCameraLayer(
@@ -203,7 +226,7 @@ fun ScannContent(
             onPreviewSizeChanged = {
                 previewWidth = it.width
                 previewHeight = it.height
-            }
+            },
         )
 
         Column(modifier = Modifier.fillMaxSize()) {
@@ -211,30 +234,31 @@ fun ScannContent(
                 if (isCameraActive) {
                     ScannerOverlay(
                         guideText = overlayGuideText,
-                        modifier = Modifier.fillMaxSize()
+                        modifier = Modifier.fillMaxSize(),
                     )
                 }
                 ScannTopAppBar(
                     modifier = Modifier.align(Alignment.TopCenter),
                     isFlashOn = state.isFlashOn,
                     onBackClick = actions.onBackClick,
-                    onFlashClick = actions.onFlashClick
+                    onFlashClick = actions.onFlashClick,
                 )
             }
         }
 
         ScannBottomSheet(
             state = state,
-            actions = ScannBottomSheetActions(
-                onStepChanged = actions.onStepChanged,
-                onNameChanged = actions.onNameChanged,
-                onContentChanged = actions.onContentChanged,
-                onUnitChanged = actions.onUnitChanged,
-                onPriceChanged = actions.onPriceChanged,
-                onScanAgainClick = actions.onScanAgainClick,
-                onConfirmClick = actions.onConfirmClick
-            ),
-            modifier = Modifier.align(Alignment.BottomCenter)
+            actions =
+                ScannBottomSheetActions(
+                    onStepChanged = actions.onStepChanged,
+                    onNameChanged = actions.onNameChanged,
+                    onContentChanged = actions.onContentChanged,
+                    onUnitChanged = actions.onUnitChanged,
+                    onPriceChanged = actions.onPriceChanged,
+                    onScanAgainClick = actions.onScanAgainClick,
+                    onConfirmClick = actions.onConfirmClick,
+                ),
+            modifier = Modifier.align(Alignment.BottomCenter),
         )
     }
 
@@ -244,7 +268,7 @@ fun ScannContent(
 @Composable
 private fun AutoSelectDetectedText(
     state: ScannUiState,
-    onTextSelected: (String) -> Unit
+    onTextSelected: (String) -> Unit,
 ) {
     LaunchedEffect(state.detectedTexts) {
         if (state.detectedTexts.isNotEmpty() && state.selectedText == null) {
@@ -256,18 +280,20 @@ private fun AutoSelectDetectedText(
 @Composable
 private fun rememberImageAnalyzer(
     previewMetrics: PreviewMetrics,
-    onProcessImage: (ImageProxy, Int, Int, Int) -> Unit
+    onProcessImage: (ImageProxy, Int, Int, Int) -> Unit,
 ): ImageAnalysis {
     val analyzerExecutor = remember { Executors.newSingleThreadExecutor() }
     DisposableEffect(analyzerExecutor) {
         onDispose { analyzerExecutor.shutdown() }
     }
 
-    val analyzer = remember {
-        ImageAnalysis.Builder()
-            .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
-            .build()
-    }
+    val analyzer =
+        remember {
+            ImageAnalysis
+                .Builder()
+                .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+                .build()
+        }
 
     DisposableEffect(analyzer, analyzerExecutor, previewMetrics, onProcessImage) {
         analyzer.setAnalyzer(analyzerExecutor) { imageProxy ->
@@ -280,7 +306,7 @@ private fun rememberImageAnalyzer(
                     imageProxy,
                     previewMetrics.width,
                     previewMetrics.height,
-                    previewMetrics.overlayHeight
+                    previewMetrics.overlayHeight,
                 )
             } else {
                 imageProxy.close()
@@ -297,15 +323,16 @@ private fun ScannCameraLayer(
     isCameraActive: Boolean,
     isFlashOn: Boolean,
     imageAnalyzer: ImageAnalysis,
-    onPreviewSizeChanged: (androidx.compose.ui.unit.IntSize) -> Unit
+    onPreviewSizeChanged: (androidx.compose.ui.unit.IntSize) -> Unit,
 ) {
     if (isCameraActive) {
         CameraPreviewView(
-            modifier = Modifier
-                .fillMaxSize()
-                .onSizeChanged(onPreviewSizeChanged),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .onSizeChanged(onPreviewSizeChanged),
             isFlashOn = isFlashOn,
-            imageAnalyzer = imageAnalyzer
+            imageAnalyzer = imageAnalyzer,
         )
     } else {
         Box(modifier = Modifier.fillMaxSize().background(Color.Black))
@@ -313,17 +340,16 @@ private fun ScannCameraLayer(
 }
 
 @Composable
-private fun guideTextForStep(step: ScanStep): String {
-    return when (step) {
+private fun guideTextForStep(step: ScanStep): String =
+    when (step) {
         ScanStep.NAME -> stringResource(id = R.string.scann_step_name_guide)
         ScanStep.CONTENT -> stringResource(id = R.string.scann_step_content_guide)
         ScanStep.PRICE -> stringResource(id = R.string.scann_step_price_guide)
     }
-}
 
-private fun Context.hasCameraPermission(): Boolean {
-    return ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
-}
+private fun Context.hasCameraPermission(): Boolean =
+    ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) ==
+        PackageManager.PERMISSION_GRANTED
 
 private fun Context.findActivity(): Activity {
     var ctx = this
@@ -335,9 +361,10 @@ private fun Context.findActivity(): Activity {
 }
 
 private fun Context.openAppSettings() {
-    val intent = Intent(
-        Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-        Uri.fromParts("package", packageName, null)
-    ).apply { addFlags(Intent.FLAG_ACTIVITY_NEW_TASK) }
+    val intent =
+        Intent(
+            Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+            Uri.fromParts("package", packageName, null),
+        ).apply { addFlags(Intent.FLAG_ACTIVITY_NEW_TASK) }
     startActivity(intent)
 }

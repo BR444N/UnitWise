@@ -20,7 +20,6 @@ import java.io.IOException
  */
 @RunWith(AndroidJUnit4::class)
 class ComparisonDaoTest {
-
     private lateinit var dao: ComparisonDao
     private lateinit var db: AppDatabase
 
@@ -38,66 +37,87 @@ class ComparisonDaoTest {
     }
 
     @Test
-    fun writeComparisonAndReadInList() = runBlocking {
-        // Given
-        val comparison = ComparisonEntity(
-            productAName = "Product A",
-            productBName = "Product B",
-            productAContent = "1",
-            productBContent = "2",
-            productAUnit = "kg",
-            productBUnit = "kg",
-            productAPrice = "10",
-            productBPrice = "15",
-            productAQuantity = "1",
-            productBQuantity = "1"
-        )
-        
-        // When
-        dao.insertComparison(comparison)
-        
-        // Then
-        val allComparisons = dao.getAllComparisons().first()
-        assertThat(allComparisons).hasSize(1)
-        assertThat(allComparisons[0].productAName).isEqualTo("Product A")
-    }
+    fun writeComparisonAndReadInList() =
+        runBlocking {
+            // Given
+            val comparison =
+                ComparisonEntity(
+                    shareId = "test_1",
+                    productAName = "Product A",
+                    productBName = "Product B",
+                    productAContent = "1",
+                    productBContent = "2",
+                    productAUnit = "kg",
+                    productBUnit = "kg",
+                    productAPrice = "10",
+                    productBPrice = "15",
+                    productAQuantity = "1",
+                    productBQuantity = "1",
+                )
+
+            // When
+            dao.insertComparison(comparison)
+
+            // Then
+            val allComparisons = dao.getAllComparisons().first()
+            assertThat(allComparisons).hasSize(1)
+            assertThat(allComparisons[0].productAName).isEqualTo("Product A")
+        }
 
     @Test
-    fun getComparisonById() = runBlocking {
-        // Given
-        val comparison = ComparisonEntity(
-            id = 42,
-            productAName = "Test",
-            productBName = "Test",
-            productAContent = "1",
-            productBContent = "1",
-            productAUnit = "g",
-            productBUnit = "g",
-            productAPrice = "1",
-            productBPrice = "1",
-            productAQuantity = "1",
-            productBQuantity = "1"
-        )
-        
-        // When
-        dao.insertComparison(comparison)
-        val loaded = dao.getComparisonById(42)
-        
-        // Then
-        assertThat(loaded).isNotNull()
-        assertThat(loaded?.productAName).isEqualTo("Test")
-    }
+    fun getComparisonById() =
+        runBlocking {
+            // Given
+            val comparison =
+                ComparisonEntity(
+                    id = 42,
+                    shareId = "test_2",
+                    productAName = "Test",
+                    productBName = "Test",
+                    productAContent = "1",
+                    productBContent = "1",
+                    productAUnit = "g",
+                    productBUnit = "g",
+                    productAPrice = "1",
+                    productBPrice = "1",
+                    productAQuantity = "1",
+                    productBQuantity = "1",
+                )
+
+            // When
+            dao.insertComparison(comparison)
+            val loaded = dao.getComparisonById(42)
+
+            // Then
+            assertThat(loaded).isNotNull()
+            assertThat(loaded?.productAName).isEqualTo("Test")
+        }
 
     @Test
-    fun deleteAllComparisons_emptiesTheTable() = runBlocking {
-        // Given
-        dao.insertComparison(ComparisonEntity(productAName = "A", productBName = "B", productAContent = "1", productBContent = "2", productAUnit = "g", productBUnit = "g", productAPrice = "1", productBPrice = "1", productAQuantity = "1", productBQuantity = "1"))
-        
-        // When
-        dao.deleteAllComparisons()
-        
-        // Then
-        val allComparisons = dao.getAllComparisons().first()
-        assertThat(allComparisons).isEmpty()
-    }
+    fun deleteAllComparisons_emptiesTheTable() =
+        runBlocking {
+            // Given
+            dao.insertComparison(
+                ComparisonEntity(
+                    shareId = "test_3",
+                    productAName = "A",
+                    productBName = "B",
+                    productAContent = "1",
+                    productBContent = "2",
+                    productAUnit = "g",
+                    productBUnit = "g",
+                    productAPrice = "1",
+                    productBPrice = "1",
+                    productAQuantity = "1",
+                    productBQuantity = "1",
+                ),
+            )
+
+            // When
+            dao.deleteAllComparisons()
+
+            // Then
+            val allComparisons = dao.getAllComparisons().first()
+            assertThat(allComparisons).isEmpty()
+        }
 }

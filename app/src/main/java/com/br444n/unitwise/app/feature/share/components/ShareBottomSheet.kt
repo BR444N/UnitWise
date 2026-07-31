@@ -9,6 +9,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.filled.Timer
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
@@ -37,56 +40,58 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.br444n.unitwise.R
 import com.br444n.unitwise.app.UnitWiseApplication
+import com.br444n.unitwise.app.core.ui.components.buttons.AppPrimaryButton
+import com.br444n.unitwise.app.core.ui.components.cards.AppMicroBadge
 import com.br444n.unitwise.app.data.local.entity.ComparisonEntity
-import com.br444n.unitwise.app.feature.share.components.design.ShareQrCardDesign
 import com.br444n.unitwise.app.feature.share.ShareImageExporter
 import com.br444n.unitwise.app.feature.share.SharedComparisonLink
+import com.br444n.unitwise.app.feature.share.components.design.ShareQrCardDesign
 import com.br444n.unitwise.app.feature.share.launchNativeShareSheet
-import com.br444n.unitwise.app.core.ui.components.cards.AppMicroBadge
-import com.br444n.unitwise.app.core.ui.components.buttons.AppPrimaryButton
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Timer
-import androidx.compose.material.icons.filled.Share
 import com.br444n.unitwise.app.ui.components.UnitWiseLoading
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ComparisonShareBottomSheet(
     comparison: ComparisonEntity,
-    onDismissRequest: () -> Unit
+    onDismissRequest: () -> Unit,
 ) {
     val context = LocalContext.current
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    val repository = remember(context) {
-        (context.applicationContext as UnitWiseApplication).container.comparisonRepository
-    }
+    val repository =
+        remember(context) {
+            (context.applicationContext as UnitWiseApplication).container.comparisonRepository
+        }
     val shareCardGraphicsLayer = rememberGraphicsLayer()
     var publishFailed by remember { mutableStateOf(false) }
     var exportFailed by remember { mutableStateOf(false) }
 
     val shareLink by produceState<SharedComparisonLink?>(initialValue = null, comparison.id) {
-        value = runCatching {
-            repository.publishSharedComparison(comparison)
-        }.getOrNull()
+        value =
+            runCatching {
+                repository.publishSharedComparison(comparison)
+            }.getOrNull()
         publishFailed = value == null
     }
 
     val shareUri by produceState<Uri?>(initialValue = null, shareLink?.url) {
-        val currentShareLink = shareLink ?: run {
-            exportFailed = false
-            value = null
-            return@produceState
-        }
+        val currentShareLink =
+            shareLink ?: run {
+                exportFailed = false
+                value = null
+                return@produceState
+            }
         withFrameNanos { }
         withFrameNanos { }
 
-        val bitmap = runCatching {
-            shareCardGraphicsLayer.toImageBitmap().asAndroidBitmap()
-        }.getOrNull()
+        val bitmap =
+            runCatching {
+                shareCardGraphicsLayer.toImageBitmap().asAndroidBitmap()
+            }.getOrNull()
 
-        value = bitmap?.let {
-            ShareImageExporter.export(context, it, currentShareLink.shareId)
-        }
+        value =
+            bitmap?.let {
+                ShareImageExporter.export(context, it, currentShareLink.shareId)
+            }
         exportFailed = value == null
     }
 
@@ -96,7 +101,7 @@ fun ComparisonShareBottomSheet(
         launchNativeShareSheet(
             context = context,
             shareText = currentShareLink.shareText,
-            imageUri = readyUri
+            imageUri = readyUri,
         )
     }
 
@@ -104,20 +109,22 @@ fun ComparisonShareBottomSheet(
         onDismissRequest = onDismissRequest,
         sheetState = sheetState,
         containerColor = MaterialTheme.colorScheme.surface,
-        dragHandle = null
+        dragHandle = null,
     ) {
         Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 20.dp, vertical = 12.dp)
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp, vertical = 12.dp),
         ) {
             ShareBottomSheetContent(
-                modifier = Modifier.drawWithContent {
-                    shareCardGraphicsLayer.record {
-                        this@drawWithContent.drawContent()
-                    }
-                    drawLayer(shareCardGraphicsLayer)
-                },
+                modifier =
+                    Modifier.drawWithContent {
+                        shareCardGraphicsLayer.record {
+                            this@drawWithContent.drawContent()
+                        }
+                        drawLayer(shareCardGraphicsLayer)
+                    },
                 shareLink = shareLink,
                 isReady = shareUri != null,
                 hasError = publishFailed || exportFailed,
@@ -125,21 +132,24 @@ fun ComparisonShareBottomSheet(
                     val currentShareLink = shareLink
                     if (currentShareLink != null) {
                         shareUri?.let { uri ->
-                        launchNativeShareSheet(
-                            context = context,
-                            shareText = currentShareLink.shareText,
-                            imageUri = uri
-                        )
+                            launchNativeShareSheet(
+                                context = context,
+                                shareText = currentShareLink.shareText,
+                                imageUri = uri,
+                            )
+                        }
                     }
-                    }
-                }
+                },
             )
 
-            if ((shareLink == null && !publishFailed) || (shareLink != null && shareUri == null && !exportFailed)) {
+            if ((shareLink == null && !publishFailed) ||
+                (shareLink != null && shareUri == null && !exportFailed)
+            ) {
                 UnitWiseLoading(
-                    modifier = Modifier
-                        .matchParentSize()
-                        .clip(RoundedCornerShape(24.dp))
+                    modifier =
+                        Modifier
+                            .matchParentSize()
+                            .clip(RoundedCornerShape(24.dp)),
                 )
             }
         }
@@ -153,16 +163,16 @@ private fun ShareBottomSheetContent(
     shareLink: SharedComparisonLink?,
     isReady: Boolean,
     hasError: Boolean,
-    onShareAgainClick: () -> Unit
+    onShareAgainClick: () -> Unit,
 ) {
     Column(
         modifier = Modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Surface(
             modifier = Modifier.size(width = 40.dp, height = 4.dp),
             shape = RoundedCornerShape(2.dp),
-            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f)
+            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f),
         ) {}
 
         Spacer(modifier = Modifier.height(20.dp))
@@ -170,14 +180,14 @@ private fun ShareBottomSheetContent(
         Text(
             text = stringResource(id = R.string.share_sheet_title),
             style = MaterialTheme.typography.titleLarge,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
         )
         Spacer(modifier = Modifier.height(6.dp))
         Text(
             text = stringResource(id = R.string.share_sheet_subtitle),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
         )
 
         Spacer(modifier = Modifier.height(20.dp))
@@ -185,7 +195,7 @@ private fun ShareBottomSheetContent(
         shareLink?.let {
             ShareQrCardDesign(
                 shareLink = it,
-                modifier = modifier
+                modifier = modifier,
             )
         }
 
@@ -193,7 +203,7 @@ private fun ShareBottomSheetContent(
 
         AppMicroBadge(
             text = stringResource(id = R.string.share_qr_expiration_message),
-            icon = Icons.Default.Timer
+            icon = Icons.Default.Timer,
         )
 
         Spacer(modifier = Modifier.height(20.dp))
@@ -203,14 +213,14 @@ private fun ShareBottomSheetContent(
                 text = stringResource(id = R.string.share_sheet_error),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.error,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
             )
         } else if (isReady) {
             AppPrimaryButton(
                 text = stringResource(id = R.string.share_again),
                 icon = Icons.Default.Share,
                 onClick = onShareAgainClick,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
             )
         }
 

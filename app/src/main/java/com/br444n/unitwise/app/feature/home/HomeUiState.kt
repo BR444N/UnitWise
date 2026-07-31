@@ -4,7 +4,7 @@ import com.br444n.unitwise.app.domain.model.ProductInputState
 
 enum class UnitSelectionDriver {
     PRODUCT_A,
-    PRODUCT_B
+    PRODUCT_B,
 }
 
 data class HomeUiState(
@@ -16,7 +16,7 @@ data class HomeUiState(
     val editingComparisonId: Int? = null,
     val editingShareId: String? = null,
     val shouldShowOnboarding: Boolean = false,
-    val inlineComparisonItemId: Int? = null
+    val inlineComparisonItemId: Int? = null,
 ) {
     val isCalculateEnabled: Boolean
         get() {
@@ -35,7 +35,11 @@ data class HomeUiState(
 fun ProductInputState.isValid(): Boolean {
     val quantityValue = quantity.toIntOrNull()
     return productName.isNotBlank() &&
-            contentAmount.isNotBlank() && contentAmount.toDoubleOrNull() != null &&
-            price.isNotBlank() && price.toDoubleOrNull() != null &&
-            quantity.isNotBlank() && quantityValue != null && quantityValue > 0
+        contentAmount.isNotBlank() &&
+        contentAmount.toDoubleOrNull() != null &&
+        price.isNotBlank() &&
+        price.toDoubleOrNull() != null &&
+        quantity.isNotBlank() &&
+        quantityValue != null &&
+        quantityValue > 0
 }

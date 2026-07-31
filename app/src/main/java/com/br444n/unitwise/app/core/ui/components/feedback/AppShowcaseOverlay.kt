@@ -40,7 +40,7 @@ data class AppShowcaseConfig(
     val actionRes: Int,
     val dialogAlignment: Alignment = Alignment.Center,
     val topPadding: Dp = 0.dp,
-    val bottomPadding: Dp = 0.dp
+    val bottomPadding: Dp = 0.dp,
 )
 
 @Composable
@@ -49,7 +49,7 @@ fun AppShowcaseOverlay(
     config: AppShowcaseConfig,
     onNext: () -> Unit,
     onSkip: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     if (targetCoordinates == null || !targetCoordinates.isAttached) return
 
@@ -62,54 +62,57 @@ fun AppShowcaseOverlay(
         targetCoordinates = targetCoordinates,
         position = ShowcasePosition.Default,
         alignment = ShowcaseAlignment.CenterHorizontal,
-        highlight = ShowcaseHighlight.Rectangular(cornerRadius = 16.dp)
+        highlight = ShowcaseHighlight.Rectangular(cornerRadius = 16.dp),
     ) {
         Spacer(modifier = Modifier.size(1.dp))
     }
 
     Box(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(horizontal = 20.dp),
-        contentAlignment = config.dialogAlignment
+        modifier =
+            modifier
+                .fillMaxSize()
+                .padding(horizontal = 20.dp),
+        contentAlignment = config.dialogAlignment,
     ) {
         Card(
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
             shape = MaterialTheme.shapes.large,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(
-                    top = config.topPadding,
-                    bottom = config.bottomPadding
-                )
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        top = config.topPadding,
+                        bottom = config.bottomPadding,
+                    ),
         ) {
             Column(
                 modifier = Modifier.padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
+                verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
                 Text(
                     text = stringResource(id = config.titleRes),
                     style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.onSurface
+                    color = MaterialTheme.colorScheme.onSurface,
                 )
                 Text(
                     text = stringResource(id = config.bodyRes),
                     style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.End
+                    horizontalArrangement = Arrangement.End,
                 ) {
                     TextButton(onClick = onSkip) {
                         Text(text = stringResource(id = R.string.home_showcase_skip))
                     }
                     Button(
                         onClick = onNext,
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = nextButtonColor,
-                            contentColor = nextButtonContentColor
-                        )
+                        colors =
+                            ButtonDefaults.buttonColors(
+                                containerColor = nextButtonColor,
+                                contentColor = nextButtonContentColor,
+                            ),
                     ) { Text(text = stringResource(id = config.actionRes)) }
                 }
             }
@@ -123,43 +126,48 @@ fun AppShowcaseOverlay(
 fun AppShowcaseOverlayPreview() {
     UnitWiseTheme {
         Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 20.dp),
-            contentAlignment = Alignment.Center
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 20.dp),
+            contentAlignment = Alignment.Center,
         ) {
             Card(
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                colors =
+                    CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surface,
+                    ),
                 shape = MaterialTheme.shapes.large,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
             ) {
                 Column(
                     modifier = Modifier.padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
                     Text(
                         text = "Ejemplo de título",
                         style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.onSurface
+                        color = MaterialTheme.colorScheme.onSurface,
                     )
                     Text(
                         text = "Este es un ejemplo de cómo se ve el diálogo de ayuda.",
                         style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                     Row(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.End
+                        horizontalArrangement = Arrangement.End,
                     ) {
                         TextButton(onClick = {}) {
                             Text(text = "Omitir")
                         }
                         Button(
                             onClick = {},
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = BrandPrimary,
-                                contentColor = DarkBackgroundMain
-                            )
+                            colors =
+                                ButtonDefaults.buttonColors(
+                                    containerColor = BrandPrimary,
+                                    contentColor = DarkBackgroundMain,
+                                ),
                         ) { Text(text = "Siguiente") }
                     }
                 }

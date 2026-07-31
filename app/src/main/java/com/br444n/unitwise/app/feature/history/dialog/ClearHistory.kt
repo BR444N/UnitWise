@@ -14,46 +14,46 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.br444n.unitwise.R
-import com.br444n.unitwise.app.core.ui.components.dialogs.AppDialog
 import com.br444n.unitwise.app.core.ui.components.buttons.AppPrimaryButton
 import com.br444n.unitwise.app.core.ui.components.buttons.AppSecondaryButton
+import com.br444n.unitwise.app.core.ui.components.dialogs.AppDialog
 
 @Composable
 fun ClearHistoryDialog(
     onDismissRequest: () -> Unit,
-    onConfirmClick: () -> Unit
+    onConfirmClick: () -> Unit,
 ) {
     AppDialog(onDismissRequest = onDismissRequest) {
         Text(
             text = stringResource(id = R.string.clear_history_dialog_title),
             style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onSurface
+            color = MaterialTheme.colorScheme.onSurface,
         )
-        
+
         Spacer(modifier = Modifier.height(16.dp))
-        
+
         Text(
             text = stringResource(id = R.string.clear_history_dialog_message),
             style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
 
         Spacer(modifier = Modifier.height(32.dp))
 
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.End
+            horizontalArrangement = Arrangement.End,
         ) {
             AppSecondaryButton(
                 text = stringResource(id = R.string.cancel),
-                onClick = onDismissRequest
+                onClick = onDismissRequest,
             )
             Spacer(modifier = Modifier.width(8.dp))
             AppPrimaryButton(
                 text = stringResource(id = R.string.delete),
                 onClick = onConfirmClick,
-                containerColor = MaterialTheme.colorScheme.error
+                containerColor = MaterialTheme.colorScheme.error,
             )
         }
     }

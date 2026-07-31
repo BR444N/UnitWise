@@ -31,7 +31,7 @@ import com.br444n.unitwise.app.ui.theme.UnitWiseTheme
 @Composable
 fun ScannerOverlay(
     guideText: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val primaryColor = MaterialTheme.colorScheme.primary
 
@@ -39,7 +39,7 @@ fun ScannerOverlay(
         Canvas(modifier = Modifier.fillMaxSize()) {
             val canvasWidth = size.width
             val canvasHeight = size.height
-            
+
             // OCR Text Window shape (Wide rectangle)
             val windowWidth = canvasWidth * 0.85f
             val windowHeight = windowWidth * 0.40f
@@ -48,96 +48,109 @@ fun ScannerOverlay(
 
             val rect = Rect(left, top, left + windowWidth, top + windowHeight)
             val roundRect = RoundRect(rect, cornerRadius = CornerRadius(16.dp.toPx()))
-            
-            val screenPath = Path().apply {
-                addRect(Rect(0f, 0f, canvasWidth, canvasHeight))
-            }
-            val windowPath = Path().apply {
-                addRoundRect(roundRect)
-            }
-            
+
+            val screenPath =
+                Path().apply {
+                    addRect(Rect(0f, 0f, canvasWidth, canvasHeight))
+                }
+            val windowPath =
+                Path().apply {
+                    addRoundRect(roundRect)
+                }
+
             // Overlay with EvenOdd to magically create a cutout
-            val dimPath = Path().apply {
-                addPath(screenPath)
-                addPath(windowPath)
-                fillType = PathFillType.EvenOdd
-            }
-            
+            val dimPath =
+                Path().apply {
+                    addPath(screenPath)
+                    addPath(windowPath)
+                    fillType = PathFillType.EvenOdd
+                }
+
             // Draw dimmed screen
             drawPath(
                 path = dimPath,
-                color = Color.Black.copy(alpha = 0.6f)
+                color = Color.Black.copy(alpha = 0.6f),
             )
 
             // Draw "crop free" style corners
             val cornerLength = 32.dp.toPx()
             val strokeWidth = 4.dp.toPx()
             val radius = 16.dp.toPx()
-            
+
             // Top-Left corner
             drawPath(
-                path = Path().apply {
-                    moveTo(left, top + cornerLength)
-                    lineTo(left, top + radius)
-                    quadraticTo(left, top, left + radius, top)
-                    lineTo(left + cornerLength, top)
-                },
+                path =
+                    Path().apply {
+                        moveTo(left, top + cornerLength)
+                        lineTo(left, top + radius)
+                        quadraticTo(left, top, left + radius, top)
+                        lineTo(left + cornerLength, top)
+                    },
                 color = primaryColor,
-                style = Stroke(width = strokeWidth)
+                style = Stroke(width = strokeWidth),
             )
             // Top-Right corner
             drawPath(
-                path = Path().apply {
-                    moveTo(left + windowWidth - cornerLength, top)
-                    lineTo(left + windowWidth - radius, top)
-                    quadraticTo(left + windowWidth, top, left + windowWidth, top + radius)
-                    lineTo(left + windowWidth, top + cornerLength)
-                },
+                path =
+                    Path().apply {
+                        moveTo(left + windowWidth - cornerLength, top)
+                        lineTo(left + windowWidth - radius, top)
+                        quadraticTo(left + windowWidth, top, left + windowWidth, top + radius)
+                        lineTo(left + windowWidth, top + cornerLength)
+                    },
                 color = primaryColor,
-                style = Stroke(width = strokeWidth)
+                style = Stroke(width = strokeWidth),
             )
             // Bottom-Left corner
             drawPath(
-                path = Path().apply {
-                    moveTo(left, top + windowHeight - cornerLength)
-                    lineTo(left, top + windowHeight - radius)
-                    quadraticTo(left, top + windowHeight, left + radius, top + windowHeight)
-                    lineTo(left + cornerLength, top + windowHeight)
-                },
+                path =
+                    Path().apply {
+                        moveTo(left, top + windowHeight - cornerLength)
+                        lineTo(left, top + windowHeight - radius)
+                        quadraticTo(left, top + windowHeight, left + radius, top + windowHeight)
+                        lineTo(left + cornerLength, top + windowHeight)
+                    },
                 color = primaryColor,
-                style = Stroke(width = strokeWidth)
+                style = Stroke(width = strokeWidth),
             )
             // Bottom-Right corner
             drawPath(
-                path = Path().apply {
-                    moveTo(left + windowWidth, top + windowHeight - cornerLength)
-                    lineTo(left + windowWidth, top + windowHeight - radius)
-                    quadraticTo(left + windowWidth, top + windowHeight, left + windowWidth - radius, top + windowHeight)
-                    lineTo(left + windowWidth - cornerLength, top + windowHeight)
-                },
+                path =
+                    Path().apply {
+                        moveTo(left + windowWidth, top + windowHeight - cornerLength)
+                        lineTo(left + windowWidth, top + windowHeight - radius)
+                        quadraticTo(
+                            left + windowWidth,
+                            top + windowHeight,
+                            left + windowWidth - radius,
+                            top + windowHeight,
+                        )
+                        lineTo(left + windowWidth - cornerLength, top + windowHeight)
+                    },
                 color = primaryColor,
-                style = Stroke(width = strokeWidth)
+                style = Stroke(width = strokeWidth),
             )
         }
 
         Column(
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text(
                 text = guideText,
                 style = MaterialTheme.typography.bodyLarge,
                 fontWeight = FontWeight.Medium,
                 color = Color(0xFF34C759),
-                modifier = Modifier.padding(bottom = 12.dp)
+                modifier = Modifier.padding(bottom = 12.dp),
             )
 
             Spacer(modifier = Modifier.height(32.dp))
 
             // Invisible placeholder mimicking the exact size of the crop window
             Spacer(
-                modifier = Modifier
-                    .fillMaxWidth(0.85f)
-                    .aspectRatio(1f / 0.40f) // width / height ratio
+                modifier =
+                    Modifier
+                        .fillMaxWidth(0.85f)
+                        .aspectRatio(1f / 0.40f), // width / height ratio
             )
         }
     }

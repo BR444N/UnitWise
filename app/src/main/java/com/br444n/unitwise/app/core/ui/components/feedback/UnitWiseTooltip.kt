@@ -23,28 +23,39 @@ fun UnitWiseTooltip(
     tooltipText: String,
     modifier: Modifier = Modifier,
     isError: Boolean = false,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
-    val containerColor = if (isError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
-    val contentColor = if (isError) MaterialTheme.colorScheme.onError else MaterialTheme.colorScheme.onPrimary
+    val containerColor =
+        if (isError) {
+            MaterialTheme.colorScheme.error
+        } else {
+            MaterialTheme.colorScheme.primary
+        }
+    val contentColor =
+        if (isError) {
+            MaterialTheme.colorScheme.onError
+        } else {
+            MaterialTheme.colorScheme.onPrimary
+        }
     TooltipBox(
-        positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
-            positioning = TooltipAnchorPosition.Below
-        ),
+        positionProvider =
+            TooltipDefaults.rememberTooltipPositionProvider(
+                positioning = TooltipAnchorPosition.Below,
+            ),
         tooltip = {
             PlainTooltip(
                 containerColor = containerColor,
-                contentColor = contentColor
+                contentColor = contentColor,
             ) {
                 Text(
                     text = tooltipText,
-                    color = contentColor
+                    color = contentColor,
                 )
             }
         },
         state = rememberTooltipState(),
         modifier = modifier,
-        content = content
+        content = content,
     )
 }
 
@@ -53,7 +64,7 @@ fun UnitWiseTooltip(
 fun UnitWiseTooltipPreview() {
     UnitWiseTheme {
         UnitWiseTooltip(
-            tooltipText = "This is a tooltip"
+            tooltipText = "This is a tooltip",
         ) {
             IconButton(onClick = { }) {
                 Icon(imageVector = Icons.Default.Info, contentDescription = null)

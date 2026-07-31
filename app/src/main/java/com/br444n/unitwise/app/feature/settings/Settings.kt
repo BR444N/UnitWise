@@ -28,13 +28,13 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import com.br444n.unitwise.app.core.ui.components.feedback.UnitWiseTooltip
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -45,25 +45,25 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.br444n.unitwise.BuildConfig
 import com.br444n.unitwise.R
 import com.br444n.unitwise.app.core.Constants
+import com.br444n.unitwise.app.core.ui.components.cards.AppHeaderCard
+import com.br444n.unitwise.app.core.ui.components.feedback.UnitWiseTooltip
 import com.br444n.unitwise.app.core.ui.components.lists.AppListDivider
 import com.br444n.unitwise.app.core.ui.components.lists.AppListItem
 import com.br444n.unitwise.app.core.ui.components.lists.AppListSectionTitle
 import com.br444n.unitwise.app.core.ui.components.navigation.AppTopBar
-import com.br444n.unitwise.app.core.ui.components.cards.AppHeaderCard
-import androidx.compose.ui.res.painterResource
 import com.br444n.unitwise.app.ui.theme.Badge
 import com.br444n.unitwise.app.ui.theme.UnitWiseTheme
 
 private data class LanguageItem(
     val code: String,
-    val nameResId: Int
+    val nameResId: Int,
 )
 
 @Composable
 fun SettingsScreen(
     modifier: Modifier = Modifier,
     viewModel: SettingsViewModel = viewModel(factory = SettingsViewModel.Factory),
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -72,7 +72,7 @@ fun SettingsScreen(
         uiState = uiState,
         onToggleTheme = viewModel::toggleTheme,
         onLanguageSelected = viewModel::updateLanguage,
-        onBackClick = onBackClick
+        onBackClick = onBackClick,
     )
 }
 
@@ -91,47 +91,48 @@ fun SettingsContent(
                 title = {
                     Text(
                         text = stringResource(id = R.string.settings_desc),
-                        style = MaterialTheme.typography.titleLarge.copy(
-                            fontWeight = FontWeight.SemiBold
-                        ),
-                        color = MaterialTheme.colorScheme.onBackground
+                        style =
+                            MaterialTheme.typography.titleLarge.copy(
+                                fontWeight = FontWeight.SemiBold,
+                            ),
+                        color = MaterialTheme.colorScheme.onBackground,
                     )
                 },
                 navigationIcon = {
                     SettingsBackButton(
                         contentDesc = stringResource(id = R.string.navigate_up),
-                        onClick = onBackClick
+                        onClick = onBackClick,
                     )
-                }
+                },
             )
         },
-
-        containerColor = MaterialTheme.colorScheme.background
+        containerColor = MaterialTheme.colorScheme.background,
     ) { paddingValues ->
         LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues),
         ) {
             item { Spacer(modifier = Modifier.height(16.dp)) }
-            
+
             item { SettingsAppearanceSection(uiState.isDarkTheme, onToggleTheme) }
             item { AppListDivider() }
-            
+
             item { SettingsPreferencesSection(uiState.selectedLanguage, onLanguageSelected) }
             item { AppListDivider() }
-            
+
             item { SettingsPrivacySection() }
             item { AppListDivider() }
-            
+
             item { SettingsAboutSection() }
-            
+
             // Branding Footer
-            item { 
+            item {
                 AppHeaderCard(
                     imagePainter = painterResource(id = R.drawable.splash_icon),
                     tagline = stringResource(id = R.string.settings_header_tagline),
-                    imageBackgroundColor = Badge
+                    imageBackgroundColor = Badge,
                 )
             }
         }
@@ -139,7 +140,10 @@ fun SettingsContent(
 }
 
 @Composable
-private fun SettingsAppearanceSection(isDarkTheme: Boolean, onToggleTheme: (Boolean) -> Unit) {
+private fun SettingsAppearanceSection(
+    isDarkTheme: Boolean,
+    onToggleTheme: (Boolean) -> Unit,
+) {
     AppListSectionTitle(text = stringResource(id = R.string.settings_appearance))
     AppListItem(
         title = stringResource(id = R.string.settings_dark_theme_title),
@@ -150,36 +154,42 @@ private fun SettingsAppearanceSection(isDarkTheme: Boolean, onToggleTheme: (Bool
             Switch(
                 checked = isDarkTheme,
                 onCheckedChange = onToggleTheme,
-                colors = SwitchDefaults.colors(
-                    checkedThumbColor = MaterialTheme.colorScheme.onPrimary,
-                    checkedTrackColor = MaterialTheme.colorScheme.primary,
-                    uncheckedThumbColor = MaterialTheme.colorScheme.onPrimary,
-                    uncheckedTrackColor = Badge,
-                    uncheckedBorderColor = MaterialTheme.colorScheme.onPrimary
-                )
+                colors =
+                    SwitchDefaults.colors(
+                        checkedThumbColor = MaterialTheme.colorScheme.onPrimary,
+                        checkedTrackColor = MaterialTheme.colorScheme.primary,
+                        uncheckedThumbColor = MaterialTheme.colorScheme.onPrimary,
+                        uncheckedTrackColor = Badge,
+                        uncheckedBorderColor = MaterialTheme.colorScheme.onPrimary,
+                    ),
             )
-        }
+        },
     )
 }
 
 @Composable
-private fun SettingsPreferencesSection(selectedLanguage: String, onLanguageSelected: (String) -> Unit) {
+private fun SettingsPreferencesSection(
+    selectedLanguage: String,
+    onLanguageSelected: (String) -> Unit,
+) {
     val (expandedLanguageDropdown, setExpandedLanguageDropdown) = remember { mutableStateOf(false) }
-    
-    val languages = remember {
-        listOf(
-            LanguageItem("en", R.string.lang_en),
-            LanguageItem("es", R.string.lang_es),
-            LanguageItem("fr", R.string.lang_fr),
-            LanguageItem("de", R.string.lang_de),
-            LanguageItem("it", R.string.lang_it),
-            LanguageItem("pt", R.string.lang_pt)
-        )
-    }
 
-    val currentLanguageName = languages.find { it.code == selectedLanguage }?.nameResId?.let { 
-        stringResource(it) 
-    } ?: stringResource(R.string.lang_en)
+    val languages =
+        remember {
+            listOf(
+                LanguageItem("en", R.string.lang_en),
+                LanguageItem("es", R.string.lang_es),
+                LanguageItem("fr", R.string.lang_fr),
+                LanguageItem("de", R.string.lang_de),
+                LanguageItem("it", R.string.lang_it),
+                LanguageItem("pt", R.string.lang_pt),
+            )
+        }
+
+    val currentLanguageName =
+        languages.find { it.code == selectedLanguage }?.nameResId?.let {
+            stringResource(it)
+        } ?: stringResource(R.string.lang_en)
 
     AppListSectionTitle(text = stringResource(id = R.string.settings_preferences))
     AppListItem(
@@ -190,33 +200,33 @@ private fun SettingsPreferencesSection(selectedLanguage: String, onLanguageSelec
         trailingContent = {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(start = 8.dp)
+                modifier = Modifier.padding(start = 8.dp),
             ) {
                 Text(
                     text = currentLanguageName,
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.primary,
-                    fontWeight = FontWeight.Medium
+                    fontWeight = FontWeight.Medium,
                 )
                 Icon(
                     imageVector = Icons.Default.KeyboardArrowDown,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(24.dp)
+                    modifier = Modifier.size(24.dp),
                 )
-                
+
                 LanguageDropdownMenu(
                     expanded = expandedLanguageDropdown,
                     onDismissRequest = { setExpandedLanguageDropdown(false) },
                     languages = languages,
                     selectedLanguage = selectedLanguage,
-                    onLanguageSelected = { 
+                    onLanguageSelected = {
                         onLanguageSelected(it)
                         setExpandedLanguageDropdown(false)
-                    }
+                    },
                 )
             }
-        }
+        },
     )
 }
 
@@ -226,33 +236,38 @@ private fun LanguageDropdownMenu(
     onDismissRequest: () -> Unit,
     languages: List<LanguageItem>,
     selectedLanguage: String,
-    onLanguageSelected: (String) -> Unit
+    onLanguageSelected: (String) -> Unit,
 ) {
     DropdownMenu(
         expanded = expanded,
         onDismissRequest = onDismissRequest,
         shape = RoundedCornerShape(16.dp),
-        containerColor = MaterialTheme.colorScheme.surface
+        containerColor = MaterialTheme.colorScheme.surface,
     ) {
         languages.forEachIndexed { index, languageItem ->
             val isSelected = selectedLanguage == languageItem.code
-            
+
             DropdownMenuItem(
-                text = { 
+                text = {
                     Text(
                         text = stringResource(languageItem.nameResId),
-                        color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
-                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
-                    ) 
+                        color =
+                            if (isSelected) {
+                                MaterialTheme.colorScheme.primary
+                            } else {
+                                MaterialTheme.colorScheme.onSurface
+                            },
+                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
+                    )
                 },
-                onClick = { onLanguageSelected(languageItem.code) }
+                onClick = { onLanguageSelected(languageItem.code) },
             )
-            
+
             if (index < languages.size - 1) {
                 HorizontalDivider(
                     modifier = Modifier.padding(horizontal = 12.dp),
                     color = Badge.copy(alpha = 0.5f),
-                    thickness = 0.5.dp
+                    thickness = 0.5.dp,
                 )
             }
         }
@@ -263,7 +278,7 @@ private fun LanguageDropdownMenu(
 private fun SettingsPrivacySection() {
     val context = LocalContext.current
     val chooserTitle = stringResource(id = R.string.settings_privacy_policy)
-    
+
     AppListSectionTitle(text = stringResource(id = R.string.settings_privacy_policy))
     AppListItem(
         title = stringResource(id = R.string.settings_privacy_policy_2),
@@ -273,7 +288,7 @@ private fun SettingsPrivacySection() {
             val intent = Intent(Intent.ACTION_VIEW, Constants.PRIVACY_POLICY_URL.toUri())
             val chooser = Intent.createChooser(intent, chooserTitle)
             context.startActivity(chooser)
-        }
+        },
     )
 }
 
@@ -281,12 +296,16 @@ private fun SettingsPrivacySection() {
 private fun SettingsAboutSection() {
     val context = LocalContext.current
     val chooserTitle = stringResource(id = R.string.settings_developer_title)
-    
+
     AppListSectionTitle(text = stringResource(id = R.string.settings_about))
     AppListItem(
         title = stringResource(id = R.string.settings_version_title),
-        subtitle = stringResource(id = R.string.settings_version_subtitle, BuildConfig.VERSION_NAME),
-        icon = Icons.Default.Info
+        subtitle =
+            stringResource(
+                id = R.string.settings_version_subtitle,
+                BuildConfig.VERSION_NAME,
+            ),
+        icon = Icons.Default.Info,
     )
     AppListItem(
         title = stringResource(id = R.string.settings_developer_title),
@@ -296,7 +315,7 @@ private fun SettingsAboutSection() {
             val intent = Intent(Intent.ACTION_VIEW, Constants.DEVELOPER_URL.toUri())
             val chooser = Intent.createChooser(intent, chooserTitle)
             context.startActivity(chooser)
-        }
+        },
     )
 }
 
@@ -305,27 +324,31 @@ private fun SettingsAboutSection() {
 fun SettingsScreenPreview() {
     UnitWiseTheme {
         SettingsContent(
-            uiState = SettingsUiState(
-                isDarkTheme = false,
-                selectedLanguage = "en"
-            ),
+            uiState =
+                SettingsUiState(
+                    isDarkTheme = false,
+                    selectedLanguage = "en",
+                ),
             onToggleTheme = {},
             onLanguageSelected = {},
-            onBackClick = {}
+            onBackClick = {},
         )
     }
 }
 
 @Composable
-private fun SettingsBackButton(contentDesc: String, onClick: () -> Unit) {
+private fun SettingsBackButton(
+    contentDesc: String,
+    onClick: () -> Unit,
+) {
     UnitWiseTooltip(
-        tooltipText = contentDesc
+        tooltipText = contentDesc,
     ) {
         IconButton(onClick = onClick) {
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                 contentDescription = contentDesc,
-                tint = MaterialTheme.colorScheme.onBackground
+                tint = MaterialTheme.colorScheme.onBackground,
             )
         }
     }

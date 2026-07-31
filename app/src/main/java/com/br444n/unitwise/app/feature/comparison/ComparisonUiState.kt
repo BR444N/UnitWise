@@ -12,7 +12,7 @@ data class ComparisonUiState(
     val savingsPerStandardUnit: String = "0.00",
     val standardUnitDesc: String = "100 g",
     val unitPriceA: String = "0.00",
-    val unitPriceB: String = "0.00"
+    val unitPriceB: String = "0.00",
 ) {
     val winningProduct: ProductInputState
         get() = if (isProductAWinner) productA else productB

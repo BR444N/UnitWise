@@ -4,17 +4,20 @@ import com.br444n.unitwise.app.domain.model.MeasurementUnit
 import com.br444n.unitwise.app.domain.model.MeasurementUnit.SUPPORTED_UNITS
 import java.io.Serializable
 
-enum class ScanStep(val number: Int, val progress: Float) {
+enum class ScanStep(
+    val number: Int,
+    val progress: Float,
+) {
     NAME(number = 1, progress = 0.33f),
     CONTENT(number = 2, progress = 0.66f),
-    PRICE(number = 3, progress = 1f)
+    PRICE(number = 3, progress = 1f),
 }
 
 data class ScannResult(
     val productName: String,
     val content: String,
     val selectedUnit: String,
-    val price: String
+    val price: String,
 ) : Serializable
 
 data class ScannUiState(
@@ -26,7 +29,7 @@ data class ScannUiState(
     val content: String = "",
     val selectedUnit: String = "g",
     val price: String = "",
-    val inheritedUnit: String? = null
+    val inheritedUnit: String? = null,
 ) {
     val compatibleUnits: List<String>
         get() = inheritedUnit?.let(MeasurementUnit::compatibleUnitsFor) ?: SUPPORTED_UNITS

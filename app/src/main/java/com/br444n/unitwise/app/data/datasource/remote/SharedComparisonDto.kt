@@ -14,5 +14,5 @@ data class SharedComparisonDto(
     @SerialName("expires_at")
     val expiresAt: Long,
     @SerialName("created_at")
-    val createdAt: Long
+    val createdAt: Long,
 )

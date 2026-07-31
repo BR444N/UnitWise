@@ -8,62 +8,69 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 
 class UserPreferencesRepositoryImpl(
-    private val sharedPreferences: SharedPreferences
+    private val sharedPreferences: SharedPreferences,
 ) : UserPreferencesRepository {
-
-    override val isDarkTheme: Flow<Boolean> = callbackFlow {
-        val listener = SharedPreferences.OnSharedPreferenceChangeListener { prefs, key ->
-            if (key == IS_DARK_THEME) {
-                trySend(prefs.getBoolean(IS_DARK_THEME, false))
+    override val isDarkTheme: Flow<Boolean> =
+        callbackFlow {
+            val listener =
+                SharedPreferences.OnSharedPreferenceChangeListener { prefs, key ->
+                    if (key == IS_DARK_THEME) {
+                        trySend(prefs.getBoolean(IS_DARK_THEME, false))
+                    }
+                }
+            sharedPreferences.registerOnSharedPreferenceChangeListener(listener)
+            trySend(sharedPreferences.getBoolean(IS_DARK_THEME, false))
+            awaitClose {
+                sharedPreferences.unregisterOnSharedPreferenceChangeListener(listener)
             }
         }
-        sharedPreferences.registerOnSharedPreferenceChangeListener(listener)
-        trySend(sharedPreferences.getBoolean(IS_DARK_THEME, false))
-        awaitClose {
-            sharedPreferences.unregisterOnSharedPreferenceChangeListener(listener)
-        }
-    }
 
-    override val selectedLanguage: Flow<String> = callbackFlow {
-        val listener = SharedPreferences.OnSharedPreferenceChangeListener { prefs, key ->
-            if (key == SELECTED_LANGUAGE) {
-                trySend(prefs.getString(SELECTED_LANGUAGE, "en") ?: "en")
+    override val selectedLanguage: Flow<String> =
+        callbackFlow {
+            val listener =
+                SharedPreferences.OnSharedPreferenceChangeListener { prefs, key ->
+                    if (key == SELECTED_LANGUAGE) {
+                        trySend(prefs.getString(SELECTED_LANGUAGE, "en") ?: "en")
+                    }
+                }
+            sharedPreferences.registerOnSharedPreferenceChangeListener(listener)
+            trySend(sharedPreferences.getString(SELECTED_LANGUAGE, "en") ?: "en")
+            awaitClose {
+                sharedPreferences.unregisterOnSharedPreferenceChangeListener(listener)
             }
         }
-        sharedPreferences.registerOnSharedPreferenceChangeListener(listener)
-        trySend(sharedPreferences.getString(SELECTED_LANGUAGE, "en") ?: "en")
-        awaitClose {
-            sharedPreferences.unregisterOnSharedPreferenceChangeListener(listener)
-        }
-    }
 
-    override val isHomeShowcaseCompleted: Flow<Boolean> = callbackFlow {
-        val listener = SharedPreferences.OnSharedPreferenceChangeListener { prefs, key ->
-            if (key == HOME_SHOWCASE_COMPLETED) {
-                trySend(prefs.getBoolean(HOME_SHOWCASE_COMPLETED, false))
+    override val isHomeShowcaseCompleted: Flow<Boolean> =
+        callbackFlow {
+            val listener =
+                SharedPreferences.OnSharedPreferenceChangeListener { prefs, key ->
+                    if (key == HOME_SHOWCASE_COMPLETED) {
+                        trySend(prefs.getBoolean(HOME_SHOWCASE_COMPLETED, false))
+                    }
+                }
+            sharedPreferences.registerOnSharedPreferenceChangeListener(listener)
+            trySend(sharedPreferences.getBoolean(HOME_SHOWCASE_COMPLETED, false))
+            awaitClose {
+                sharedPreferences.unregisterOnSharedPreferenceChangeListener(listener)
             }
         }
-        sharedPreferences.registerOnSharedPreferenceChangeListener(listener)
-        trySend(sharedPreferences.getBoolean(HOME_SHOWCASE_COMPLETED, false))
-        awaitClose {
-            sharedPreferences.unregisterOnSharedPreferenceChangeListener(listener)
-        }
-    }
 
-    override val seenFeatures: Flow<Set<String>> = callbackFlow {
-        val listener = SharedPreferences.OnSharedPreferenceChangeListener { prefs, key ->
-            if (key == SEEN_FEATURES) {
-                val current = prefs.getStringSet(SEEN_FEATURES, emptySet()) ?: emptySet()
-                trySend(current)
+    override val seenFeatures: Flow<Set<String>> =
+        callbackFlow {
+            val listener =
+                SharedPreferences.OnSharedPreferenceChangeListener { prefs, key ->
+                    if (key == SEEN_FEATURES) {
+                        val current = prefs.getStringSet(SEEN_FEATURES, emptySet()) ?: emptySet()
+                        trySend(current)
+                    }
+                }
+            sharedPreferences.registerOnSharedPreferenceChangeListener(listener)
+            val initial = sharedPreferences.getStringSet(SEEN_FEATURES, emptySet()) ?: emptySet()
+            trySend(initial)
+            awaitClose {
+                sharedPreferences.unregisterOnSharedPreferenceChangeListener(listener)
             }
         }
-        sharedPreferences.registerOnSharedPreferenceChangeListener(listener)
-        val initial = sharedPreferences.getStringSet(SEEN_FEATURES, emptySet()) ?: emptySet()
-        trySend(initial)
-        awaitClose {
-            sharedPreferences.unregisterOnSharedPreferenceChangeListener(listener)
-        }
-    }
 
     override suspend fun saveThemePreference(isDarkTheme: Boolean) {
         sharedPreferences.edit { putBoolean(IS_DARK_THEME, isDarkTheme) }

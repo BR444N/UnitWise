@@ -34,27 +34,28 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.br444n.unitwise.R
-import com.br444n.unitwise.app.ui.theme.UnitWiseTheme
+import com.br444n.unitwise.app.core.ui.components.buttons.AppPrimaryButton
+import com.br444n.unitwise.app.core.ui.components.buttons.AppSecondaryButton
 import com.br444n.unitwise.app.core.ui.components.dialogs.AppDialog
 import com.br444n.unitwise.app.core.ui.components.inputs.AppTextField
 import com.br444n.unitwise.app.core.ui.components.inputs.AppTextFieldContent
 import com.br444n.unitwise.app.core.ui.components.inputs.AppTextFieldKeyboard
-import com.br444n.unitwise.app.core.ui.components.buttons.AppPrimaryButton
-import com.br444n.unitwise.app.core.ui.components.buttons.AppSecondaryButton
+import com.br444n.unitwise.app.ui.theme.UnitWiseTheme
 
-private val defaultColors = listOf(
-    Color(0xFF4CAF50), // Green (Default Brand)
-    Color(0xFF2196F3), // Blue
-    Color(0xFF9C27B0), // Purple
-    Color(0xFFFF9800), // Orange
-    Color(0xFFE91E63), // Pink
-    Color(0xFF607D8B)  // Blue Grey
-)
+private val defaultColors =
+    listOf(
+        Color(0xFF4CAF50), // Green (Default Brand)
+        Color(0xFF2196F3), // Blue
+        Color(0xFF9C27B0), // Purple
+        Color(0xFFFF9800), // Orange
+        Color(0xFFE91E63), // Pink
+        Color(0xFF607D8B), // Blue Grey
+    )
 
 @Composable
 fun CreateListDialog(
     onDismiss: () -> Unit,
-    onCreate: (name: String, colorArgb: Int) -> Unit
+    onCreate: (name: String, colorArgb: Int) -> Unit,
 ) {
     var listName by remember { mutableStateOf("") }
     var selectedColor by remember { mutableStateOf(defaultColors.first()) }
@@ -69,26 +70,30 @@ fun CreateListDialog(
             text = stringResource(id = R.string.create_list_dialog_title),
             style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onSurface
+            color = MaterialTheme.colorScheme.onSurface,
         )
-        
+
         Spacer(modifier = Modifier.height(16.dp))
 
         AppTextField(
             value = listName,
             onValueChange = { if (it.length <= 40) listName = it },
-            modifier = Modifier
-                .fillMaxWidth()
-                .focusRequester(focusRequester),
-            content = AppTextFieldContent(
-                label = { Text(stringResource(id = R.string.list_name_hint)) }
-            ),
-            keyboard = AppTextFieldKeyboard(
-                options = KeyboardOptions(
-                    capitalization = KeyboardCapitalization.Sentences,
-                    imeAction = ImeAction.Done
-                )
-            )
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .focusRequester(focusRequester),
+            content =
+                AppTextFieldContent(
+                    label = { Text(stringResource(id = R.string.list_name_hint)) },
+                ),
+            keyboard =
+                AppTextFieldKeyboard(
+                    options =
+                        KeyboardOptions(
+                            capitalization = KeyboardCapitalization.Sentences,
+                            imeAction = ImeAction.Done,
+                        ),
+                ),
         )
 
         Spacer(modifier = Modifier.height(24.dp))
@@ -96,20 +101,20 @@ fun CreateListDialog(
         Text(
             text = stringResource(id = R.string.choose_color),
             style = MaterialTheme.typography.labelLarge,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
-        
+
         Spacer(modifier = Modifier.height(12.dp))
 
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
+            horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             defaultColors.forEach { color ->
                 ColorCircle(
                     color = color,
                     isSelected = selectedColor == color,
-                    onClick = { selectedColor = color }
+                    onClick = { selectedColor = color },
                 )
             }
         }
@@ -118,17 +123,17 @@ fun CreateListDialog(
 
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.End
+            horizontalArrangement = Arrangement.End,
         ) {
             AppSecondaryButton(
                 text = stringResource(id = R.string.cancel),
-                onClick = onDismiss
+                onClick = onDismiss,
             )
             Spacer(modifier = Modifier.width(8.dp))
             AppPrimaryButton(
                 text = stringResource(id = R.string.create_list),
                 onClick = { onCreate(listName.trim(), selectedColor.toArgb()) },
-                enabled = listName.isNotBlank()
+                enabled = listName.isNotBlank(),
             )
         }
     }
@@ -138,22 +143,24 @@ fun CreateListDialog(
 private fun ColorCircle(
     color: Color,
     isSelected: Boolean,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Box(
-        modifier = Modifier
-            .size(36.dp)
-            .clip(CircleShape)
-            .background(color)
-            .clickable(onClick = onClick),
-        contentAlignment = Alignment.Center
+        modifier =
+            Modifier
+                .size(36.dp)
+                .clip(CircleShape)
+                .background(color)
+                .clickable(onClick = onClick),
+        contentAlignment = Alignment.Center,
     ) {
         if (isSelected) {
             Box(
-                modifier = Modifier
-                    .size(16.dp)
-                    .clip(CircleShape)
-                    .background(Color.White)
+                modifier =
+                    Modifier
+                        .size(16.dp)
+                        .clip(CircleShape)
+                        .background(Color.White),
             )
         }
     }
@@ -165,7 +172,7 @@ fun CreateListDialogPreview() {
     UnitWiseTheme {
         CreateListDialog(
             onDismiss = {},
-            onCreate = { _, _ -> }
+            onCreate = { _, _ -> },
         )
     }
 }

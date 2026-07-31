@@ -30,7 +30,7 @@ private const val TOAST_DURATION_MS = 2000L
 fun AppToastMessage(
     eventKey: Int,
     @StringRes messageResId: Int,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     var visible by remember { mutableStateOf(false) }
 
@@ -45,7 +45,7 @@ fun AppToastMessage(
     AppToastMessage(
         visible = visible,
         message = stringResource(messageResId),
-        modifier = modifier
+        modifier = modifier,
     )
 }
 
@@ -53,24 +53,24 @@ fun AppToastMessage(
 fun AppToastMessage(
     visible: Boolean,
     message: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     AnimatedVisibility(
         modifier = modifier,
         visible = visible,
         enter = slideInVertically(initialOffsetY = { it / 2 }) + fadeIn(),
-        exit = slideOutVertically(targetOffsetY = { it / 2 }) + fadeOut()
+        exit = slideOutVertically(targetOffsetY = { it / 2 }) + fadeOut(),
     ) {
         Surface(
             shape = RoundedCornerShape(16.dp),
             color = MaterialTheme.colorScheme.primary,
             contentColor = MaterialTheme.colorScheme.onPrimary,
-            shadowElevation = 6.dp
+            shadowElevation = 6.dp,
         ) {
             Text(
                 text = message,
                 style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
             )
         }
     }
@@ -83,7 +83,7 @@ private fun AppToastMessagePreview() {
         AppToastMessage(
             visible = true,
             message = "Units cannot be compared.",
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier.padding(16.dp),
         )
     }
 }

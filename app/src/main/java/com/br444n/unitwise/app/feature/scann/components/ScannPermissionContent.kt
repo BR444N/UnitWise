@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import com.br444n.unitwise.app.core.ui.components.buttons.AppPrimaryButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -16,6 +15,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.br444n.unitwise.app.core.ui.components.buttons.AppPrimaryButton
 import com.br444n.unitwise.app.ui.theme.UnitWiseTheme
 
 @Composable
@@ -24,39 +24,41 @@ fun ScannPermissionContent(
     title: String,
     description: String,
     actionLabel: String?,
-    onActionClick: (() -> Unit)?
+    onActionClick: (() -> Unit)?,
 ) {
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.Black)
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .background(Color.Black),
     ) {
         ScannTopAppBar(
             modifier = Modifier.align(Alignment.TopCenter),
-            onBackClick = onBackClick
+            onBackClick = onBackClick,
         )
 
         Column(
-            modifier = Modifier
-                .align(Alignment.Center)
-                .padding(horizontal = 24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+            modifier =
+                Modifier
+                    .align(Alignment.Center)
+                    .padding(horizontal = 24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text(
                 text = title,
-                color = Color.White
+                color = Color.White,
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = description,
                 color = Color.White,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
             )
             if (actionLabel != null && onActionClick != null) {
                 Spacer(modifier = Modifier.height(16.dp))
                 AppPrimaryButton(
                     text = actionLabel,
-                    onClick = onActionClick
+                    onClick = onActionClick,
                 )
             }
         }
@@ -72,7 +74,7 @@ private fun ScannPermissionContentPreview() {
             title = "Camera access required",
             description = "Allow camera access to scan product names.",
             actionLabel = "Allow camera",
-            onActionClick = {}
+            onActionClick = {},
         )
     }
 }

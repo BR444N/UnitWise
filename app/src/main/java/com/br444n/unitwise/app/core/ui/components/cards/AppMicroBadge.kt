@@ -30,21 +30,22 @@ fun AppMicroBadge(
     text: String,
     icon: ImageVector? = null,
     containerColor: Color = Badge,
-    contentColor: Color = MaterialTheme.colorScheme.primary
+    contentColor: Color = MaterialTheme.colorScheme.primary,
 ) {
     Row(
-        modifier = modifier
-            .clip(RoundedCornerShape(8.dp))
-            .background(containerColor)
-            .padding(horizontal = 8.dp, vertical = 4.dp),
-        verticalAlignment = Alignment.CenterVertically
+        modifier =
+            modifier
+                .clip(RoundedCornerShape(8.dp))
+                .background(containerColor)
+                .padding(horizontal = 8.dp, vertical = 4.dp),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         if (icon != null) {
             Icon(
                 imageVector = icon,
                 contentDescription = null, // decorative
                 tint = contentColor,
-                modifier = Modifier.size(14.dp)
+                modifier = Modifier.size(14.dp),
             )
             Spacer(modifier = Modifier.width(4.dp))
         }
@@ -53,7 +54,7 @@ fun AppMicroBadge(
             style = MaterialTheme.typography.labelSmall,
             fontWeight = FontWeight.SemiBold,
             color = contentColor,
-            maxLines = 1
+            maxLines = 1,
         )
     }
 }
@@ -65,7 +66,7 @@ fun AppMicroBadgePreview() {
         AppMicroBadge(
             text = "Verified Component",
             icon = Icons.Default.Verified,
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier.padding(16.dp),
         )
     }
 }

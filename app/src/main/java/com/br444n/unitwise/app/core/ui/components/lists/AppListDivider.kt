@@ -13,14 +13,12 @@ import androidx.compose.ui.unit.dp
 import com.br444n.unitwise.app.ui.theme.UnitWiseTheme
 
 @Composable
-fun AppListDivider(
-    modifier: Modifier = Modifier
-) {
+fun AppListDivider(modifier: Modifier = Modifier) {
     Column(modifier = modifier.padding(horizontal = 16.dp)) {
         Spacer(modifier = Modifier.height(12.dp))
         HorizontalDivider(
             thickness = 1.dp,
-            color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+            color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f),
         )
         Spacer(modifier = Modifier.height(12.dp))
     }
