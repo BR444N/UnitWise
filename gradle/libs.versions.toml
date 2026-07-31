@@ -1,4 +1,5 @@
 [versions]
+ktlint = "14.2.0"
 # Android & Kotlin Core
 agp = "9.0.0-rc03"
 kotlin = "2.0.21"
@@ -112,6 +113,7 @@ desugar-jdk-libs = { group = "com.android.tools", name = "desugar_jdk_libs", ver
 androidx-compose-remote-creation-core = { group = "androidx.compose.remote", name = "remote-creation-core", version.ref = "remoteCreationCore" }
 
 [plugins]
+ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
 # Android & Kotlin Plugins
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
