@@ -1,0 +1,14 @@
+[*.{kt,kts}]
+# Standard ktlint settings
+indent_size = 4
+max_line_length = 100
+insert_final_newline = true
+
+# Reglas específicas para Jetpack Compose
+ktlint_code_style = ktlint_official
+ktlint_function_naming_ignore_when_annotated_with = Composable
+
+# Compose usa fuertemente "trailing commas" (comas al final de los paréntesis).
+# Activamos esto para que Ktlint no pelee con el auto-formateador de Android Studio:
+ij_kotlin_allow_trailing_comma = true
+ij_kotlin_allow_trailing_comma_on_call_site = true
