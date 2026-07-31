@@ -45,11 +45,12 @@ The app focuses on simplicity, clarity, and real-world usefulness during everyda
 ## Table of Contents
 
 - [UnitWise — Smart Grocery Comparison App](#unitwise--smart-grocery-comparison-app)
+- [What's New (Recent Updates)](#whats-new-recent-updates)
 - [Features](#features)
-- [Coming Soon](#coming-soon)
 - [Problem It Solves](#problem-it-solves)
 - [Visual Evolution: Stitch AI Inspiration vs. Human-Centered Design](#visual-evolution-stitch-ai-inspiration-vs-human-centered-design)
 - [Tech Stack](#tech-stack)
+- [Development Workflow & CI/CD](#development-workflow--cicd)
 - [Getting Started](#getting-started)
 - [Architecture](#architecture)
 - [Platform](#platform)
@@ -58,6 +59,19 @@ The app focuses on simplicity, clarity, and real-world usefulness during everyda
 - [Privacy](#privacy)
 - [Contribution](#contribution)
 - [Author](#author)
+
+---
+
+# What's New (Recent Updates)
+
+🚀 **Major UI Refactor & Smart Scanning Experience**
+We recently overhauled the scanner interface and core features to make the in-store experience even smoother:
+- **Redesigned Scanner UI:** The camera view is now much cleaner, featuring a constrained visual grid that naturally guides the user's eye to the product details, avoiding the chaos of scanning the entire supermarket shelf at once.
+- **Enhanced Accuracy:** Improved the integration with ML Kit to faster isolate and capture the right text blocks.
+
+<p align="center">
+  <img src="assets/UI_guide_improved.png" alt="Scanner UI Refactor"/>
+</p>
 
 ---
 
@@ -79,13 +93,9 @@ Revisit and reuse results anytime.
 Built with Jetpack Compose.
 Minimal and accessibility-focused design system.
 
----
-
-# Coming Soon
-
-- **🔗 Share Comparisons:**
-  Share results with friends or family.
-  Generate shareable comparison summaries.
+- **🔗 Share Comparisons via QR & Deep Links:**
+Share comparisons easily with friends or family by sending a generated QR code image. 
+Powered by **Supabase**, if the recipient doesn't have the app installed, scanning the QR code redirects them to the Google Play Store via a Deep Link. If installed, the app opens the comparison directly. To maintain privacy and save storage, shared records automatically expire and are wiped from the Supabase backend after a set time.
 
 ---
 
@@ -105,11 +115,11 @@ UnitWise solves this by:
 
 In today's industry, AI-driven prototyping is becoming a key standard for rapid ideation. This project utilizes **Stitch AI** for initial concept mapping, followed by a rigorous human-led refinement process to ensure the interface meets real-world Android production standards.
 
-|                  Stitch AI Exploration (Inspiration)                   |                   Human-Centered Refinement (Final Design)                    | Key Iteration Detail                                                                                                                                                                                                                            |
-|:----------------------------------------------------------------------:|:-----------------------------------------------------------------------------:|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| <img src="assets/UI_UnitWise.png" width="180" alt="Stitch AI Concept"> |   <img src="assets/App_UnitWise.png" width="180" alt="UnitWise Final Home">   | **UX Simplification:** The AI layout included redundant features like 'Lists' and 'Trends'. My design strips away this noise, simplifying navigation to just **Home** and **History** to focus on fast, on-the-spot price comparisons.          |
-|    <img src="assets/UI_Scann.png" width="180" alt="Stitch AI Scan">    |    <img src="assets/App_Scann.png" width="180" alt="UnitWise Final Scan">     | **Focused Precision:** Unlike the AI concept which processes the entire screen, my design uses a **constrained green framing grid** to guide users toward the most relevant text area and reduce visual noise from nearby products. |
-| <img src="assets/UI_Results.png" width="180" alt="Stitch AI Results">  | <img src="assets/App_Comparison.png" width="180" alt="UnitWise Final Result"> | **Scope Reality:** AI envisioned an e-commerce platform with images and "Add to Cart" buttons. **UnitWise** is a pure math utility; it intentionally lacks product databases or images to remain a lightweight and focused tool.                |
+|                  Stitch AI Exploration (Inspiration)                   |                   Human-Centered Refinement (Final Design)                    | Key Iteration Detail                                                                                                                                                                                                                   |
+|:----------------------------------------------------------------------:|:-----------------------------------------------------------------------------:|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| <img src="assets/UI_UnitWise.png" width="180" alt="Stitch AI Concept"> |   <img src="assets/App_UnitWise.png" width="180" alt="UnitWise Final Home">   | **UX Simplification:** The AI layout included redundant features like 'Lists' and 'Trends'. My design strips away this noise, simplifying navigation to just **Home** and **History** to focus on fast, on-the-spot price comparisons. |
+|    <img src="assets/UI_Scann.png" width="180" alt="Stitch AI Scan">    |    <img src="assets/App_Scann.png" width="180" alt="UnitWise Final Scan">     | **Focused Precision:** Unlike the AI concept which processes the entire screen, my design uses a **constrained green framing grid** to guide users toward the most relevant text area and reduce visual noise from nearby products.    |
+| <img src="assets/UI_Results.png" width="180" alt="Stitch AI Results">  | <img src="assets/App_Comparison.png" width="180" alt="UnitWise Final Result"> | **Scope Reality:** AI envisioned an e-commerce platform with images and "Add to Cart" buttons. **UnitWise** is a pure math utility; it intentionally lacks product databases or images to remain a lightweight and focused tool.       |
 
 ---
 
@@ -124,6 +134,7 @@ In today's industry, AI-driven prototyping is becoming a key standard for rapid 
 ## 🏛️ Architecture & Data
 * **[MVVM (Model-View-ViewModel)](https://www.geeksforgeeks.org/android/mvvm-model-view-viewmodel-architecture-pattern-in-android/):** Pattern used for separation of concerns between business logic and UI.
 * **[Room Persistence](https://developer.android.com/training/data-storage/room):** Local database with KSP (Kotlin Symbol Processing) support.
+* **[Supabase](https://supabase.com/):** Open-source Firebase alternative used for temporarily storing shared comparisons.
 * **[Navigation Compose](https://developer.android.com/develop/ui/compose/navigation):** Robust route management and screen-to-screen navigation.
 * **[Lifecycle & ViewModel](https://developer.android.com/topic/libraries/architecture/viewmodel):** Efficient UI state management and lifecycle handling.
 
@@ -135,6 +146,25 @@ In today's industry, AI-driven prototyping is becoming a key standard for rapid 
 * **Unit Testing:** [JUnit](https://junit.org/), [MockK](https://mockk.io/) for mocking, [Turbine](https://github.com/cashapp/turbine) for Flow testing, and [Google Truth](https://truth.dev/) for fluent assertions.
 * **UI & Instrumentation Testing:** [Espresso](https://developer.android.com/training/testing/espresso) and Compose UI Test to ensure interface integrity.
 * **KSP (Kotlin Symbol Processing):** High-performance code generation for Room database.
+
+## ⚙️ CI/CD & Tooling
+* **GitHub Actions:** Automated pipelines for Sanity Builds and testing on every push.
+* **Ktlint:** Strict static code analysis and formatting for Kotlin.
+* **Git Hooks:** Enforced `commit-msg` (Conventional Commits), `pre-commit`, and `pre-push` hooks.
+
+---
+
+# Development Workflow & CI/CD
+
+UnitWise is built with production-grade standards to ensure maximum code quality and stability. The development lifecycle is heavily automated:
+
+- **Conventional Commits:** All commit messages strictly follow the Conventional Commits specification (e.g., `feat(ui): ...`, `fix(scanner): ...`), enforced locally by Git Hooks and verified by CI.
+- **Automated Formatting (Ktlint):** The project uses the `org.jlleitschuh.gradle.ktlint` plugin to ensure code style consistency, specifically tailored for Jetpack Compose standards (like trailing commas and PascalCase function rules).
+- **Git Hooks:**
+  - `pre-commit`: Scans for accidentally staged secrets, large binaries, or hardcoded sensitive data.
+  - `commit-msg`: Validates commit formatting and prevents AI attribution pollution.
+  - `pre-push`: Runs a local Sanity Build (`assembleDebug` and code styling checks) before allowing any code to be pushed to the remote repository.
+- **GitHub Actions:** A robust CI/CD pipeline triggers on every push and pull request. It injects required environment variables securely, runs all unit and instrumented tests, checks code formatting, and generates the final release builds.
 
 ---
 
@@ -171,9 +201,9 @@ UnitWise is organized around a feature-first Android structure with clear separa
 - `ui/`: Shared theming, reusable UI components, and app-level presentation helpers.
 - `navigation/`: Route definitions and Navigation Compose setup.
 - `permission/`: Runtime permission helpers used by hardware-driven flows.
-- `di/`: Application container and dependency wiring.
+- `di/`: Application container and dependency wiring. UnitWise uses a **Manual Dependency Injection (App Container)** pattern, which avoids the build-time overhead of frameworks like Hilt or Dagger while keeping dependencies fully decoupled and testable.
 
-This structure helps keep business rules independent from Compose UI while making feature modules easier to evolve over time.
+This structure helps keep business rules independent of Compose UI. ViewModels consume data through reactive **StateFlows** emitted by the repositories, ensuring the UI is always up-to-date with the local database.
 
 ---
 
@@ -219,9 +249,9 @@ AI designs were used as inspiration, while final interfaces were adapted to bett
 # Privacy
 
 - UnitWise does not require unnecessary personal data.
-- All comparisons are stored locally.
-- Camera access is used only for on-device text scanning during product capture.
-- Scanned images and recognized text are not uploaded to external servers.
+- Standard comparisons are stored entirely locally on your device.
+- **Shared Comparisons:** When you generate a QR code to share a comparison, that specific record is temporarily uploaded to a secure Supabase instance. These records automatically expire and are permanently deleted after a set period to ensure privacy.
+- Camera access is used exclusively for on-device text scanning (ML Kit). Scanned images and recognized text are never uploaded to external servers.
 
 ---
 
