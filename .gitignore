@@ -1,12 +1,10 @@
 *.iml
 .gradle
 /local.properties
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
+# Ignorar toda la basura de Android Studio, pero conservar el ícono del proyecto
+.idea/*
+!.idea/icon.svg
+!.idea/icon.png
 .DS_Store
 /build
 /captures
@@ -14,13 +12,7 @@
 .cxx
 local.properties
 
-*idea/firebender
-*.agent
-.idea/deploymentTargetSelector.xml
 *.kotlin/errors
-.idea/deviceManager.xml
-.idea/appInsightsSettings.xml
-.idea/androidTestResultsUserPreferences.xml
 compile_log.txt
 app/release/app-release.aab
 /app/src/main/java/com/br444n/unitwise/app/feature/scann/logcat
